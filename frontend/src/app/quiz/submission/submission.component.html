@@ -1,0 +1,30 @@
+<div id="answer-overlay" (click)="removeOverlay()"></div>
+
+<div id="answer-page">
+  <p><strong>Question</strong>: {{ question.text }}</p>
+  <div [ngSwitch]="question.choices === undefined">
+    <input
+      *ngSwitchCase="true"
+      id="response"
+      type="text"
+      [formControl]="response"
+      (keyup)="responseChanged()"
+    />
+    <div *ngSwitchDefault id="choices">
+      <button
+        *ngFor="let choice of question.choices; index as idx"
+        [ngClass]="{
+          selected: idx === saved
+        }"
+        (click)="selectChoice(idx)"
+      >
+        {{ idx }}:{{ choice }}
+      </button>
+    </div>
+  </div>
+  <div id="answer-buttons">
+    <button (click)="submit()">Submit</button>
+    <button>Share the Spoils</button>
+    <button>Nobody Knows</button>
+  </div>
+</div>

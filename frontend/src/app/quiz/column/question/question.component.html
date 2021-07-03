@@ -1,0 +1,15 @@
+<p>
+  <span
+    [ngClass]="{
+      dot: true,
+      correct: submitted && correct,
+      incorrect: submitted && !correct
+    }"
+  >
+    &#x2B24;
+  </span>
+  <span [class.submitted]="submitted">
+    <strong>Q{{ index + 1 }}</strong
+    >: {{ text }}
+  </span>
+</p>

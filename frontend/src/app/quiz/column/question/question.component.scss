@@ -1,0 +1,19 @@
+:host {
+  height: 20px;
+}
+
+span.dot {
+  color: rgba(0, 0, 0, 0);
+}
+
+span.dot.correct {
+  color: green;
+}
+
+span.dot.incorrect {
+  color: maroon;
+}
+
+span.submitted {
+  text-decoration: line-through;
+}

@@ -36,6 +36,16 @@ export default class QuizHost {
           type: "questions",
           questions: player.getDisplayQuestions(),
         });
+        responses.push({
+          type: "player_status",
+          name: player.name,
+          status: player.getPlayerState(),
+        });
+        responses.push({
+          type: "scoreboard",
+          name: "_broadcast",
+          scores: this.makeScoreboard(),
+        });
         break;
       case "submission":
         if (await player.submitAnswer(message.index, message.submission))

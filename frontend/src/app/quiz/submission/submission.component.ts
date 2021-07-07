@@ -14,11 +14,13 @@ export class SubmissionComponent implements OnInit {
   @Output() responseUpdate = new EventEmitter<string | number>();
   @Output() clearSelected = new EventEmitter<boolean>();
   response = new FormControl('');
+  model: number = -1;
 
   constructor(private questionService: QuestionsService) {}
 
   ngOnInit() {
     if (typeof this.saved == 'string') this.response.setValue(this.saved);
+    if (typeof this.saved == 'number') this.model = this.saved;
   }
 
   responseChanged() {

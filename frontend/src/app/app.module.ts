@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -15,6 +16,8 @@ import { GroupOriginatorComponent } from './quiz/group/originator/originator.com
 import { PersonalDelegatedComponent } from './quiz/personal/delegated/delegated.component';
 import { PersonalOriginatorComponent } from './quiz/personal/originator/originator.component';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +32,13 @@ import { PersonalOriginatorComponent } from './quiz/personal/originator/originat
     PersonalDelegatedComponent,
     PersonalOriginatorComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

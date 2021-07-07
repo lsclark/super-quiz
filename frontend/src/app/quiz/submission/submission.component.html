@@ -10,16 +10,22 @@
       [formControl]="response"
       (keyup)="responseChanged()"
     />
-    <div *ngSwitchDefault id="choices">
-      <button
+    <div
+      *ngSwitchDefault
+      id="choices"
+      class="btn-group btn-group-toggle"
+      ngbRadioGroup
+      name="radioBasic"
+      [(ngModel)]="model"
+    >
+      <label
+        ngbButtonLabel
+        class="btn-primary"
         *ngFor="let choice of question.choices; index as idx"
-        [ngClass]="{
-          selected: idx === saved
-        }"
-        (click)="selectChoice(idx)"
       >
+        <input type="radio" [value]="idx" (click)="selectChoice(idx)" />
         {{ idx }}:{{ choice }}
-      </button>
+      </label>
     </div>
   </div>
   <div id="answer-buttons">

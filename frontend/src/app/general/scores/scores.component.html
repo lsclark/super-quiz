@@ -1,1 +1,10 @@
-<div *ngFor="let player of players">{{ player.name }}: {{ player.score }}</div>
+<h2>Scores</h2>
+<ul class="list-group">
+  <li
+    *ngFor="let player of players"
+    class="list-group-item d-flex justify-content-between align-items-center"
+  >
+    {{ player.name }}
+    <span class="badge bg-primary rounded-pill">{{ player.score }}</span>
+  </li>
+</ul>

@@ -1,8 +1,12 @@
-<h3>{{ points }} Points</h3>
-<app-quiz-question
-  *ngFor="let question of questions"
-  [text]="question.text"
-  [index]="question.index"
-  (click)="clickQuestion(question.index)"
->
-</app-quiz-question>
+<div class="card h-100">
+  <div class="card-body">
+    <h3>{{ points }} Points</h3>
+    <app-quiz-question
+      *ngFor="let question of questions"
+      [text]="question.text"
+      [index]="question.index"
+      (click)="clickQuestion(question.index)"
+    >
+    </app-quiz-question>
+  </div>
+</div>

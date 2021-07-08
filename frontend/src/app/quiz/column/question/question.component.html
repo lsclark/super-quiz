@@ -1,15 +1,25 @@
 <p>
-  <span
+  <!-- <span
     [ngClass]="{
       dot: true,
+      'd-none': !submitted,
       correct: submitted && correct,
       incorrect: submitted && !correct
     }"
   >
     &#x2B24;
-  </span>
-  <span [class.submitted]="submitted">
-    <strong>Q{{ index + 1 }}</strong
-    >: {{ text }}
+  </span> -->
+  <span
+    class="question-strike"
+    [ngClass]="{
+      submitted: submitted,
+      correct: submitted && correct,
+      incorrect: submitted && !correct
+    }"
+  >
+    <span class="question-text">
+      <strong>Q{{ index + 1 }}</strong
+      >: {{ text }}
+    </span>
   </span>
 </p>

@@ -1,10 +1,25 @@
-<h2>Scores</h2>
-<ul class="list-group">
-  <li
-    *ngFor="let player of players"
-    class="list-group-item d-flex justify-content-between align-items-center"
-  >
-    {{ player.name }}
-    <span class="badge bg-primary rounded-pill">{{ player.score }}</span>
-  </li>
-</ul>
+<ng-template #scoreTitle>The Leaderboard</ng-template>
+<ng-template #scoreContent>
+  <ul class="list-group">
+    <li
+      *ngFor="let player of players"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      {{ player.name }}
+      <span class="badge bg-primary rounded-pill">{{ player.score }}</span>
+    </li>
+  </ul>
+</ng-template>
+
+<button
+  type="button"
+  class="btn btn-outline-secondary"
+  placement="bottom"
+  [ngbPopover]="scoreContent"
+  [popoverTitle]="scoreTitle"
+  triggers="mouseenter:mouseleave"
+  [openDelay]="200"
+  [closeDelay]="500"
+>
+  Scores
+</button>

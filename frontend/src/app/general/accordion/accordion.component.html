@@ -1,0 +1,29 @@
+<div class="container">
+  <ngb-accordion
+    #accordion="ngbAccordion"
+    activeIds="accordion-quiz"
+    [destroyOnHide]="false"
+    [closeOthers]="true"
+    (panelChange)="onPanelChange($event)"
+  >
+    <ngb-panel title="Quiz" id="accordion-quiz">
+      <ng-template ngbPanelContent>
+        <div class="container">
+          <div class="row">
+            <div class="col-12"><app-quiz></app-quiz></div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
+
+    <ngb-panel title="Target" id="accordion-target">
+      <ng-template ngbPanelContent>
+        <div class="container">
+          <div class="row">
+            <div class="col-12"><app-target></app-target></div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+</div>

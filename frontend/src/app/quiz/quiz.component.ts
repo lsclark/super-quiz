@@ -10,14 +10,11 @@ import { first } from 'rxjs/operators';
 })
 export class QuizComponent {
   columns: QuestionColumn[];
-  selected?: number;
   questions: { [index: number]: QuestionDisplay };
-  saves: { [key: number]: string | number };
 
   constructor(private questionService: QuestionsService) {
     this.columns = [];
     this.questions = {};
-    this.saves = {};
     questionService.questions$?.pipe(first()).subscribe((msg) => {
       this.columns = msg;
       this.parseQuestions();
@@ -31,20 +28,5 @@ export class QuizComponent {
         this.questions[quest.index] = quest;
       }
     }
-    Object.keys(this.questions).forEach((index) => {
-      this.saves[Number(index)] = '';
-    });
-  }
-
-  questionSelected(index: number) {
-    this.selected = index;
-  }
-
-  questionDeselect() {
-    this.selected = undefined;
-  }
-
-  updateSavedResponses(value: number | string) {
-    if (this.selected !== undefined) this.saves[this.selected] = value;
   }
 }

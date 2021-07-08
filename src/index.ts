@@ -1,6 +1,5 @@
 import express from "express";
 import WebSocket from "ws";
-import { IncomingMessage } from "http";
 import QuizHost from "./quiz-host";
 import { Subject } from "rxjs";
 import { QuizMessage } from "./messaging";

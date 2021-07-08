@@ -1,21 +1,16 @@
-:host {
-  height: 20px;
-  padding-left: 7ex;
-  text-indent: 0ex;
+span.question-strike.submitted {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.45ex;
 }
 
-span.dot {
-  color: rgba(0, 0, 0, 0);
-}
-
-span.dot.correct {
+span.question-strike.correct {
   color: green;
 }
 
-span.dot.incorrect {
+span.question-strike.incorrect {
   color: maroon;
 }
 
-span.submitted {
-  text-decoration: line-through;
+span.question-text {
+  color: black;
 }

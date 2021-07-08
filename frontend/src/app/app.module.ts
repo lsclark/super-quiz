@@ -17,6 +17,9 @@ import { PersonalDelegatedComponent } from './quiz/personal/delegated/delegated.
 import { PersonalOriginatorComponent } from './quiz/personal/originator/originator.component';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NavbarComponent } from './general/navbar/navbar.component';
+import { TargetComponent } from './target/target/target.component';
+import { AccordionComponent } from './general/accordion/accordion.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +34,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     GroupOriginatorComponent,
     PersonalDelegatedComponent,
     PersonalOriginatorComponent,
+    NavbarComponent,
+    TargetComponent,
+    AccordionComponent,
   ],
   imports: [
     BrowserModule,

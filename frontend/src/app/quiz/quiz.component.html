@@ -1,4 +1,3 @@
-<h1>Super Quiz</h1>
 <div>
   <div class="row row-eq-height">
     <div *ngFor="let column of columns" class="col-12 col-lg-4">
@@ -6,18 +5,9 @@
         class="h-100"
         [points]="column.points"
         [questions]="column.questions"
-        (selectQuestionEvent)="questionSelected($event)"
       >
       </app-quiz-column>
     </div>
   </div>
   <app-solutions class="col-12"></app-solutions>
 </div>
-<app-quiz-submission
-  *ngIf="selected !== undefined"
-  [question]="questions[selected]"
-  [saved]="saves[selected]"
-  (responseUpdate)="updateSavedResponses($event)"
-  (clearSelected)="questionDeselect()"
->
-</app-quiz-submission>

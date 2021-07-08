@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { QuestionDisplay } from '../../question-types';
 import { QuestionsService } from '../../services/questions.service';
+import { SubmissionComponent } from '../submission/submission.component';
 import { AnswerState } from '../types';
 
 const getEntries = Object.entries as <T extends object>(
@@ -17,9 +20,10 @@ export class ColumnComponent {
   @Input() points!: number;
   submitted: Set<number | string>;
 
-  @Output() selectQuestionEvent = new EventEmitter<number>();
-
-  constructor(private questionService: QuestionsService) {
+  constructor(
+    private questionService: QuestionsService,
+    private modalService: NgbModal
+  ) {
     this.submitted = new Set<number | string>();
     questionService.playerState$?.subscribe((msg) => {
       for (let [index, state] of getEntries(msg.questions)) {
@@ -31,7 +35,14 @@ export class ColumnComponent {
 
   clickQuestion(index: number) {
     console.log(index, typeof index, this.submitted, index in this.submitted);
-    if (!this.submitted.has(index) && !this.submitted.has((+index).toString()))
-      this.selectQuestionEvent.emit(index);
+    if (
+      !this.submitted.has(index) &&
+      !this.submitted.has((+index).toString())
+    ) {
+      let modalRef = this.modalService.open(SubmissionComponent);
+      let questions = this.questions.filter((q) => q.index == index);
+      modalRef.componentInstance.question = questions[0];
+      modalRef.componentInstance.setSaved();
+    }
   }
 }

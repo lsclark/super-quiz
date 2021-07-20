@@ -8,6 +8,7 @@ import {
   Question,
 } from "./question";
 import QuestionLoader from "./question-loader";
+import { Target, TargetManager } from "./target";
 
 const getKeys = Object.keys as <T extends object>(obj: T) => Array<keyof T>;
 const getEntries = Object.entries as <T extends object>(
@@ -43,10 +44,16 @@ export default class Player {
   private state: { [index: number]: AnswerState };
   private bonuses: Bonus[];
   private score: number;
+  targets: Target[];
 
-  constructor(public name: string, questionManager: QuestionLoader) {
+  constructor(
+    public name: string,
+    questionManager: QuestionLoader,
+    targetManager: TargetManager
+  ) {
     let [questIdents, questions] = questionManager.deal();
     this.questions = questions;
+    this.targets = targetManager.getTargets()!;
 
     this.bonuses = [];
     this.state = {};
@@ -82,12 +89,16 @@ export default class Player {
     this.bonuses.forEach((bonus) => {
       score += bonus.points;
     });
+    score += Math.max(...this.targets.map((tgt) => tgt.getScore()));
     this.score = score;
     return score;
   }
 
   makePlayerScore(): PlayerScore {
-    return { name: this.name, score: this.score };
+    return {
+      name: this.name,
+      score: this.computeScore(),
+    };
   }
 
   async submitAnswer(
@@ -103,6 +114,11 @@ export default class Player {
       this.state[index] = AnswerState.Incorrect;
       return false;
     }
+  }
+
+  submitTarget(letters: string, submission: string): boolean {
+    let target = this.targets.filter((target) => target.equivalent(letters))[0];
+    return target.checkSubmission(submission);
   }
 
   retrieveAnswers(): DisplayAnswer[] {

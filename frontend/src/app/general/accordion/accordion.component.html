@@ -6,7 +6,10 @@
     [closeOthers]="true"
     (panelChange)="onPanelChange($event)"
   >
-    <ngb-panel title="Quiz" id="accordion-quiz">
+    <ngb-panel id="accordion-quiz">
+      <ng-template ngbPanelTitle>
+        <span>Quiz</span>
+      </ng-template>
       <ng-template ngbPanelContent>
         <div class="container">
           <div class="row">
@@ -16,11 +19,14 @@
       </ng-template>
     </ngb-panel>
 
-    <ngb-panel title="Target" id="accordion-target">
+    <ngb-panel id="accordion-target">
+      <ng-template ngbPanelTitle>
+        <span>Targets</span>
+      </ng-template>
       <ng-template ngbPanelContent>
         <div class="container">
           <div class="row">
-            <div class="col-12"><app-target></app-target></div>
+            <div class="col-12"><app-target-tabbing></app-target-tabbing></div>
           </div>
         </div>
       </ng-template>

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { QuestionsService } from '../../../services/questions.service';
-import { AnswerState } from '../../types';
+import { QuestionState } from '../../types';
 
 @Component({
   selector: 'app-quiz-question',
@@ -14,12 +14,12 @@ export class QuestionComponent {
   correct?: boolean;
 
   constructor(private questionService: QuestionsService) {
-    questionService.playerState$?.subscribe((msg) => {
-      let state = msg.questions[this.index];
+    questionService.states$?.subscribe((msg) => {
+      let state = msg[this.index];
       if (state !== null) {
-        this.submitted = !(state === AnswerState.UnAnswered);
-        if (state !== AnswerState.UnAnswered)
-          this.correct = state == AnswerState.Correct;
+        this.submitted = !(state === QuestionState.UnAnswered);
+        if (state !== QuestionState.UnAnswered)
+          this.correct = state == QuestionState.Correct;
         else this.correct = undefined;
       }
     });

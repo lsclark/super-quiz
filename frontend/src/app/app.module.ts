@@ -20,6 +20,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NavbarComponent } from './general/navbar/navbar.component';
 import { TargetComponent } from './target/target/target.component';
 import { AccordionComponent } from './general/accordion/accordion.component';
+import { GridComponent } from './target/grid/grid.component';
+import { TargetInputComponent } from './target/input/input.component';
+import { TabbingComponent } from './target/tabbing/tabbing.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +40,9 @@ import { AccordionComponent } from './general/accordion/accordion.component';
     NavbarComponent,
     TargetComponent,
     AccordionComponent,
+    GridComponent,
+    TargetInputComponent,
+    TabbingComponent,
   ],
   imports: [
     BrowserModule,

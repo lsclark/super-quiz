@@ -1,0 +1,20 @@
+<nav
+  ngbNav
+  #nav="ngbNav"
+  class="nav-tabs"
+  [destroyOnHide]="false"
+  [(activeId)]="active"
+>
+  <ng-container
+    *ngFor="let target of targetService.assignments | keyvalue; let idx = index"
+    [ngbNavItem]="idx"
+    [destroyOnHide]="false"
+  >
+    <a ngbNavLink>Target {{ idx + 1 }}</a>
+    <ng-template ngbNavContent>
+      <app-target [targetSpec]="target.value"></app-target>
+    </ng-template>
+  </ng-container>
+</nav>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

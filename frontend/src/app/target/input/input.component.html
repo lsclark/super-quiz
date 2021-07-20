@@ -1,0 +1,13 @@
+<input
+  #input
+  type="text"
+  [readonly]="fixed"
+  [class.user-select-none]="fixed"
+  [class.font-italic]="fixed && !correct"
+  [class.font-weight-bolder]="correct"
+  [class.correct]="correct"
+  class="w-100 mb-1"
+  (blur)="submitWord()"
+  (keyup.enter)="enterPressed()"
+  [(ngModel)]="inputValue"
+/>

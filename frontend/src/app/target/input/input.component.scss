@@ -1,0 +1,17 @@
+input {
+  border-top-style: none;
+  border-left-style: none;
+  border-right-style: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+.correct {
+  color: green;
+  cursor: default;
+}

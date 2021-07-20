@@ -1,6 +1,6 @@
 import { QuestionColumn } from '../question-types';
 
-export enum AnswerState {
+export enum QuestionState {
   UnAnswered,
   Correct,
   Incorrect,
@@ -11,7 +11,7 @@ export type DisplayAnswer = {
 };
 export type PlayerState = {
   score: number;
-  questions: { [index: number]: AnswerState };
+  questions: { [index: number]: QuestionState };
   answers: DisplayAnswer[];
 };
 
@@ -46,9 +46,35 @@ export type USConnectMessage = {
   type: 'connect';
 };
 
+export type USTargetSubmitMessage = {
+  name: string;
+  type: 'target_submit';
+  letters: string;
+  submission: string;
+};
+
+export type DSTargetAssignment = {
+  name: string;
+  type: 'target_assignment';
+  centre: string;
+  others: string[];
+  previous: string[];
+};
+
+export type DSTargetMarking = {
+  name: string;
+  type: 'target_marking';
+  letters: string;
+  submission: string;
+  correct: boolean;
+};
+
 export type QuizMessage =
   | USConnectMessage
   | USSubmitMessage
   | DSPlayerStatusMessage
   | DSQuestionsMessage
-  | DSScoreboardMessage;
+  | DSScoreboardMessage
+  | USTargetSubmitMessage
+  | DSTargetMarking
+  | DSTargetAssignment;

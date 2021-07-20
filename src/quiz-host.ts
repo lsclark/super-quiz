@@ -3,11 +3,13 @@ import { PlayerScore } from "../frontend/src/app/question-types";
 import { QuizMessage } from "./messaging";
 import Player from "./player";
 import QuestionLoader from "./question-loader";
+import { TargetManager } from "./target";
 
 export default class QuizHost {
   update$: Subject<boolean>;
 
   private questionLoader: QuestionLoader;
+  private targetManager: TargetManager;
   players: { [key: string]: Player };
 
   constructor(
@@ -17,6 +19,7 @@ export default class QuizHost {
     this.update$ = new Subject<boolean>();
 
     this.questionLoader = new QuestionLoader();
+    this.targetManager = new TargetManager();
     this.players = {};
 
     incoming$.subscribe((message) => this.routeIncoming(message));
@@ -46,6 +49,15 @@ export default class QuizHost {
           name: "_broadcast",
           scores: this.makeScoreboard(),
         });
+        player.targets.forEach((target) => {
+          responses.push({
+            type: "target_assignment",
+            name: player.name,
+            centre: target.centre,
+            others: target.others,
+            previous: Array.from(target.submissions),
+          });
+        });
         break;
       case "submission":
         if (await player.submitAnswer(message.index, message.submission))
@@ -60,6 +72,33 @@ export default class QuizHost {
           status: player.getPlayerState(),
         });
         break;
+      case "target_submit":
+        let valid = player.submitTarget(message.letters, message.submission);
+        console.log(
+          player.name,
+          message.submission,
+          valid ? "correct" : "incorrect"
+        );
+        responses.push({
+          type: "target_marking",
+          name: player.name,
+          letters: message.letters,
+          submission: message.submission,
+          correct: valid,
+        });
+        if (valid) {
+          responses.push({
+            type: "scoreboard",
+            name: "_broadcast",
+            scores: this.makeScoreboard(),
+          });
+          responses.push({
+            type: "player_status",
+            name: player.name,
+            status: player.getPlayerState(),
+          });
+        }
+        break;
 
       default:
         break;
@@ -68,7 +107,11 @@ export default class QuizHost {
   }
 
   newPlayer(name: string) {
-    this.players[name] = new Player(name, this.questionLoader);
+    this.players[name] = new Player(
+      name,
+      this.questionLoader,
+      this.targetManager
+    );
   }
 
   makeScoreboard(): PlayerScore[] {

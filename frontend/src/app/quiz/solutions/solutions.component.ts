@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { QuestionsService } from '../../services/questions.service';
-import { DisplayAnswer } from '../types';
 
 @Component({
   selector: 'app-solutions',
@@ -8,14 +7,5 @@ import { DisplayAnswer } from '../types';
   styleUrls: ['./solutions.component.scss'],
 })
 export class SolutionsComponent {
-  solutions: DisplayAnswer[];
-
-  constructor(private questionService: QuestionsService) {
-    this.solutions = [];
-    questionService.playerState$?.subscribe((msg) => {
-      this.solutions = msg.answers;
-      console.log(this.solutions);
-      this.solutions.sort((s1, s2) => s1.index - s2.index);
-    });
-  }
+  constructor(public questionService: QuestionsService) {}
 }

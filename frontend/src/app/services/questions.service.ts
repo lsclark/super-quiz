@@ -2,23 +2,30 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import {
+  QuestionState,
   DSPlayerStatusMessage,
   DSQuestionsMessage,
-  DSScoreboardMessage,
-  PlayerState,
+  DisplayAnswer,
 } from '../quiz/types';
-import { PlayerScore, QuestionColumn, Solution } from '../question-types';
+import { QuestionColumn } from '../question-types';
 import { WebsocketService } from './websocket.service';
+
+const getEntries = Object.entries as <T extends object>(
+  obj: T
+) => Array<[keyof T, T[keyof T]]>;
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuestionsService {
   questions$?: Observable<QuestionColumn[]>;
-  playerState$?: Observable<PlayerState>;
-  scoreboard$?: Observable<PlayerScore[]>;
+  answers: DisplayAnswer[];
+  states$?: Observable<{ [index: number]: QuestionState }>;
+  submitted: Set<number | string>;
 
   constructor(private websocketService: WebsocketService) {
+    this.answers = [];
+    this.submitted = new Set<number | string>();
     this.subscribe();
   }
 
@@ -31,26 +38,37 @@ export class QuestionsService {
         complete: () => console.log('Connection closed'),
       })
     );
-    this.playerState$ = base$?.pipe(
+    this.states$ = base$?.pipe(
       filter((msg): msg is DSPlayerStatusMessage => {
         return msg.type == 'player_status';
       }),
-      map((msg) => {
-        return msg.status;
-      })
+      map((msg) => msg.status.questions)
     );
-    this.scoreboard$ = base$?.pipe(
-      filter((msg): msg is DSScoreboardMessage => {
-        return msg.type == 'scoreboard';
-      }),
-      map((msg) => msg.scores)
-    );
+    this.states$?.subscribe((msg) => {
+      for (let [index, state] of getEntries(msg)) {
+        if (!this.submitted.has(index) && state !== QuestionState.UnAnswered)
+          this.submitted.add(index);
+      }
+    });
     this.questions$ = base$?.pipe(
       filter((msg): msg is DSQuestionsMessage => {
         return msg.type == 'questions';
       }),
       map((msg) => msg.questions)
     );
+
+    base$
+      ?.pipe(
+        filter((msg): msg is DSPlayerStatusMessage => {
+          return msg.type == 'player_status';
+        }),
+        map((msg) => msg.status.answers)
+      )
+      .subscribe((msg) => {
+        this.answers = msg;
+        console.log(this.answers);
+        this.answers.sort((s1, s2) => s1.index - s2.index);
+      });
   }
 
   submitAnswer(index: number, solution: number | string) {

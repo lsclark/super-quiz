@@ -1,0 +1,12 @@
+<table (click)="shuffleLetters()" class="w-100">
+  <tr *ngFor="let row of ordering; let ri = index">
+    <td *ngFor="let char of row; let ci = index">
+      <div
+        class="target-letter card p-2 text-center"
+        [ngClass]="ri == 1 && ci == 1 ? 'text-white bg-dark' : ''"
+      >
+        {{ char | uppercase }}
+      </div>
+    </td>
+  </tr>
+</table>

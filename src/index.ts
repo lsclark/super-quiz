@@ -35,6 +35,7 @@ class TriviaServer {
       this.clients.add(socket);
 
       socket.on("message", (data: string) => {
+        console.log("RECEIVE", data);
         let message: QuizMessage = JSON.parse(data);
         if (this.players[message.name] != socket)
           this.players[message.name] = socket;
@@ -48,6 +49,7 @@ class TriviaServer {
     });
 
     this.fromQuizHost$.subscribe((message) => {
+      console.log("Sending", message.type, "to", message.name);
       this.messageSender(message);
     });
   }

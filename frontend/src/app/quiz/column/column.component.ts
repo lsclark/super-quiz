@@ -4,11 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { QuestionDisplay } from '../../question-types';
 import { QuestionsService } from '../../services/questions.service';
 import { SubmissionComponent } from '../submission/submission.component';
-import { AnswerState } from '../types';
-
-const getEntries = Object.entries as <T extends object>(
-  obj: T
-) => Array<[keyof T, T[keyof T]]>;
+import { QuestionState } from '../types';
 
 @Component({
   selector: 'app-quiz-column',
@@ -18,26 +14,22 @@ const getEntries = Object.entries as <T extends object>(
 export class ColumnComponent {
   @Input() questions!: QuestionDisplay[];
   @Input() points!: number;
-  submitted: Set<number | string>;
 
   constructor(
     private questionService: QuestionsService,
     private modalService: NgbModal
-  ) {
-    this.submitted = new Set<number | string>();
-    questionService.playerState$?.subscribe((msg) => {
-      for (let [index, state] of getEntries(msg.questions)) {
-        if (!this.submitted.has(index) && state !== AnswerState.UnAnswered)
-          this.submitted.add(index);
-      }
-    });
-  }
+  ) {}
 
   clickQuestion(index: number) {
-    console.log(index, typeof index, this.submitted, index in this.submitted);
+    console.log(
+      index,
+      typeof index,
+      this.questionService.submitted,
+      index in this.questionService.submitted
+    );
     if (
-      !this.submitted.has(index) &&
-      !this.submitted.has((+index).toString())
+      !this.questionService.submitted.has(index) &&
+      !this.questionService.submitted.has((+index).toString())
     ) {
       let modalRef = this.modalService.open(SubmissionComponent);
       let questions = this.questions.filter((q) => q.index == index);

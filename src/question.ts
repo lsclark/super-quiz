@@ -77,7 +77,7 @@ export async function checkAnswerCorrect(
       }
     );
     if (!matches.length) return false;
-    let [actual, score, index] = matches[0];
+    let [actual, score] = matches[0];
     if (score > 95) return true;
     let charError = (1 - score / 100.0) * actual.length;
     if (actual.length < 3) return false;

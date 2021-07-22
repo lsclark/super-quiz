@@ -5,12 +5,12 @@ import { Question, QuestionSource } from "./question";
 
 const basePath = "./questions/test";
 
-function drawAndRemove<T>(data: { [key: string]: T }): [string, T] {
+function drawAndRemove<T>(data: { [key: string]: T }): T {
   let keys = Object.keys(data);
   let selected = keys[Math.floor(Math.random() * keys.length)];
   let output = data[selected];
   delete data[selected];
-  return [selected, output];
+  return output;
 }
 
 export default class QuestionLoader {
@@ -29,17 +29,15 @@ export default class QuestionLoader {
     }
   }
 
-  deal(): [string[], Question[]] {
+  deal(): Question[] {
     let questions: Question[] = [];
-    let selectors: string[] = [];
     ([1, 2, 3] as const).forEach((points) => {
       for (let draw = 0; draw < 5; draw++) {
-        let [key, question] = drawAndRemove(this.questionPool[points]);
+        let question = drawAndRemove(this.questionPool[points]);
         questions.push(question);
-        selectors.push(key);
       }
     });
-    return [selectors, questions];
+    return questions;
   }
 
   private loadQuestions(filepath: string, data: QuestionSource) {

@@ -43,7 +43,6 @@ export default class Player {
   private displayQuestions: QuestionColumn[];
   private state: { [index: number]: AnswerState };
   private bonuses: Bonus[];
-  private score: number;
   targets: Target[];
 
   constructor(
@@ -51,13 +50,11 @@ export default class Player {
     questionManager: QuestionLoader,
     targetManager: TargetManager
   ) {
-    let [questIdents, questions] = questionManager.deal();
-    this.questions = questions;
+    this.questions = questionManager.deal();
     this.targets = targetManager.getTargets()!;
 
     this.bonuses = [];
     this.state = {};
-    this.score = 0;
 
     [this.indexes, this.displayQuestions] = formatQuestionDisplay(
       this.questions
@@ -90,7 +87,6 @@ export default class Player {
       score += bonus.points;
     });
     score += Math.max(...this.targets.map((tgt) => tgt.getScore()));
-    this.score = score;
     return score;
   }
 
@@ -116,9 +112,9 @@ export default class Player {
     }
   }
 
-  submitTarget(letters: string, submission: string): boolean {
+  submitTarget(letters: string, submission: string): [boolean, number] {
     let target = this.targets.filter((target) => target.equivalent(letters))[0];
-    return target.checkSubmission(submission);
+    return [target.checkSubmission(submission), target.getScore()];
   }
 
   retrieveAnswers(): DisplayAnswer[] {

@@ -8,18 +8,20 @@ import {
 } from '../quiz/types';
 import { PlayerScore } from '../question-types';
 import { WebsocketService } from './websocket.service';
+import { SessionService } from './session.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayersService {
-  name: string;
   score: number;
   playerState$?: Observable<PlayerState>;
   scoreboard$?: Observable<PlayerScore[]>;
 
-  constructor(private websocketService: WebsocketService) {
-    this.name = 'testname';
+  constructor(
+    private websocketService: WebsocketService,
+    private session: SessionService
+  ) {
     this.score = 0;
     this.subscribe();
   }
@@ -49,7 +51,7 @@ export class PlayersService {
     );
     this.scoreboard$?.subscribe((msg) => {
       msg
-        .filter((scoreobj) => scoreobj.name == this.name)
+        .filter((scoreobj) => scoreobj.name == this.session.username)
         .forEach((scoreobj) => (this.score = scoreobj.score));
     });
   }

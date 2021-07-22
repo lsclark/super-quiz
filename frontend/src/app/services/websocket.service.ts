@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { QuizMessage } from '../quiz/types';
+import { SessionService } from './session.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class WebsocketService {
   private connection$?: WebSocketSubject<QuizMessage>;
   messages$?: Observable<QuizMessage>;
 
-  constructor() {
+  constructor(private session: SessionService) {
     this.connect();
   }
 
@@ -20,7 +21,7 @@ export class WebsocketService {
     if (!this.connection$ || this.connection$.closed) {
       this.connection$ = webSocket(this.url);
       this.messages$ = this.connection$.pipe(share());
-      this.send({ name: 'testname', type: 'connect' });
+      this.send({ name: this.session.username, type: 'connect' });
     }
   }
 

@@ -59,6 +59,7 @@ export type DSTargetAssignment = {
   centre: string;
   others: string[];
   previous: string[];
+  score: number;
 };
 
 export type DSTargetMarking = {
@@ -67,6 +68,7 @@ export type DSTargetMarking = {
   letters: string;
   submission: string;
   correct: boolean;
+  score: number;
 };
 
 export type QuizMessage =

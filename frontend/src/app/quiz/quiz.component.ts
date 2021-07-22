@@ -15,7 +15,7 @@ export class QuizComponent {
   constructor(private questionService: QuestionsService) {
     this.columns = [];
     this.questions = {};
-    questionService.questions$?.pipe(first()).subscribe((msg) => {
+    this.questionService.questions$?.pipe(first()).subscribe((msg) => {
       this.columns = msg;
       this.parseQuestions();
     });

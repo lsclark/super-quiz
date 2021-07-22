@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { QuestionsService } from 'src/app/services/questions.service';
 import { SaveResponsesService } from 'src/app/services/save-responses.service';
 import { QuestionDisplay } from '../../question-types';
+import { GroupOriginatorComponent } from '../group/originator/originator.component';
 
 @Component({
   selector: 'app-quiz-submission',
@@ -18,6 +19,7 @@ export class SubmissionComponent {
   constructor(
     private questionService: QuestionsService,
     public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
     private saveService: SaveResponsesService
   ) {}
 
@@ -38,7 +40,17 @@ export class SubmissionComponent {
   }
 
   submit() {
-    this.questionService.submitAnswer(this.question.index, this.response.value);
+    if (this.response.value.length)
+      this.questionService.submitAnswer(
+        this.question.index,
+        this.response.value
+      );
     this.activeModal.dismiss();
+  }
+
+  groupChallenge() {
+    this.activeModal.dismiss();
+    let modalRef = this.modalService.open(GroupOriginatorComponent);
+    modalRef.componentInstance.question = this.question;
   }
 }

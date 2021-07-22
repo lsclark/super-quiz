@@ -1,1 +1,61 @@
-<p>originator works!</p>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Nobody Will Know</h4>
+  <button
+    type="button"
+    class="close"
+    aria-label="Close"
+    (click)="activeModal.dismiss()"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div *ngIf="playerService.score < 3">
+  <div class="modal-body">
+    <p>Sorry, you need to have at least three points to make a wager.</p>
+    <p>Maybe you can complete a target?</p>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="activeModal.dismiss()"
+    >
+      Close
+    </button>
+  </div>
+</div>
+
+<div *ngIf="playerService.score >= 3">
+  <div class="modal-body">
+    <div></div>
+    <p class="text-center font-italic font-weight-bold">{{ question.text }}</p>
+    <p>So you think no-one else will know this?</p>
+    <p>Why not put some points of your points on the line? State your wager.</p>
+    <form>
+      <div class="form-group">
+        <div class="input-group">
+          <input
+            class="w-50"
+            id="response"
+            type="number"
+            min="3.0"
+            [max]="playerService.score"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark">Let's Do It</button>
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      placement="top"
+      (click)="activeModal.dismiss()"
+    >
+      Chicken Out
+    </button>
+  </div>
+</div>

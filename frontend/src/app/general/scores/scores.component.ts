@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { PlayerScore } from 'src/app/question-types';
 import { PlayersService } from 'src/app/services/players.service';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-scores',
@@ -10,7 +11,10 @@ import { PlayersService } from 'src/app/services/players.service';
 export class ScoresComponent {
   players: PlayerScore[];
 
-  constructor(public playerService: PlayersService) {
+  constructor(
+    public playerService: PlayersService,
+    public session: SessionService
+  ) {
     this.players = [];
     this.playerService.scoreboard$?.subscribe((msg) => {
       this.players = msg;

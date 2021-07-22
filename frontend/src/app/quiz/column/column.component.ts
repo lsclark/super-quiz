@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { QuestionDisplay } from '../../question-types';
 import { QuestionsService } from '../../services/questions.service';
 import { SubmissionComponent } from '../submission/submission.component';
-import { QuestionState } from '../types';
 
 @Component({
   selector: 'app-quiz-column',

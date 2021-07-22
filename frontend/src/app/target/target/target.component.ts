@@ -1,11 +1,12 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { TargetService } from 'src/app/services/target.service';
 import { TargetInputComponent } from '../input/input.component';
@@ -23,9 +24,9 @@ export class TargetComponent implements OnInit {
   @Input() targetSpec!: TargetLetters;
   letters: string;
   columns!: TargetState[][];
+  @Output() scoreUpdate = new EventEmitter<number>();
 
   constructor(private targetService: TargetService) {
-    console.log('CONSTRUT TARGET');
     this.letters = '';
     this.columns = [[], [], []];
     [...Array(NUMINPUTS).keys()]
@@ -39,6 +40,7 @@ export class TargetComponent implements OnInit {
     targetService.results$
       ?.pipe(filter((res) => this.equivalent(res.letters)))
       .subscribe((result) => {
+        this.scoreUpdate.emit(result.score);
         let states = this.columns
           .flat(1)
           .filter((state) => state.input === result.submission);
@@ -57,6 +59,7 @@ export class TargetComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.scoreUpdate.emit(this.targetSpec.initScore);
     this.letters = this.targetSpec.centre + this.targetSpec.others.join('');
     let idx = 0;
     for (let prev of this.targetSpec.previous) {

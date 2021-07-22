@@ -8,6 +8,7 @@ import {
   USTargetSubmitMessage,
 } from '../quiz/types';
 import { TargetLetters, TargetResult } from '../target/message-types';
+import { SessionService } from './session.service';
 import { WebsocketService } from './websocket.service';
 
 @Injectable({
@@ -17,7 +18,10 @@ export class TargetService {
   assignments: { [key: string]: TargetLetters };
   results$?: Observable<TargetResult>;
 
-  constructor(private websocketService: WebsocketService) {
+  constructor(
+    private websocketService: WebsocketService,
+    private session: SessionService
+  ) {
     this.assignments = {};
     this.subscribe();
   }
@@ -40,6 +44,7 @@ export class TargetService {
           letters: msg.letters,
           submission: msg.submission,
           correct: msg.correct,
+          score: msg.score,
         };
       })
     );
@@ -48,13 +53,6 @@ export class TargetService {
       ?.pipe(
         filter((msg): msg is DSTargetAssignment => {
           return msg.type == 'target_assignment';
-        }),
-        map((msg) => {
-          return {
-            centre: msg.centre,
-            others: msg.others,
-            previous: msg.previous,
-          };
         })
       )
       .subscribe((msg) => {
@@ -63,13 +61,14 @@ export class TargetService {
           centre: msg.centre,
           others: msg.others,
           previous: msg.previous,
+          initScore: msg.score,
         };
       });
   }
 
   submit(letters: string, submission: string) {
     let data: USTargetSubmitMessage = {
-      name: 'testname',
+      name: this.session.username,
       type: 'target_submit',
       letters: letters,
       submission: submission,

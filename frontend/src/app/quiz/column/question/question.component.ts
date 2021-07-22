@@ -14,7 +14,7 @@ export class QuestionComponent {
   correct?: boolean;
 
   constructor(private questionService: QuestionsService) {
-    questionService.states$?.subscribe((msg) => {
+    this.questionService.states$?.subscribe((msg) => {
       let state = msg[this.index];
       if (state !== null) {
         this.submitted = !(state === QuestionState.UnAnswered);

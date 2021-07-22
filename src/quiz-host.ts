@@ -22,7 +22,7 @@ export default class QuizHost {
     this.targetManager = new TargetManager();
     this.players = {};
 
-    incoming$.subscribe((message) => this.routeIncoming(message));
+    this.incoming$.subscribe((message) => this.routeIncoming(message));
   }
 
   async routeIncoming(message: QuizMessage) {
@@ -56,6 +56,7 @@ export default class QuizHost {
             centre: target.centre,
             others: target.others,
             previous: Array.from(target.submissions),
+            score: target.getScore(),
           });
         });
         break;
@@ -73,7 +74,10 @@ export default class QuizHost {
         });
         break;
       case "target_submit":
-        let valid = player.submitTarget(message.letters, message.submission);
+        let [valid, score] = player.submitTarget(
+          message.letters,
+          message.submission
+        );
         console.log(
           player.name,
           message.submission,
@@ -85,6 +89,7 @@ export default class QuizHost {
           letters: message.letters,
           submission: message.submission,
           correct: valid,
+          score: score,
         });
         if (valid) {
           responses.push({

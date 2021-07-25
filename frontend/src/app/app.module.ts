@@ -23,6 +23,7 @@ import { AccordionComponent } from './general/accordion/accordion.component';
 import { GridComponent } from './target/grid/grid.component';
 import { TargetInputComponent } from './target/input/input.component';
 import { TabbingComponent } from './target/tabbing/tabbing.component';
+import { TimeoutWarningComponent } from './general/timeout-warning/timeout-warning.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { TabbingComponent } from './target/tabbing/tabbing.component';
     GridComponent,
     TargetInputComponent,
     TabbingComponent,
+    TimeoutWarningComponent,
   ],
   imports: [
     BrowserModule,

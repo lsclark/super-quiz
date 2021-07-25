@@ -9,6 +9,11 @@ export type USConnectMessage = {
   type: "connect";
 };
 
+export type DSTimeoutMessage = {
+  name: string;
+  type: "timeout";
+};
+
 export type DSQuestionsMessage = {
   name: string;
   type: "questions";
@@ -61,6 +66,7 @@ export type DSTargetMarking = {
 
 export type QuizMessage =
   | USConnectMessage
+  | DSTimeoutMessage
   | USSubmitMessage
   | DSPlayerStatusMessage
   | DSQuestionsMessage

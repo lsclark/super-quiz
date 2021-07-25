@@ -4,7 +4,7 @@
     type="button"
     class="close"
     aria-label="Close"
-    (click)="activeModal.dismiss()"
+    (click)="modalController.dismissTop()"
   >
     <span aria-hidden="true">&times;</span>
   </button>
@@ -19,7 +19,7 @@
     <button
       type="button"
       class="btn btn-outline-dark"
-      (click)="activeModal.dismiss()"
+      (click)="modalController.dismissTop()"
     >
       Close
     </button>
@@ -30,30 +30,30 @@
   <div class="modal-body">
     <div></div>
     <p class="text-center font-italic font-weight-bold">{{ question.text }}</p>
-    <p>So you think no-one else will know this?</p>
-    <p>Why not put some points of your points on the line? State your wager.</p>
-    <form>
-      <div class="form-group">
-        <div class="input-group">
-          <input
-            class="w-50"
-            id="response"
-            type="number"
-            min="3.0"
-            [max]="playerService.score"
-          />
-        </div>
-      </div>
-    </form>
+    <p>
+      So you think no-one else will know this? Why not put some points of your
+      points on the line?
+    </p>
+    <div class="form-group">
+      <label for="group-response" class="form-label">State your wager:</label>
+      <input
+        class="form-control"
+        id="group-response"
+        type="number"
+        [(ngModel)]="wager"
+        (input)="wagerChanged()"
+      />
+    </div>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark">Let's Do It</button>
+    <button type="button" class="btn btn-outline-dark" (click)="submit()">
+      Let's Do It
+    </button>
     <button
       type="button"
       class="btn btn-outline-dark"
-      placement="top"
-      (click)="activeModal.dismiss()"
+      (click)="modalController.dismissTop()"
     >
       Chicken Out
     </button>

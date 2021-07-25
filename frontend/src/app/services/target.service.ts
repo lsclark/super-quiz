@@ -57,12 +57,13 @@ export class TargetService {
       )
       .subscribe((msg) => {
         let sorted = [msg.centre, ...msg.others].sort().join('');
-        this.assignments[sorted] = {
-          centre: msg.centre,
-          others: msg.others,
-          previous: msg.previous,
-          initScore: msg.score,
-        };
+        if (!(sorted in this.assignments))
+          this.assignments[sorted] = {
+            centre: msg.centre,
+            others: msg.others,
+            previous: msg.previous,
+            initScore: msg.score,
+          };
       });
   }
 

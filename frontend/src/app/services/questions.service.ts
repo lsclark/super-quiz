@@ -9,6 +9,8 @@ import {
 } from '../quiz/types';
 import { QuestionColumn } from '../question-types';
 import { WebsocketService } from './websocket.service';
+import { SessionService } from './session.service';
+import { SaveResponsesService } from './save-responses.service';
 
 const getEntries = Object.entries as <T extends object>(
   obj: T
@@ -23,7 +25,11 @@ export class QuestionsService {
   states$?: Observable<{ [index: number]: QuestionState }>;
   submitted: Set<number | string>;
 
-  constructor(private websocketService: WebsocketService) {
+  constructor(
+    private websocketService: WebsocketService,
+    private saveService: SaveResponsesService,
+    private session: SessionService
+  ) {
     this.answers = [];
     this.submitted = new Set<number | string>();
     this.subscribe();
@@ -71,12 +77,17 @@ export class QuestionsService {
       });
   }
 
-  submitAnswer(index: number, solution: number | string) {
-    this.websocketService.send({
-      name: 'testname',
-      type: 'submission',
-      index: index,
-      submission: solution,
-    });
+  submitAnswer(index: number) {
+    let response = this.saveService.get(index);
+    if (
+      (typeof response == 'string' && response.length) ||
+      (typeof response == 'number' && response > 0)
+    )
+      this.websocketService.send({
+        name: this.session.username,
+        type: 'submission',
+        index: index,
+        submission: response,
+      });
   }
 }

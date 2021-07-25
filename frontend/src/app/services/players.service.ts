@@ -15,6 +15,7 @@ import { SessionService } from './session.service';
 })
 export class PlayersService {
   score: number;
+  others: string[];
   playerState$?: Observable<PlayerState>;
   scoreboard$?: Observable<PlayerScore[]>;
 
@@ -22,6 +23,7 @@ export class PlayersService {
     private websocketService: WebsocketService,
     private session: SessionService
   ) {
+    this.others = [];
     this.score = 0;
     this.subscribe();
   }
@@ -53,6 +55,11 @@ export class PlayersService {
       msg
         .filter((scoreobj) => scoreobj.name == this.session.username)
         .forEach((scoreobj) => (this.score = scoreobj.score));
+    });
+    this.scoreboard$?.subscribe((msg) => {
+      this.others = msg
+        .filter((scoreobj) => scoreobj.name != this.session.username)
+        .map((scoreobj) => scoreobj.name);
     });
   }
 }

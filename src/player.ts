@@ -1,3 +1,5 @@
+import { Subject } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 import {
   PlayerScore,
   QuestionColumn,
@@ -8,7 +10,11 @@ import {
   Question,
 } from "./question";
 import QuestionLoader from "./question-loader";
+import QuizHost from "./quiz-host";
 import { Target, TargetManager } from "./target";
+
+const TIMEOUT_WARNING = 1 * 60 * 1000;
+const TIMEOUT_DEATH = 2 * 60 * 1000;
 
 const getKeys = Object.keys as <T extends object>(obj: T) => Array<keyof T>;
 const getEntries = Object.entries as <T extends object>(
@@ -38,18 +44,22 @@ export type DisplayAnswer = {
 };
 
 export default class Player {
+  alive: boolean;
   private questions: Question[];
   private indexes: { [index: number]: Question };
   private displayQuestions: QuestionColumn[];
   private state: { [index: number]: AnswerState };
   private bonuses: Bonus[];
   targets: Target[];
+  private timeout = new Subject<true>();
 
   constructor(
     public name: string,
     questionManager: QuestionLoader,
-    targetManager: TargetManager
+    targetManager: TargetManager,
+    private quizHost: QuizHost
   ) {
+    this.alive = true;
     this.questions = questionManager.deal();
     this.targets = targetManager.getTargets()!;
 
@@ -62,6 +72,19 @@ export default class Player {
     getKeys(this.indexes).forEach((index: number) => {
       this.state[index] = AnswerState.UnAnswered;
     });
+
+    this.timeout.pipe(debounceTime(TIMEOUT_WARNING)).subscribe(() => {
+      this.quizHost.timeoutWarning(this.name);
+    });
+
+    this.timeout.pipe(debounceTime(TIMEOUT_DEATH)).subscribe(() => {
+      this.alive = false;
+    });
+  }
+
+  accessed() {
+    this.alive = true;
+    this.timeout.next(true);
   }
 
   getDisplayQuestions(): QuestionColumn[] {

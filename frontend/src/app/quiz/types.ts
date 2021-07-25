@@ -20,10 +20,12 @@ export type DSPlayerStatusMessage = {
   type: 'player_status';
   status: PlayerState;
 };
+
 export interface PlayerScore {
   name: string;
   score: number;
 }
+
 export type DSScoreboardMessage = {
   name: string;
   type: 'scoreboard';
@@ -35,6 +37,7 @@ export type DSQuestionsMessage = {
   type: 'questions';
   questions: QuestionColumn[];
 };
+
 export type USSubmitMessage = {
   name: string;
   type: 'submission';
@@ -44,6 +47,11 @@ export type USSubmitMessage = {
 export type USConnectMessage = {
   name: string;
   type: 'connect';
+};
+
+export type DSTimeoutMessage = {
+  name: string;
+  type: 'timeout';
 };
 
 export type USTargetSubmitMessage = {
@@ -73,6 +81,7 @@ export type DSTargetMarking = {
 
 export type QuizMessage =
   | USConnectMessage
+  | DSTimeoutMessage
   | USSubmitMessage
   | DSPlayerStatusMessage
   | DSQuestionsMessage

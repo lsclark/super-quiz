@@ -1,9 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { ModalControllerService } from 'src/app/services/modal-controller.service';
 import { QuestionDisplay } from '../../question-types';
 import { QuestionsService } from '../../services/questions.service';
-import { SubmissionComponent } from '../submission/submission.component';
 
 @Component({
   selector: 'app-quiz-column',
@@ -16,7 +15,7 @@ export class ColumnComponent {
 
   constructor(
     private questionService: QuestionsService,
-    private modalService: NgbModal
+    private modalController: ModalControllerService
   ) {}
 
   clickQuestion(index: number) {
@@ -30,10 +29,8 @@ export class ColumnComponent {
       !this.questionService.submitted.has(index) &&
       !this.questionService.submitted.has((+index).toString())
     ) {
-      let modalRef = this.modalService.open(SubmissionComponent);
       let questions = this.questions.filter((q) => q.index == index);
-      modalRef.componentInstance.question = questions[0];
-      modalRef.componentInstance.setSaved();
+      this.modalController.launchSubmission(questions[0]);
     }
   }
 }

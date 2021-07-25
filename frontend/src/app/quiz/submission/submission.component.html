@@ -1,53 +1,46 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-basic-title">Answer Submission</h4>
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    (click)="activeModal.dismiss()"
-  >
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body">
   <p><strong>Question</strong>: {{ question.text }}</p>
-  <form>
-    <div class="form-group">
-      <!-- <label for="response">Your answer</label> -->
-      <div class="input-group" [ngSwitch]="question.choices === undefined">
-        <input
-          class="w-100"
-          *ngSwitchCase="true"
-          id="response"
-          type="text"
-          [formControl]="response"
-          (keyup)="responseChanged()"
-        />
-        <div
-          *ngSwitchDefault
-          id="choices"
-          class="btn-group btn-group-toggle w-100"
-          ngbRadioGroup
-          name="submitMultiChoice"
-          [(ngModel)]="multiChoice"
+  <div class="form-group">
+    <div class="input-group" [ngSwitch]="question.choices === undefined">
+      <input
+        class="w-100"
+        *ngSwitchCase="true"
+        id="response"
+        type="text"
+        ngbAutofocus
+        [(ngModel)]="response"
+        (keyup)="responseChanged()"
+      />
+      <div
+        *ngSwitchDefault
+        id="choices"
+        class="btn-group btn-group-toggle w-100"
+        ngbRadioGroup
+        name="submitMultiChoice"
+        [(ngModel)]="multiChoice"
+      >
+        <label
+          ngbButtonLabel
+          class="btn-light"
+          *ngFor="let choice of question.choices; index as idx"
         >
-          <label
-            ngbButtonLabel
-            class="btn-light"
-            *ngFor="let choice of question.choices; index as idx"
-          >
-            <input
-              type="radio"
-              [value]="idx"
-              (click)="selectChoice(idx)"
-              ngbButton
-            />
-            {{ choice }}
-          </label>
-        </div>
+          <input
+            type="radio"
+            [value]="idx"
+            (click)="selectChoice(idx)"
+            ngbButton
+          />
+          {{ choice }}
+        </label>
       </div>
     </div>
-  </form>
+  </div>
 </div>
 
 <div class="modal-footer">
@@ -65,6 +58,7 @@
     class="btn btn-outline-dark"
     placement="top"
     ngbTooltip="Nominate a friend to have a go. Split the points 50-50."
+    (click)="personalChallenge()"
   >
     Share the Spoils
   </button>

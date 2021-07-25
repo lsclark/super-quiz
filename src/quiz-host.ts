@@ -25,12 +25,18 @@ export default class QuizHost {
     this.incoming$.subscribe((message) => this.routeIncoming(message));
   }
 
+  getPlayer(name: string) {
+    if (!(name in this.players)) {
+      this.newPlayer(name);
+    }
+    let player = this.players[name];
+    player.accessed();
+    return player;
+  }
+
   async routeIncoming(message: QuizMessage) {
     console.log(`Incoming: ${JSON.stringify(message)}`);
-    if (!(message.name in this.players)) {
-      this.newPlayer(message.name);
-    }
-    let player = this.players[message.name];
+    let player = this.getPlayer(message.name);
     let responses: QuizMessage[] = [];
     switch (message.type) {
       case "connect":
@@ -115,11 +121,21 @@ export default class QuizHost {
     this.players[name] = new Player(
       name,
       this.questionLoader,
-      this.targetManager
+      this.targetManager,
+      this
     );
   }
 
   makeScoreboard(): PlayerScore[] {
-    return Object.values(this.players).map((plyr) => plyr.makePlayerScore());
+    return Object.values(this.players)
+      .filter((plyr) => plyr.alive)
+      .map((plyr) => plyr.makePlayerScore());
+  }
+
+  timeoutWarning(name: string) {
+    this.outgoing$.next({
+      type: "timeout",
+      name: name,
+    });
   }
 }

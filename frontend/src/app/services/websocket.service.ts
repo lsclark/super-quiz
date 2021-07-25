@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { share } from 'rxjs/operators';
+import { filter, share } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { QuizMessage } from '../quiz/types';
+import { DSTimeoutMessage, QuizMessage } from '../quiz/types';
+import { ModalControllerService } from './modal-controller.service';
 import { SessionService } from './session.service';
 
 @Injectable({
@@ -13,8 +14,21 @@ export class WebsocketService {
   private connection$?: WebSocketSubject<QuizMessage>;
   messages$?: Observable<QuizMessage>;
 
-  constructor(private session: SessionService) {
+  constructor(
+    private session: SessionService,
+    private modalController: ModalControllerService
+  ) {
     this.connect();
+
+    this.messages$
+      ?.pipe(
+        filter((msg): msg is DSTimeoutMessage => {
+          return msg.type == 'timeout';
+        })
+      )
+      .subscribe(() => {
+        this.modalController.launchTimeoutWarning();
+      });
   }
 
   connect() {
@@ -43,5 +57,12 @@ export class WebsocketService {
   ngOnDestroy() {
     console.log('Websocket Service Destroyed');
     this.closeConnection();
+  }
+
+  reportAlive() {
+    this.send({
+      type: 'connect',
+      name: this.session.username,
+    });
   }
 }

@@ -1,35 +1,37 @@
-import { Component, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { ModalControllerService } from 'src/app/services/modal-controller.service';
 import { QuestionsService } from 'src/app/services/questions.service';
 import { SaveResponsesService } from 'src/app/services/save-responses.service';
 import { QuestionDisplay } from '../../question-types';
-import { GroupOriginatorComponent } from '../group/originator/originator.component';
 
 @Component({
   selector: 'app-quiz-submission',
   templateUrl: './submission.component.html',
   styleUrls: ['./submission.component.scss'],
 })
-export class SubmissionComponent {
+export class SubmissionComponent implements OnInit {
   @Input() question!: QuestionDisplay;
-  response = new FormControl('');
+  response: string = '';
   multiChoice: number = -1;
 
   constructor(
+    private modalController: ModalControllerService,
     private questionService: QuestionsService,
-    public activeModal: NgbActiveModal,
-    private modalService: NgbModal,
     private saveService: SaveResponsesService
   ) {}
 
-  responseChanged() {
-    this.saveService.set(this.question.index, this.response.value);
+  ngOnInit(): void {
+    this.restoreSaved();
   }
 
-  setSaved() {
+  responseChanged() {
+    this.saveService.set(this.question.index, this.response);
+  }
+
+  restoreSaved() {
     let saved = this.saveService.get(this.question.index);
-    if (typeof saved == 'string') this.response.setValue(saved);
+    if (typeof saved == 'string') this.response = saved;
     if (typeof saved == 'number') this.multiChoice = saved;
   }
 
@@ -39,18 +41,20 @@ export class SubmissionComponent {
     this.multiChoice = event;
   }
 
+  dismiss() {
+    this.modalController.dismissTop();
+  }
+
   submit() {
-    if (this.response.value.length)
-      this.questionService.submitAnswer(
-        this.question.index,
-        this.response.value
-      );
-    this.activeModal.dismiss();
+    this.questionService.submitAnswer(this.question.index);
+    this.modalController.dismissTop();
   }
 
   groupChallenge() {
-    this.activeModal.dismiss();
-    let modalRef = this.modalService.open(GroupOriginatorComponent);
-    modalRef.componentInstance.question = this.question;
+    this.modalController.launchGroupChallenge(this.question);
+  }
+
+  personalChallenge() {
+    this.modalController.launchPersonalChallenge(this.question);
   }
 }

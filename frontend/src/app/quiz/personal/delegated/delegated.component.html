@@ -1,1 +1,47 @@
-<p>delegated works!</p>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{ player }} Needs Help!</h4>
+</div>
+<div class="modal-body">
+  <p>
+    Can you answer this question? You'll split the {{ question.points }} if you
+    do.
+  </p>
+  <p><strong>Question</strong>: {{ question.text }}</p>
+  <form>
+    <div class="form-group">
+      <div class="input-group" [ngSwitch]="question.choices === undefined">
+        <input
+          class="w-100"
+          *ngSwitchCase="true"
+          id="response"
+          type="text"
+          ngbAutofocus
+          [(ngModel)]="response"
+        />
+        <div
+          *ngSwitchDefault
+          id="choices"
+          class="btn-group btn-group-toggle w-100"
+          ngbRadioGroup
+          name="submitMultiChoice"
+          [(ngModel)]="multiChoice"
+        >
+          <label
+            ngbButtonLabel
+            class="btn-light"
+            *ngFor="let choice of question.choices; index as idx"
+          >
+            <input type="radio" [value]="idx" ngbButton />
+            {{ choice }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="submit()">
+    Submit
+  </button>
+</div>

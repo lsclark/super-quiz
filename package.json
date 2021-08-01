@@ -2,9 +2,9 @@
   "name": "trivia",
   "version": "1.0.0",
   "description": "Trivia competition website",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build:back": "tsc && node dist/src/index.js",
+    "build:back": "tsc && node dist/index.js",
     "back": "npx nodemon",
     "front": "cd frontend && ng serve",
     "start": "npx concurrently -p \"[{name}]\" -n \"FRONT,BACK\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run front\" \"npm run back\""

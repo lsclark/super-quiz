@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { QuestionsService } from '../../../services/questions.service';
-import { QuestionState } from '../../types';
+import { QuestionState } from '../../../message-types';
 
 @Component({
   selector: 'app-quiz-question',

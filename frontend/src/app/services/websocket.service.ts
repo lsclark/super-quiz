@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { filter, share } from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { DSTimeoutMessage, QuizMessage } from '../quiz/types';
-import { ModalControllerService } from './modal-controller.service';
+import { QuizMessage } from '../message-types';
 import { SessionService } from './session.service';
 
 @Injectable({
@@ -14,21 +13,8 @@ export class WebsocketService {
   private connection$?: WebSocketSubject<QuizMessage>;
   messages$?: Observable<QuizMessage>;
 
-  constructor(
-    private session: SessionService,
-    private modalController: ModalControllerService
-  ) {
+  constructor(private session: SessionService) {
     this.connect();
-
-    this.messages$
-      ?.pipe(
-        filter((msg): msg is DSTimeoutMessage => {
-          return msg.type == 'timeout';
-        })
-      )
-      .subscribe(() => {
-        this.modalController.launchTimeoutWarning();
-      });
   }
 
   connect() {

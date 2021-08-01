@@ -1,9 +1,6 @@
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
-import {
-  PlayerScore,
-  QuestionColumn,
-} from "../frontend/src/app/question-types";
+import { PlayerScore, QuestionColumn } from "./message-types";
 import {
   checkAnswerCorrect,
   formatQuestionDisplay,

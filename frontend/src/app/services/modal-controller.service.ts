@@ -1,14 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import {
   NgbModal,
   NgbModalOptions,
   NgbModalRef,
 } from '@ng-bootstrap/ng-bootstrap';
-import { TimeoutWarningComponent } from '../general/timeout-warning/timeout-warning.component';
-import { QuestionDisplay } from '../question-types';
+import { NotificationComponent } from '../general/notification/notification.component';
+import { QuestionDisplay } from '../message-types';
+import { GroupChallengedComponent } from '../quiz/group/challenged/challenged.component';
 import { GroupOriginatorComponent } from '../quiz/group/originator/originator.component';
+import { PersonalDelegatedComponent } from '../quiz/personal/delegated/delegated.component';
 import { PersonalOriginatorComponent } from '../quiz/personal/originator/originator.component';
 import { SubmissionComponent } from '../quiz/submission/submission.component';
+import { WebsocketService } from './websocket.service';
 
 type SubmissionSpec = {
   type: 'submission';
@@ -46,7 +49,11 @@ export class ModalControllerService {
   private stack: ModalSpec[];
   private topModal?: NgbModalRef;
 
-  constructor(private modalService: NgbModal) {
+  constructor(
+    private modalService: NgbModal,
+    // private session: SessionService,
+    private websocketService: WebsocketService
+  ) {
     this.stack = [];
   }
 
@@ -64,10 +71,10 @@ export class ModalControllerService {
           this.makeSubmission(spec.question);
           break;
         case 'group-originator':
-          this.makeGroupChallenge(spec.question);
+          this.makeGroupChallengeOrigin(spec.question);
           break;
         case 'personal-originator':
-          this.makePersonalChallenge(spec.question);
+          this.makePersonalChallengeOrigin(spec.question);
           break;
         case 'timeout-warning':
           this.makeTimeoutWarning();
@@ -95,22 +102,82 @@ export class ModalControllerService {
     this.makeTimeoutWarning();
   }
 
-  launchGroupChallenge(question: QuestionDisplay) {
+  launchGroupChallengeOrigin(question: QuestionDisplay) {
     this.topModal?.close();
     this.stack.push({
       type: 'group-originator',
       question: question,
     });
-    this.makeGroupChallenge(question);
+    this.makeGroupChallengeOrigin(question);
   }
 
-  launchPersonalChallenge(question: QuestionDisplay) {
+  launchGroupChallengeDistribute(
+    question: QuestionDisplay,
+    origin: string,
+    wager: number
+  ) {
+    this.topModal?.close();
+    this.stack.push({
+      type: 'group-originator',
+      question: question,
+    });
+    this.makeGroupChallengeDistribute(question, origin, wager);
+  }
+
+  launchGroupChallengeOutcome(
+    question: QuestionDisplay,
+    originator: string,
+    victor: string | null,
+    answer: string
+  ) {
+    this.topModal?.close();
+    this.stack.push({
+      type: 'group-originator',
+      question: question,
+    });
+    this.makeGroupChallengeOutcome(question, originator, victor, answer);
+  }
+
+  launchPersonalChallengeOrigin(question: QuestionDisplay) {
     this.topModal?.close();
     this.stack.push({
       type: 'personal-originator',
       question: question,
     });
-    this.makePersonalChallenge(question);
+    this.makePersonalChallengeOrigin(question);
+  }
+
+  launchPersonalChallengeDelegate(
+    question: QuestionDisplay,
+    originator: string
+  ) {
+    this.topModal?.close();
+    this.stack.push({
+      type: 'personal-originator',
+      question: question,
+    });
+    this.makePersonalChallengeDelegate(question, originator);
+  }
+
+  launchPersonalChallengeOutcome(
+    question: QuestionDisplay,
+    originator: string,
+    delegate: string,
+    answer: string,
+    success: boolean
+  ) {
+    this.topModal?.close();
+    this.stack.push({
+      type: 'group-originator',
+      question: question,
+    });
+    this.makePersonalChallengeOutcome(
+      question,
+      originator,
+      delegate,
+      answer,
+      success
+    );
   }
 
   private makeSubmission(question: QuestionDisplay) {
@@ -122,7 +189,7 @@ export class ModalControllerService {
     this.topModal = modalRef;
   }
 
-  private makeGroupChallenge(question: QuestionDisplay) {
+  private makeGroupChallengeOrigin(question: QuestionDisplay) {
     let modalRef = this.modalService.open(
       GroupOriginatorComponent,
       DEFAULT_MODAL_OPTIONS
@@ -131,7 +198,40 @@ export class ModalControllerService {
     this.topModal = modalRef;
   }
 
-  private makePersonalChallenge(question: QuestionDisplay) {
+  private makeGroupChallengeDistribute(
+    question: QuestionDisplay,
+    origin: string,
+    wager: number
+  ) {
+    let modalRef = this.modalService.open(
+      GroupChallengedComponent,
+      DEFAULT_MODAL_OPTIONS
+    );
+    modalRef.componentInstance.question = question;
+    modalRef.componentInstance.player = origin;
+    modalRef.componentInstance.wager = wager;
+    this.topModal = modalRef;
+  }
+
+  private makeGroupChallengeOutcome(
+    question: QuestionDisplay,
+    originator: string,
+    victor: string | null,
+    answer: string
+  ) {
+    let modalRef = this.modalService.open(
+      NotificationComponent,
+      DEFAULT_MODAL_OPTIONS
+    );
+    modalRef.componentInstance.title = 'GROUP OUTCOME';
+    modalRef.componentInstance.body =
+      "It's been a while since you've done anything. Are you still there?";
+    modalRef.componentInstance.button = "I'm here!";
+    modalRef.componentInstance.button_cb = this.websocketService.reportAlive;
+    this.topModal = modalRef;
+  }
+
+  private makePersonalChallengeOrigin(question: QuestionDisplay) {
     let modalRef = this.modalService.open(
       PersonalOriginatorComponent,
       DEFAULT_MODAL_OPTIONS
@@ -140,11 +240,51 @@ export class ModalControllerService {
     this.topModal = modalRef;
   }
 
-  private makeTimeoutWarning() {
+  private makePersonalChallengeDelegate(
+    question: QuestionDisplay,
+    originator: string
+  ) {
     let modalRef = this.modalService.open(
-      TimeoutWarningComponent,
+      PersonalDelegatedComponent,
       DEFAULT_MODAL_OPTIONS
     );
+    modalRef.componentInstance.question = question;
+    modalRef.componentInstance.origin = originator;
     this.topModal = modalRef;
   }
+
+  private makePersonalChallengeOutcome(
+    question: QuestionDisplay,
+    originator: string,
+    delegate: string,
+    answer: string,
+    success: boolean
+  ) {
+    let modalRef = this.modalService.open(
+      NotificationComponent,
+      DEFAULT_MODAL_OPTIONS
+    );
+    modalRef.componentInstance.title = 'PERSONAL OUTCOME';
+    modalRef.componentInstance.body =
+      "It's been a while since you've done anything. Are you still there?";
+    modalRef.componentInstance.button = "I'm here!";
+    modalRef.componentInstance.button_cb = this.websocketService.reportAlive;
+    this.topModal = modalRef;
+    if (!!modalRef) this.topModal = modalRef;
+  }
+
+  private makeTimeoutWarning() {
+    let modalRef = this.modalService.open(
+      NotificationComponent,
+      DEFAULT_MODAL_OPTIONS
+    );
+    modalRef.componentInstance.title = 'Wake Up';
+    modalRef.componentInstance.body =
+      "It's been a while since you've done anything. Are you still there?";
+    modalRef.componentInstance.button = "I'm here!";
+    modalRef.componentInstance.button_cb = this.websocketService.reportAlive;
+    this.topModal = modalRef;
+  }
+
+  private make();
 }

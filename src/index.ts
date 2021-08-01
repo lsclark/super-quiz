@@ -2,7 +2,7 @@ import express from "express";
 import WebSocket from "ws";
 import QuizHost from "./quiz-host";
 import { Subject } from "rxjs";
-import { QuizMessage } from "./messaging";
+import { QuizMessage } from "./message-types";
 
 const port = process.env.TRIVIA_PORT || 8080;
 

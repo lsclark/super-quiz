@@ -5,8 +5,8 @@ import {
   DSPlayerStatusMessage,
   DSScoreboardMessage,
   PlayerState,
-} from '../quiz/types';
-import { PlayerScore } from '../question-types';
+} from '../message-types';
+import { PlayerScore } from '../message-types';
 import { WebsocketService } from './websocket.service';
 import { SessionService } from './session.service';
 

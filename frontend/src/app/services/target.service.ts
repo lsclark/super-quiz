@@ -6,7 +6,7 @@ import {
   DSTargetAssignment,
   DSTargetMarking,
   USTargetSubmitMessage,
-} from '../quiz/types';
+} from '../message-types';
 import { TargetLetters, TargetResult } from '../target/message-types';
 import { SessionService } from './session.service';
 import { WebsocketService } from './websocket.service';

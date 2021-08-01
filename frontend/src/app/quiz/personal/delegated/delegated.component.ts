@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { QuestionDisplay } from 'src/app/question-types';
+import { QuestionDisplay } from 'src/app/message-types';
 
 @Component({
   selector: 'app-personal-delegated',

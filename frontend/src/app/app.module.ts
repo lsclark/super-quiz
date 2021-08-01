@@ -24,10 +24,7 @@ import { GridComponent } from './target/grid/grid.component';
 import { TargetInputComponent } from './target/input/input.component';
 import { TabbingComponent } from './target/tabbing/tabbing.component';
 import { TimeoutWarningComponent } from './general/timeout-warning/timeout-warning.component';
-import { GroupResultOriginComponent } from './quiz/group/result-origin/result-origin.component';
-import { GroupResultWinnerComponent } from './quiz/group/result-winner/result-winner.component';
-import { PersonalResultOriginComponent } from './quiz/personal/result-origin/result-origin.component';
-import { PersonalResultDelegateComponent } from './quiz/personal/result-delegate/result-delegate.component';
+import { NotificationComponent } from './general/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -49,10 +46,7 @@ import { PersonalResultDelegateComponent } from './quiz/personal/result-delegate
     TargetInputComponent,
     TabbingComponent,
     TimeoutWarningComponent,
-    GroupResultOriginComponent,
-    GroupResultWinnerComponent,
-    PersonalResultOriginComponent,
-    PersonalResultDelegateComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,

@@ -6,8 +6,8 @@ import {
   DSPlayerStatusMessage,
   DSQuestionsMessage,
   DisplayAnswer,
-} from '../quiz/types';
-import { QuestionColumn } from '../question-types';
+} from '../message-types';
+import { QuestionColumn } from '../message-types';
 import { WebsocketService } from './websocket.service';
 import { SessionService } from './session.service';
 import { SaveResponsesService } from './save-responses.service';

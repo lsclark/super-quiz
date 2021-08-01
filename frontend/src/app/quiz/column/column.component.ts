@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 import { ModalControllerService } from 'src/app/services/modal-controller.service';
-import { QuestionDisplay } from '../../question-types';
+import { QuestionDisplay } from '../../message-types';
 import { QuestionsService } from '../../services/questions.service';
 
 @Component({

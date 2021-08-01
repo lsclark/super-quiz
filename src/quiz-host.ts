@@ -1,6 +1,5 @@
 import { Subject } from "rxjs";
-import { PlayerScore } from "../frontend/src/app/question-types";
-import { QuizMessage } from "./messaging";
+import { QuizMessage, PlayerScore } from "./message-types";
 import Player from "./player";
 import QuestionLoader from "./question-loader";
 import { TargetManager } from "./target";

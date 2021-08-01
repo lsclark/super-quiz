@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { QuestionDisplay } from 'src/app/question-types';
+import { QuestionDisplay } from 'src/app/message-types';
 import { ModalControllerService } from 'src/app/services/modal-controller.service';
 import { PlayersService } from 'src/app/services/players.service';
 

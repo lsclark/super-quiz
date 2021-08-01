@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PlayerScore } from 'src/app/question-types';
+import { PlayerScore } from 'src/app/message-types';
 import { PlayersService } from 'src/app/services/players.service';
 import { SessionService } from 'src/app/services/session.service';
 

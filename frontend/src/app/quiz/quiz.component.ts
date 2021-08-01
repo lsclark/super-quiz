@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { QuestionColumn, QuestionDisplay } from 'src/app/question-types';
+import { QuestionColumn, QuestionDisplay } from 'src/app/message-types';
 import { QuestionsService } from '../services/questions.service';
 import { first } from 'rxjs/operators';
 

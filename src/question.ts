@@ -1,7 +1,4 @@
-import {
-  QuestionColumn,
-  QuestionDisplay,
-} from "../frontend/src/app/question-types";
+import { QuestionColumn, QuestionDisplay } from "./message-types";
 import fuzz from "fuzzball";
 
 export interface QuestionBase {

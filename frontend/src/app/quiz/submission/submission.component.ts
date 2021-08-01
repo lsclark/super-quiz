@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ModalControllerService } from 'src/app/services/modal-controller.service';
 import { QuestionsService } from 'src/app/services/questions.service';
 import { SaveResponsesService } from 'src/app/services/save-responses.service';
-import { QuestionDisplay } from '../../question-types';
+import { QuestionDisplay } from '../../message-types';
 
 @Component({
   selector: 'app-quiz-submission',
@@ -51,10 +51,10 @@ export class SubmissionComponent implements OnInit {
   }
 
   groupChallenge() {
-    this.modalController.launchGroupChallenge(this.question);
+    this.modalController.launchGroupChallengeOrigin(this.question);
   }
 
   personalChallenge() {
-    this.modalController.launchPersonalChallenge(this.question);
+    this.modalController.launchPersonalChallengeOrigin(this.question);
   }
 }

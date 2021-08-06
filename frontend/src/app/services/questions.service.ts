@@ -6,11 +6,14 @@ import {
   DSPlayerStatusMessage,
   DSQuestionsMessage,
   DisplayAnswer,
+  QuestionDisplay,
 } from '../message-types';
 import { QuestionColumn } from '../message-types';
 import { WebsocketService } from './websocket.service';
 import { SessionService } from './session.service';
 import { SaveResponsesService } from './save-responses.service';
+import { ModalControllerService, ModalSpec } from './modal-controller.service';
+import { SubmissionComponent } from '../quiz/submission/submission.component';
 
 const getEntries = Object.entries as <T extends object>(
   obj: T
@@ -28,6 +31,7 @@ export class QuestionsService {
   constructor(
     private websocketService: WebsocketService,
     private saveService: SaveResponsesService,
+    private modalController: ModalControllerService,
     private session: SessionService
   ) {
     this.answers = [];
@@ -77,11 +81,20 @@ export class QuestionsService {
       });
   }
 
+  launchSubmission(question: QuestionDisplay) {
+    let spec: ModalSpec = {
+      component: SubmissionComponent,
+      identifier: question.index,
+      inputs: { question: question },
+    };
+    this.modalController.launch(spec);
+  }
+
   submitAnswer(index: number) {
     let response = this.saveService.get(index);
     if (
       (typeof response == 'string' && response.length) ||
-      (typeof response == 'number' && response > 0)
+      (typeof response == 'number' && response >= 0)
     )
       this.websocketService.send({
         name: this.session.username,

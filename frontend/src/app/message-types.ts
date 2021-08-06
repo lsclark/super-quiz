@@ -19,6 +19,8 @@ export enum QuestionState {
   UnAnswered,
   Correct,
   Incorrect,
+  DelegatedPending,
+  DelegatedComplete,
 }
 
 export type DisplayAnswer = {
@@ -85,14 +87,15 @@ export type DSGroupChallengeOutcome = {
   type: 'group-outcome';
   origin: string;
   victor: string | null;
+  wager: number;
   question: QuestionDisplay;
-  answer: string;
 };
 
 export type USPersonalChallengeOrigin = {
   name: string;
   type: 'personal-origin';
   index: number;
+  delegate: string;
 };
 
 export type DSPersonalChallengeDistribute = {

@@ -9,6 +9,8 @@ import {
 import { PlayerScore } from '../message-types';
 import { WebsocketService } from './websocket.service';
 import { SessionService } from './session.service';
+import { GroupChallengeService } from './group-challenge.service';
+import { PersonalChallengeService } from './personal-challenge.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +23,10 @@ export class PlayersService {
 
   constructor(
     private websocketService: WebsocketService,
-    private session: SessionService
+    private session: SessionService,
+    // Define challenge services so they enter memory
+    groupChallenge: GroupChallengeService,
+    personalChallenge: PersonalChallengeService
   ) {
     this.others = [];
     this.score = 0;

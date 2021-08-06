@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 
-import { ModalControllerService } from 'src/app/services/modal-controller.service';
 import { QuestionDisplay } from '../../message-types';
 import { QuestionsService } from '../../services/questions.service';
 
@@ -13,10 +12,7 @@ export class ColumnComponent {
   @Input() questions!: QuestionDisplay[];
   @Input() points!: number;
 
-  constructor(
-    private questionService: QuestionsService,
-    private modalController: ModalControllerService
-  ) {}
+  constructor(private questionService: QuestionsService) {}
 
   clickQuestion(index: number) {
     console.log(
@@ -29,8 +25,8 @@ export class ColumnComponent {
       !this.questionService.submitted.has(index) &&
       !this.questionService.submitted.has((+index).toString())
     ) {
-      let questions = this.questions.filter((q) => q.index == index);
-      this.modalController.launchSubmission(questions[0]);
+      let question = this.questions.find((q) => q.index == index);
+      if (!!question) this.questionService.launchSubmission(question);
     }
   }
 }

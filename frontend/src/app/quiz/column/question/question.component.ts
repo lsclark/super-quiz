@@ -12,15 +12,21 @@ export class QuestionComponent {
   @Input() text!: string;
   submitted?: boolean;
   correct?: boolean;
+  incorrect?: boolean;
+  delegated?: boolean;
 
   constructor(private questionService: QuestionsService) {
     this.questionService.states$?.subscribe((msg) => {
       let state = msg[this.index];
       if (state !== null) {
         this.submitted = !(state === QuestionState.UnAnswered);
-        if (state !== QuestionState.UnAnswered)
+        if (state !== QuestionState.UnAnswered) {
           this.correct = state == QuestionState.Correct;
-        else this.correct = undefined;
+          this.incorrect = state == QuestionState.Incorrect;
+          this.delegated =
+            state == QuestionState.DelegatedPending ||
+            state == QuestionState.DelegatedComplete;
+        } else this.correct = this.incorrect = this.delegated = undefined;
       }
     });
   }

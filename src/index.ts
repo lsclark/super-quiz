@@ -31,6 +31,10 @@ class TriviaServer {
   }
 
   setupRoutes() {
+    this.app.get("/", (req, res) => {
+      res.send("Hello world");
+    });
+
     this.wsServer.on("connection", (socket: WebSocket) => {
       this.clients.add(socket);
 

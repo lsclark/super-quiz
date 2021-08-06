@@ -1,20 +1,11 @@
 <p>
-  <!-- <span
-    [ngClass]="{
-      dot: true,
-      'd-none': !submitted,
-      correct: submitted && correct,
-      incorrect: submitted && !correct
-    }"
-  >
-    &#x2B24;
-  </span> -->
   <span
     class="question-strike"
     [ngClass]="{
       submitted: submitted,
       correct: submitted && correct,
-      incorrect: submitted && !correct
+      incorrect: submitted && incorrect,
+      delegated: submitted && delegated
     }"
   >
     <span class="question-text">

@@ -1,5 +1,11 @@
 import { Subject } from "rxjs";
-import { QuizMessage, PlayerScore } from "./message-types";
+import { GroupChallengeManager } from "./group-challenge";
+import {
+  QuizMessage,
+  PlayerScore,
+  DSScoreboardMessage,
+  DSPersonalChallengeOutcome,
+} from "./message-types";
 import Player from "./player";
 import QuestionLoader from "./question-loader";
 import { TargetManager } from "./target";
@@ -9,6 +15,7 @@ export default class QuizHost {
 
   private questionLoader: QuestionLoader;
   private targetManager: TargetManager;
+  private groupChallengeManager: GroupChallengeManager;
   players: { [key: string]: Player };
 
   constructor(
@@ -19,6 +26,10 @@ export default class QuizHost {
 
     this.questionLoader = new QuestionLoader();
     this.targetManager = new TargetManager();
+    this.groupChallengeManager = new GroupChallengeManager(
+      this.outgoing$,
+      this
+    );
     this.players = {};
 
     this.incoming$.subscribe((message) => this.routeIncoming(message));
@@ -109,7 +120,94 @@ export default class QuizHost {
           });
         }
         break;
+      case "personal-origin":
+        player.personalChallengeInit(message.index, message.delegate);
+        responses.push({
+          type: "player_status",
+          name: player.name,
+          status: player.getPlayerState(),
+        });
+        responses.push({
+          type: "personal-distribute",
+          name: message.delegate,
+          origin: message.name,
+          question: player.getQuestion(message.index),
+        });
+        break;
+      case "personal-submit":
+        let origin = this.getPlayer(message.origin);
+        let correct = await origin.submitAnswer(
+          message.question.index,
+          message.submission
+        );
+        if (correct) {
+          player.addBonus(
+            `personal-${message.origin}-${message.question.index}`,
+            message.question.points! / 2
+          );
+          origin.addBonus(
+            `personal-${message.origin}-${message.question.index}`,
+            message.question.points! / 2
+          );
+          responses.push({
+            type: "scoreboard",
+            name: "_broadcast",
+            scores: this.makeScoreboard(),
+          });
+        }
+        let outcome_delegate: DSPersonalChallengeOutcome = {
+          type: "personal-outcome",
+          name: message.name,
+          answer: origin.getAnswer(message.question.index),
+          delegate: message.name,
+          origin: message.origin,
+          question: message.question,
+          success: correct,
+        };
+        responses.push(outcome_delegate);
+        let outcome_origin = { ...outcome_delegate };
+        outcome_origin.name = message.origin;
+        responses.push(outcome_origin);
+        responses.push({
+          type: "player_status",
+          name: origin.name,
+          status: origin.getPlayerState(),
+        });
+        break;
 
+      case "group-origin":
+        player.groupChallengeInit(message.index, message.wager);
+        responses.push({
+          type: "player_status",
+          name: player.name,
+          status: player.getPlayerState(),
+        });
+        let question = player.getQuestion(message.index);
+        responses.push({
+          type: "group-distribute",
+          name: "_broadcast",
+          origin: message.name,
+          question: question,
+          wager: message.wager,
+        });
+        let active = Object.entries(this.players)
+          .filter(([name, other]) => other.alive && name != player.name)
+          .map(([name, other]) => name);
+        this.groupChallengeManager.create(
+          player,
+          message.wager,
+          question,
+          active
+        );
+        break;
+      case "group-submit":
+        this.groupChallengeManager.submit(
+          message.origin,
+          player,
+          message.question,
+          message.submission
+        );
+        break;
       default:
         break;
     }
@@ -136,5 +234,14 @@ export default class QuizHost {
       type: "timeout",
       name: name,
     });
+  }
+
+  timedOut(name: string) {
+    let bcast: DSScoreboardMessage = {
+      type: "scoreboard",
+      name: "_broadcast",
+      scores: this.makeScoreboard(),
+    };
+    this.outgoing$.next(bcast);
   }
 }

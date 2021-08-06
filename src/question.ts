@@ -31,7 +31,7 @@ export interface QuestionSource {
  * @returns A mapping from question index to question, and the
  *   questions formatted for display at the frontend
  */
-export function formatQuestionDisplay(
+export function formatQuestionsDisplay(
   questions: Question[]
 ): [{ [index: number]: Question }, QuestionColumn[]] {
   let split: { [points in 1 | 2 | 3]: Question[] } = { 1: [], 2: [], 3: [] };
@@ -56,6 +56,18 @@ export function formatQuestionDisplay(
     output.push({ points: points, questions: colQuestions });
   });
   return [indexMap, output];
+}
+
+export function formatQuestion(
+  index: number,
+  question: Question
+): QuestionDisplay {
+  return {
+    index: index,
+    text: question.question,
+    points: question.points,
+    ...(question.type == "multichoice" && { choices: question.choices }),
+  };
 }
 
 export async function checkAnswerCorrect(

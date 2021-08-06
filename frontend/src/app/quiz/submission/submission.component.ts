@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { GroupChallengeService } from 'src/app/services/group-challenge.service';
 
 import { ModalControllerService } from 'src/app/services/modal-controller.service';
+import { PersonalChallengeService } from 'src/app/services/personal-challenge.service';
 import { QuestionsService } from 'src/app/services/questions.service';
 import { SaveResponsesService } from 'src/app/services/save-responses.service';
 import { QuestionDisplay } from '../../message-types';
@@ -18,7 +20,9 @@ export class SubmissionComponent implements OnInit {
   constructor(
     private modalController: ModalControllerService,
     private questionService: QuestionsService,
-    private saveService: SaveResponsesService
+    private saveService: SaveResponsesService,
+    private groupChallengeSvc: GroupChallengeService,
+    private personalChallengeSvc: PersonalChallengeService
   ) {}
 
   ngOnInit(): void {
@@ -51,10 +55,10 @@ export class SubmissionComponent implements OnInit {
   }
 
   groupChallenge() {
-    this.modalController.launchGroupChallengeOrigin(this.question);
+    this.groupChallengeSvc.initiate(this.question);
   }
 
   personalChallenge() {
-    this.modalController.launchPersonalChallengeOrigin(this.question);
+    this.personalChallengeSvc.initiate(this.question);
   }
 }

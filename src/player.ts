@@ -1,9 +1,10 @@
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
-import { PlayerScore, QuestionColumn } from "./message-types";
+import { PlayerScore, QuestionColumn, QuestionDisplay } from "./message-types";
 import {
   checkAnswerCorrect,
-  formatQuestionDisplay,
+  formatQuestion,
+  formatQuestionsDisplay,
   Question,
 } from "./question";
 import QuestionLoader from "./question-loader";
@@ -22,10 +23,12 @@ export enum AnswerState {
   UnAnswered,
   Correct,
   Incorrect,
+  DelegatedPending,
+  DelegatedComplete,
 }
 
 type Bonus = {
-  identifier: [string, number];
+  identifier: string;
   points: number;
 };
 
@@ -40,15 +43,32 @@ export type DisplayAnswer = {
   answer: string;
 };
 
+type PersonalChallenge = {
+  type: "personal";
+  index: number;
+  delegate: string;
+  state: "success" | "failure" | "pending";
+};
+
+type GroupChallenge = {
+  type: "group";
+  index: number;
+  wager: number;
+  state: "success" | "failure" | "pending";
+};
+
+type Challenge = PersonalChallenge | GroupChallenge;
+
 export default class Player {
   alive: boolean;
   private questions: Question[];
   private indexes: { [index: number]: Question };
   private displayQuestions: QuestionColumn[];
-  private state: { [index: number]: AnswerState };
-  private bonuses: Bonus[];
+  private state: { [index: number]: AnswerState } = {};
+  private bonuses: Bonus[] = [];
   targets: Target[];
   private timeout = new Subject<true>();
+  private challenges: Challenge[] = [];
 
   constructor(
     public name: string,
@@ -60,10 +80,7 @@ export default class Player {
     this.questions = questionManager.deal();
     this.targets = targetManager.getTargets()!;
 
-    this.bonuses = [];
-    this.state = {};
-
-    [this.indexes, this.displayQuestions] = formatQuestionDisplay(
+    [this.indexes, this.displayQuestions] = formatQuestionsDisplay(
       this.questions
     );
     getKeys(this.indexes).forEach((index: number) => {
@@ -82,6 +99,11 @@ export default class Player {
   accessed() {
     this.alive = true;
     this.timeout.next(true);
+  }
+
+  getQuestion(index: number): QuestionDisplay {
+    let question = this.indexes[index];
+    return formatQuestion(index, question);
   }
 
   getDisplayQuestions(): QuestionColumn[] {
@@ -122,14 +144,46 @@ export default class Player {
     submission: string | number
   ): Promise<boolean> {
     let question = this.indexes[index];
+    let challenge: Challenge | undefined = this.challenges.find(
+      (ch) => ch.index == index
+    );
     if (await checkAnswerCorrect(question, submission)) {
-      this.state[index] = AnswerState.Correct;
-      this.computeScore();
+      if (!challenge) this.state[index] = AnswerState.Correct;
+      else {
+        this.state[index] = AnswerState.DelegatedComplete;
+        if (challenge.type == "personal") {
+          challenge.state = "success";
+        } else if (challenge.type == "group") {
+          // PASS
+        }
+      }
       return true;
     } else {
-      this.state[index] = AnswerState.Incorrect;
+      if (!challenge) this.state[index] = AnswerState.Incorrect;
+      else {
+        this.state[index] = AnswerState.DelegatedComplete;
+        if (challenge.type == "personal") {
+          challenge.state = "failure";
+        } else if (challenge.type == "group") {
+          // PASS
+        }
+      }
       return false;
     }
+  }
+
+  challengeOutcome(index: number, outcome: "success" | "failure") {
+    let challenge: Challenge | undefined = this.challenges.find(
+      (ch) => ch.index == index
+    );
+    if (!!challenge) challenge.state = outcome;
+  }
+
+  addBonus(identifier: string, points: number) {
+    this.bonuses.push({
+      identifier: identifier,
+      points: points,
+    });
   }
 
   submitTarget(letters: string, submission: string): [boolean, number] {
@@ -137,19 +191,44 @@ export default class Player {
     return [target.checkSubmission(submission), target.getScore()];
   }
 
+  getAnswer(index: number): string {
+    let question = this.indexes[index];
+    if (question.type == "multichoice")
+      return question.choices[question.answer];
+    else return question.answer;
+  }
+
   retrieveAnswers(): DisplayAnswer[] {
     let output: DisplayAnswer[] = [];
     for (let [index, state] of getEntries(this.state)) {
-      if (state != AnswerState.UnAnswered) {
-        let question = this.indexes[index];
-
-        if (question.type == "multichoice")
-          var answer = question.choices[question.answer];
-        else answer = question.answer;
-
+      if (
+        state != AnswerState.UnAnswered &&
+        state != AnswerState.DelegatedPending
+      ) {
+        let answer = this.getAnswer(index);
         output.push({ index: index, answer: answer });
       }
     }
     return output;
+  }
+
+  personalChallengeInit(index: number, delegate: string) {
+    this.state[index] = AnswerState.DelegatedPending;
+    this.challenges.push({
+      type: "personal",
+      index: index,
+      delegate: delegate,
+      state: "pending",
+    });
+  }
+
+  groupChallengeInit(index: number, wager: number) {
+    this.state[index] = AnswerState.DelegatedPending;
+    this.challenges.push({
+      type: "group",
+      index: index,
+      wager: wager,
+      state: "pending",
+    });
   }
 }

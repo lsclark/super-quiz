@@ -11,6 +11,10 @@ span.question-strike.incorrect {
   color: maroon;
 }
 
+span.question-strike.delegated {
+  color: rgba(0, 0, 0, 0.5);
+}
+
 span.question-text {
   color: black;
 }

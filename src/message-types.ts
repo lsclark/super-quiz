@@ -70,13 +70,14 @@ export type DSGroupChallengeOutcome = {
   origin: string;
   victor: string | null;
   question: QuestionDisplay;
-  answer: string;
+  wager: number;
 };
 
 export type USPersonalChallengeOrigin = {
   name: string;
   type: "personal-origin";
   index: number;
+  delegate: string;
 };
 
 export type DSPersonalChallengeDistribute = {

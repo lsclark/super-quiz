@@ -23,6 +23,7 @@ export default class QuestionLoader {
     let searchPath = path.join(basePath, "*.json");
     let matches = glob.sync(searchPath);
     for (let filepath of matches) {
+      console.log("Question Loader: Loading", filepath);
       let raw = readFileSync(filepath, "utf-8");
       let data: QuestionSource = JSON.parse(raw);
       this.loadQuestions(filepath, data);

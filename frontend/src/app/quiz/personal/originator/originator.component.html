@@ -21,10 +21,9 @@
     <select
       id="personal-response"
       class="w-100 form-select"
-      [(ngModel)]="player"
+      [(ngModel)]="delegate"
     >
-      <option selected value="null">Choose another player</option>
-      <option *ngFor="let name of playerService.others" value="name">
+      <option *ngFor="let name of playerService.others" value="{{ name }}">
         {{ name | titlecase }}
       </option>
     </select>

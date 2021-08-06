@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HeartbeatService } from './heartbeat.service';
+import { TimeoutService } from './timeout.service';
 
 describe('HeartbeatService', () => {
-  let service: HeartbeatService;
+  let service: TimeoutService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HeartbeatService);
+    service = TestBed.inject(TimeoutService);
   });
 
   it('should be created', () => {

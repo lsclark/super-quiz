@@ -7,37 +7,35 @@
     do.
   </p>
   <p><strong>Question</strong>: {{ question.text }}</p>
-  <form>
-    <div class="form-group">
-      <div class="input-group" [ngSwitch]="question.choices === undefined">
-        <input
-          class="w-100"
-          *ngSwitchCase="true"
-          id="response"
-          type="text"
-          ngbAutofocus
-          [(ngModel)]="response"
-        />
-        <div
-          *ngSwitchDefault
-          id="choices"
-          class="btn-group btn-group-toggle w-100"
-          ngbRadioGroup
-          name="submitMultiChoice"
-          [(ngModel)]="multiChoice"
+  <div class="form-group">
+    <div class="input-group" [ngSwitch]="question.choices === undefined">
+      <input
+        class="w-100"
+        *ngSwitchCase="true"
+        id="response"
+        type="text"
+        ngbAutofocus
+        [(ngModel)]="response"
+      />
+      <div
+        *ngSwitchDefault
+        id="choices"
+        class="btn-group btn-group-toggle w-100"
+        ngbRadioGroup
+        name="submitMultiChoice"
+        [(ngModel)]="multiChoice"
+      >
+        <label
+          ngbButtonLabel
+          class="btn-light"
+          *ngFor="let choice of question.choices; index as idx"
         >
-          <label
-            ngbButtonLabel
-            class="btn-light"
-            *ngFor="let choice of question.choices; index as idx"
-          >
-            <input type="radio" [value]="idx" ngbButton />
-            {{ choice }}
-          </label>
-        </div>
+          <input type="radio" [value]="idx" ngbButton />
+          {{ choice }}
+        </label>
       </div>
     </div>
-  </form>
+  </div>
 </div>
 
 <div class="modal-footer">

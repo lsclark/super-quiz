@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { QuestionDisplay } from 'src/app/message-types';
 import { ModalControllerService } from 'src/app/services/modal-controller.service';
+import { PersonalChallengeService } from 'src/app/services/personal-challenge.service';
 import { PlayersService } from 'src/app/services/players.service';
 
 @Component({
@@ -10,14 +11,18 @@ import { PlayersService } from 'src/app/services/players.service';
 })
 export class PersonalOriginatorComponent {
   @Input() question!: QuestionDisplay;
-  player?: string;
+  delegate?: string;
 
   constructor(
     public modalController: ModalControllerService,
-    public playerService: PlayersService
+    public playerService: PlayersService,
+    private personalChallengeSvc: PersonalChallengeService
   ) {}
 
   submit() {
-    console.log('SUBMIT PC', this.player);
+    if (!!this.delegate) {
+      this.personalChallengeSvc.sendChallenge(this.question, this.delegate);
+      this.modalController.dismissTop(this.question.index);
+    }
   }
 }

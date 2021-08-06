@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { QuestionDisplay } from 'src/app/message-types';
+import { GroupChallengeService } from 'src/app/services/group-challenge.service';
 import { ModalControllerService } from 'src/app/services/modal-controller.service';
 import { PlayersService } from 'src/app/services/players.service';
 
@@ -17,7 +18,8 @@ export class GroupOriginatorComponent {
 
   constructor(
     public modalController: ModalControllerService,
-    public playerService: PlayersService
+    public playerService: PlayersService,
+    private groupChallengeSvc: GroupChallengeService
   ) {
     this.wagerChanges
       .pipe(debounceTime(1000))
@@ -37,6 +39,7 @@ export class GroupOriginatorComponent {
 
   submit() {
     this.validateWager();
-    console.log('SUBMIT GC', this.wager);
+    this.groupChallengeSvc.sendChallenge(this.question, this.wager);
+    this.modalController.dismissTop(this.question.index);
   }
 }

@@ -19,7 +19,7 @@ const getEntries = Object.entries as <T extends object>(
   obj: T
 ) => Array<[keyof T, T[keyof T]]>;
 
-export enum AnswerState {
+export enum QuestionState {
   UnAnswered,
   Correct,
   Incorrect,
@@ -34,7 +34,7 @@ type Bonus = {
 
 export type PlayerState = {
   score: number;
-  questions: { [index: number]: AnswerState };
+  questions: { [index: number]: QuestionState };
   answers: DisplayAnswer[];
 };
 
@@ -43,32 +43,15 @@ export type DisplayAnswer = {
   answer: string;
 };
 
-type PersonalChallenge = {
-  type: "personal";
-  index: number;
-  delegate: string;
-  state: "success" | "failure" | "pending";
-};
-
-type GroupChallenge = {
-  type: "group";
-  index: number;
-  wager: number;
-  state: "success" | "failure" | "pending";
-};
-
-type Challenge = PersonalChallenge | GroupChallenge;
-
 export default class Player {
   alive: boolean;
   private questions: Question[];
   private indexes: { [index: number]: Question };
   private displayQuestions: QuestionColumn[];
-  private state: { [index: number]: AnswerState } = {};
+  private state: { [index: number]: QuestionState } = {};
   private bonuses: Bonus[] = [];
   targets: Target[];
   private timeout = new Subject<true>();
-  private challenges: Challenge[] = [];
 
   constructor(
     public name: string,
@@ -84,7 +67,7 @@ export default class Player {
       this.questions
     );
     getKeys(this.indexes).forEach((index: number) => {
-      this.state[index] = AnswerState.UnAnswered;
+      this.state[index] = QuestionState.UnAnswered;
     });
 
     this.timeout.pipe(debounceTime(TIMEOUT_WARNING)).subscribe(() => {
@@ -118,10 +101,14 @@ export default class Player {
     };
   }
 
+  setQuestionState(index: number, state: QuestionState) {
+    this.state[index] = state;
+  }
+
   computeScore(): number {
     let score = 0;
     getEntries(this.state).forEach(([index, state]) => {
-      if (state == AnswerState.Correct) {
+      if (state == QuestionState.Correct) {
         score += this.indexes[index].points;
       }
     });
@@ -141,42 +128,17 @@ export default class Player {
 
   async submitAnswer(
     index: number,
-    submission: string | number
+    submission: string | number,
+    challenge: boolean
   ): Promise<boolean> {
     let question = this.indexes[index];
-    let challenge: Challenge | undefined = this.challenges.find(
-      (ch) => ch.index == index
-    );
     if (await checkAnswerCorrect(question, submission)) {
-      if (!challenge) this.state[index] = AnswerState.Correct;
-      else {
-        this.state[index] = AnswerState.DelegatedComplete;
-        if (challenge.type == "personal") {
-          challenge.state = "success";
-        } else if (challenge.type == "group") {
-          // PASS
-        }
-      }
+      if (!challenge) this.state[index] = QuestionState.Correct;
       return true;
     } else {
-      if (!challenge) this.state[index] = AnswerState.Incorrect;
-      else {
-        this.state[index] = AnswerState.DelegatedComplete;
-        if (challenge.type == "personal") {
-          challenge.state = "failure";
-        } else if (challenge.type == "group") {
-          // PASS
-        }
-      }
+      if (!challenge) this.state[index] = QuestionState.Incorrect;
       return false;
     }
-  }
-
-  challengeOutcome(index: number, outcome: "success" | "failure") {
-    let challenge: Challenge | undefined = this.challenges.find(
-      (ch) => ch.index == index
-    );
-    if (!!challenge) challenge.state = outcome;
   }
 
   addBonus(identifier: string, points: number) {
@@ -202,33 +164,13 @@ export default class Player {
     let output: DisplayAnswer[] = [];
     for (let [index, state] of getEntries(this.state)) {
       if (
-        state != AnswerState.UnAnswered &&
-        state != AnswerState.DelegatedPending
+        state != QuestionState.UnAnswered &&
+        state != QuestionState.DelegatedPending
       ) {
         let answer = this.getAnswer(index);
         output.push({ index: index, answer: answer });
       }
     }
     return output;
-  }
-
-  personalChallengeInit(index: number, delegate: string) {
-    this.state[index] = AnswerState.DelegatedPending;
-    this.challenges.push({
-      type: "personal",
-      index: index,
-      delegate: delegate,
-      state: "pending",
-    });
-  }
-
-  groupChallengeInit(index: number, wager: number) {
-    this.state[index] = AnswerState.DelegatedPending;
-    this.challenges.push({
-      type: "group",
-      index: index,
-      wager: wager,
-      state: "pending",
-    });
   }
 }

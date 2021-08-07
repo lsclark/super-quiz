@@ -105,6 +105,14 @@ export type DSPersonalChallengeOutcome = {
   success: boolean;
 };
 
+export type DSPersonalChallengeTimeout = {
+  name: string;
+  type: "personal-timeout";
+  origin: string;
+  delegate: string;
+  question: QuestionDisplay;
+};
+
 export type PlayerScore = {
   name: string;
   score: number;
@@ -155,6 +163,7 @@ export type QuizMessage =
   | DSGroupChallengeOutcome
   | DSPersonalChallengeDistribute
   | DSPersonalChallengeOutcome
+  | DSPersonalChallengeTimeout
   | USGroupChallengeOrigin
   | USGroupChallengeSubmit
   | USPersonalChallengeOrigin

@@ -7,7 +7,7 @@ export interface QuestionDisplay {
   index: number;
   text: string;
   choices?: string[];
-  points?: 1 | 2 | 3;
+  points: 1 | 2 | 3;
 }
 
 export interface QuestionColumn {
@@ -123,6 +123,14 @@ export type DSPersonalChallengeOutcome = {
   success: boolean;
 };
 
+export type DSPersonalChallengeTimeout = {
+  name: string;
+  type: 'personal-timeout';
+  origin: string;
+  delegate: string;
+  question: QuestionDisplay;
+};
+
 export type USConnectMessage = {
   name: string;
   type: 'connect';
@@ -172,6 +180,7 @@ export type QuizMessage =
   | DSGroupChallengeOutcome
   | DSPersonalChallengeDistribute
   | DSPersonalChallengeOutcome
+  | DSPersonalChallengeTimeout
   | USGroupChallengeOrigin
   | USGroupChallengeSubmit
   | USPersonalChallengeOrigin

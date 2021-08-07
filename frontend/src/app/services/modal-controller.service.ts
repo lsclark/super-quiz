@@ -41,7 +41,7 @@ export class ModalControllerService {
 
   purgeIdentifier(identifier: number | string) {
     let open = this.stack[this.stack.length - 1];
-    if (open.identifier === identifier) {
+    if (!!open && open.identifier === identifier) {
       this.dismissTop(identifier);
     } else {
       this.stack = this.stack.filter((spec) => spec.identifier !== identifier);

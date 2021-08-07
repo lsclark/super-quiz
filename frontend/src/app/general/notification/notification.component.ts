@@ -16,6 +16,6 @@ export class NotificationComponent {
 
   dismiss() {
     this.modalController.dismissTop();
-    this.dismiss_cb();
+    if (!!this.dismiss_cb) this.dismiss_cb();
   }
 }

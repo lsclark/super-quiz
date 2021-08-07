@@ -1,11 +1,7 @@
 import { Subject } from "rxjs";
 import { GroupChallengeManager } from "./group-challenge";
-import {
-  QuizMessage,
-  PlayerScore,
-  DSScoreboardMessage,
-  DSPersonalChallengeOutcome,
-} from "./message-types";
+import { QuizMessage, PlayerScore, DSScoreboardMessage } from "./message-types";
+import { PersonalChallengeManager } from "./personal-challenge";
 import Player from "./player";
 import QuestionLoader from "./question-loader";
 import { TargetManager } from "./target";
@@ -16,6 +12,7 @@ export default class QuizHost {
   private questionLoader: QuestionLoader;
   private targetManager: TargetManager;
   private groupChallengeManager: GroupChallengeManager;
+  private personalChallengeManager: PersonalChallengeManager;
   players: { [key: string]: Player };
 
   constructor(
@@ -27,6 +24,10 @@ export default class QuizHost {
     this.questionLoader = new QuestionLoader();
     this.targetManager = new TargetManager();
     this.groupChallengeManager = new GroupChallengeManager(
+      this.outgoing$,
+      this
+    );
+    this.personalChallengeManager = new PersonalChallengeManager(
       this.outgoing$,
       this
     );
@@ -47,159 +48,44 @@ export default class QuizHost {
   async routeIncoming(message: QuizMessage) {
     console.log(`Incoming: ${JSON.stringify(message)}`);
     let player = this.getPlayer(message.name);
-    let responses: QuizMessage[] = [];
     switch (message.type) {
       case "connect":
-        responses.push({
-          name: player.name,
-          type: "questions",
-          questions: player.getDisplayQuestions(),
-        });
-        responses.push({
-          type: "player_status",
-          name: player.name,
-          status: player.getPlayerState(),
-        });
-        responses.push({
-          type: "scoreboard",
-          name: "_broadcast",
-          scores: this.makeScoreboard(),
-        });
-        player.targets.forEach((target) => {
-          responses.push({
-            type: "target_assignment",
-            name: player.name,
-            centre: target.centre,
-            others: target.others,
-            previous: Array.from(target.submissions),
-            score: target.getScore(),
-          });
-        });
+        this.handleConnect(player);
         break;
+
       case "submission":
-        if (await player.submitAnswer(message.index, message.submission))
-          responses.push({
-            type: "scoreboard",
-            name: "_broadcast",
-            scores: this.makeScoreboard(),
-          });
-        responses.push({
-          type: "player_status",
-          name: player.name,
-          status: player.getPlayerState(),
-        });
+        this.handleQuestionSubmit(player, message.index, message.submission);
         break;
+
       case "target_submit":
-        let [valid, score] = player.submitTarget(
-          message.letters,
-          message.submission
-        );
-        console.log(
-          player.name,
-          message.submission,
-          valid ? "correct" : "incorrect"
-        );
-        responses.push({
-          type: "target_marking",
-          name: player.name,
-          letters: message.letters,
-          submission: message.submission,
-          correct: valid,
-          score: score,
-        });
-        if (valid) {
-          responses.push({
-            type: "scoreboard",
-            name: "_broadcast",
-            scores: this.makeScoreboard(),
-          });
-          responses.push({
-            type: "player_status",
-            name: player.name,
-            status: player.getPlayerState(),
-          });
-        }
+        this.handleTargetSubmit(player, message.letters, message.submission);
         break;
+
       case "personal-origin":
-        player.personalChallengeInit(message.index, message.delegate);
-        responses.push({
-          type: "player_status",
-          name: player.name,
-          status: player.getPlayerState(),
-        });
-        responses.push({
-          type: "personal-distribute",
-          name: message.delegate,
-          origin: message.name,
-          question: player.getQuestion(message.index),
-        });
+        this.personalChallengeManager.create(
+          player,
+          player.getQuestion(message.index),
+          this.getPlayer(message.delegate)
+        );
         break;
+
       case "personal-submit":
-        let origin = this.getPlayer(message.origin);
-        let correct = await origin.submitAnswer(
-          message.question.index,
+        this.personalChallengeManager.submit(
+          message.origin,
+          message.name,
+          message.question,
           message.submission
         );
-        if (correct) {
-          player.addBonus(
-            `personal-${message.origin}-${message.question.index}`,
-            message.question.points! / 2
-          );
-          origin.addBonus(
-            `personal-${message.origin}-${message.question.index}`,
-            message.question.points! / 2
-          );
-          responses.push({
-            type: "scoreboard",
-            name: "_broadcast",
-            scores: this.makeScoreboard(),
-          });
-        }
-        let outcome_delegate: DSPersonalChallengeOutcome = {
-          type: "personal-outcome",
-          name: message.name,
-          answer: origin.getAnswer(message.question.index),
-          delegate: message.name,
-          origin: message.origin,
-          question: message.question,
-          success: correct,
-        };
-        responses.push(outcome_delegate);
-        let outcome_origin = { ...outcome_delegate };
-        outcome_origin.name = message.origin;
-        responses.push(outcome_origin);
-        responses.push({
-          type: "player_status",
-          name: origin.name,
-          status: origin.getPlayerState(),
-        });
         break;
 
       case "group-origin":
-        player.groupChallengeInit(message.index, message.wager);
-        responses.push({
-          type: "player_status",
-          name: player.name,
-          status: player.getPlayerState(),
-        });
-        let question = player.getQuestion(message.index);
-        responses.push({
-          type: "group-distribute",
-          name: "_broadcast",
-          origin: message.name,
-          question: question,
-          wager: message.wager,
-        });
-        let active = Object.entries(this.players)
-          .filter(([name, other]) => other.alive && name != player.name)
-          .map(([name, other]) => name);
         this.groupChallengeManager.create(
           player,
           message.wager,
-          question,
-          active
+          player.getQuestion(message.index)
         );
         break;
+
       case "group-submit":
         this.groupChallengeManager.submit(
           message.origin,
@@ -208,19 +94,90 @@ export default class QuizHost {
           message.submission
         );
         break;
+
       default:
         break;
     }
-    responses.forEach((message) => this.outgoing$.next(message));
   }
 
-  newPlayer(name: string) {
+  private newPlayer(name: string) {
     this.players[name] = new Player(
       name,
       this.questionLoader,
       this.targetManager,
       this
     );
+  }
+
+  handleConnect(player: Player) {
+    this.outgoing$.next({
+      name: player.name,
+      type: "questions",
+      questions: player.getDisplayQuestions(),
+    });
+    this.outgoing$.next({
+      type: "player_status",
+      name: player.name,
+      status: player.getPlayerState(),
+    });
+    this.outgoing$.next({
+      type: "scoreboard",
+      name: "_broadcast",
+      scores: this.makeScoreboard(),
+    });
+    player.targets.forEach((target) => {
+      this.outgoing$.next({
+        type: "target_assignment",
+        name: player.name,
+        centre: target.centre,
+        others: target.others,
+        previous: Array.from(target.submissions),
+        score: target.getScore(),
+      });
+    });
+  }
+
+  async handleQuestionSubmit(
+    player: Player,
+    index: number,
+    submission: number | string
+  ) {
+    if (await player.submitAnswer(index, submission, false))
+      this.outgoing$.next({
+        type: "scoreboard",
+        name: "_broadcast",
+        scores: this.makeScoreboard(),
+      });
+    this.outgoing$.next({
+      type: "player_status",
+      name: player.name,
+      status: player.getPlayerState(),
+    });
+  }
+
+  handleTargetSubmit(player: Player, letters: string, submission: string) {
+    let [valid, score] = player.submitTarget(letters, submission);
+    console.log(player.name, submission, valid ? "correct" : "incorrect");
+    this.outgoing$.next({
+      type: "target_marking",
+      name: player.name,
+      letters: letters,
+      submission: submission,
+      correct: valid,
+      score: score,
+    });
+    if (valid) {
+      this.outgoing$.next({
+        type: "scoreboard",
+        name: "_broadcast",
+        scores: this.makeScoreboard(),
+      });
+      this.outgoing$.next({
+        type: "player_status",
+        name: player.name,
+        status: player.getPlayerState(),
+      });
+    }
   }
 
   makeScoreboard(): PlayerScore[] {

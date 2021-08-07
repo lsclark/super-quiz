@@ -3,8 +3,8 @@
 </div>
 <div class="modal-body">
   <p>
-    Can you answer this question? You'll split the {{ question.points }} if you
-    do.
+    Can you answer this question? You'll split {{ question.points }}
+    {{ question.points > 1 ? "points" : "point" }} if you do.
   </p>
   <p><strong>Question</strong>: {{ question.text }}</p>
   <div class="form-group">

@@ -4,6 +4,7 @@ import { NotificationComponent } from '../general/notification/notification.comp
 import {
   DSPersonalChallengeDistribute,
   DSPersonalChallengeOutcome,
+  DSPersonalChallengeTimeout,
   QuestionDisplay,
   USPersonalChallengeOrigin,
   USPersonalChallengeSubmit,
@@ -51,10 +52,10 @@ export class PersonalChallengeService {
         })
       )
       .subscribe((msg) => {
-        let spec: ModalSpec = { component: null, inputs: {} };
         if (this.session.username == msg.origin) {
-          spec = {
+          let spec: ModalSpec = {
             component: NotificationComponent,
+            identifier: `${msg.origin}-${msg.question.index}`,
             inputs: {
               title: msg.success ? 'Success' : 'Unlucky',
               body: msg.success
@@ -65,10 +66,11 @@ export class PersonalChallengeService {
               button: 'OK',
             },
           };
-        }
-        if (this.session.username == msg.delegate) {
-          spec = {
+          this.modalController.launch(spec);
+        } else if (this.session.username == msg.delegate) {
+          let spec: ModalSpec = {
             component: NotificationComponent,
+            identifier: `${msg.origin}-${msg.question.index}`,
             inputs: {
               title: msg.success ? 'Success' : 'Unlucky',
               body: msg.success
@@ -79,7 +81,35 @@ export class PersonalChallengeService {
               button: "Let's move on",
             },
           };
+          this.modalController.launch(spec);
         }
+      });
+
+    this.websocketService.messages$
+      ?.pipe(
+        filter((msg): msg is DSPersonalChallengeTimeout => {
+          return msg.type == 'personal-timeout';
+        })
+      )
+      .subscribe((msg) => {
+        let identifier = `${msg.origin}-${msg.question.index}`;
+        this.modalController.purgeIdentifier(identifier);
+        let spec: ModalSpec = {
+          component: NotificationComponent,
+          identifier: identifier,
+          inputs: {
+            title: this.session.username == msg.origin ? 'Refund' : 'Too Slow',
+            body:
+              this.session.username == msg.origin
+                ? `${
+                    msg.delegate
+                  } took too long. You can try to answer question ${
+                    msg.question.index + 1
+                  } again.`
+                : `You took too long to answer ${msg.origin}'s question.`,
+            button: "Let's move on",
+          },
+        };
         this.modalController.launch(spec);
       });
   }

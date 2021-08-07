@@ -1,13 +1,13 @@
 import { Subject, timer } from "rxjs";
 import { QuestionDisplay, QuizMessage } from "./message-types";
-import Player from "./player";
+import Player, { QuestionState } from "./player";
 import QuizHost from "./quiz-host";
 
 const timeout = 30 * 1000;
 
-function setsEqual<T>(seta: Set<T>, setb: Set<T>): boolean {
-  if (seta.size != setb.size) return false;
-  for (const a of seta) if (!setb.has(a)) return false;
+function setsEqual<T>(setA: Set<T>, setB: Set<T>): boolean {
+  if (setA.size != setB.size) return false;
+  for (const a of setA) if (!setB.has(a)) return false;
   return true;
 }
 
@@ -45,7 +45,8 @@ export class GroupChallengeManager {
 
       let correct = await challenge.origin.submitAnswer(
         sub.question.index,
-        sub.submission
+        sub.submission,
+        true
       );
       if (correct) {
         this.closeout(challenge, sub.player);
@@ -58,17 +59,15 @@ export class GroupChallengeManager {
     });
   }
 
-  create(
-    origin: Player,
-    wager: number,
-    question: QuestionDisplay,
-    activePlayers: string[]
-  ) {
+  create(origin: Player, wager: number, question: QuestionDisplay) {
+    let active = Object.entries(this.quizHost.players)
+      .filter(([name, other]) => other.alive && name != origin.name)
+      .map(([name, other]) => name);
     let challenge: GroupChallenge = {
       origin: origin,
       wager: wager,
       question: question,
-      activePlayers: new Set(activePlayers),
+      activePlayers: new Set(active),
       submitted: new Set<string>(),
       complete: false,
     };
@@ -77,6 +76,19 @@ export class GroupChallengeManager {
       if (!challenge.complete) {
         this.closeout(challenge, challenge.origin);
       }
+    });
+    origin.setQuestionState(question.index, QuestionState.DelegatedPending);
+    this.outgoing$.next({
+      type: "player_status",
+      name: origin.name,
+      status: origin.getPlayerState(),
+    });
+    this.outgoing$.next({
+      type: "group-distribute",
+      name: "_broadcast",
+      origin: origin.name,
+      question: question,
+      wager: wager,
     });
   }
 
@@ -97,9 +109,9 @@ export class GroupChallengeManager {
 
   closeout(challenge: GroupChallenge, victor: Player) {
     challenge.complete = true;
-    challenge.origin.challengeOutcome(
+    challenge.origin.setQuestionState(
       challenge.question.index,
-      victor.name == challenge.origin.name ? "success" : "failure"
+      QuestionState.DelegatedComplete
     );
     if (victor.name == challenge.origin.name) {
       challenge.origin.addBonus(

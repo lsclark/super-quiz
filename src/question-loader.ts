@@ -44,16 +44,41 @@ export default class QuestionLoader {
   private loadQuestions(filepath: string, data: QuestionSource) {
     let base = path.basename(filepath, ".json");
     data.questions.forEach((question, index) => {
-      if (
-        question.type == "freetext" &&
-        !(
-          question.answer.toLowerCase() in
-          question.alternatives.map((alt) => alt.toLowerCase())
-        )
-      ) {
-        question.alternatives.push(question.answer);
-      }
+      this.prepareQuestion(question);
+      this.checkQuestion(question);
       this.questionPool[question.points][`${base}-${index}`] = question;
     });
+  }
+
+  private prepareQuestion(question: Question) {
+    if (question.type == "freetext") {
+      question.alternatives = question.alternatives.map((alt) =>
+        alt.toLowerCase().replace(/[^\w\s]/gi, "")
+      );
+      let answer = question.answer.toLowerCase().replace(/[^\w\s]/gi, "");
+      if (!(answer in question.alternatives))
+        question.alternatives.push(answer);
+      question.alternatives = question.alternatives.map((alt) =>
+        alt.trim().replace(/\s+/g, " ")
+      );
+    }
+  }
+
+  private checkQuestion(question: Question) {
+    if (typeof question.points !== "number")
+      throw "Question needs to have points";
+    if (![1, 2, 3].includes(question.points))
+      throw "Question points must be 1/2/3";
+    if (question.type == "multichoice") {
+      if ("alternatives" in question)
+        throw "Multichoice can't have alternatives";
+      if ("fuzzy" in question) throw "Multichoice can't have fuzzy";
+      if (typeof question.answer != "number")
+        throw "Multichoice answer is not a number";
+    } else {
+      if ("choices" in question) throw "Freetext can't have choices";
+      if (typeof question.answer != "string")
+        throw "Multichoice answer is not a string";
+    }
   }
 }

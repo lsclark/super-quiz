@@ -1,18 +1,7 @@
 import { readFileSync } from "fs";
-import { join, dirname } from "path";
-import NSpell from "nspell";
 
 const targetsPath = "./targets.json";
-const dictionarySources = [
-  "dictionary-en",
-  "dictionary-en-au",
-  "dictionary-en-gb",
-];
-
-type Dictionary = {
-  dic: Buffer;
-  aff: Buffer;
-};
+const dictionaryPath = "./dictionary.txt";
 
 function shuffle<T>(array: Array<T>): Array<T> {
   return array
@@ -30,7 +19,7 @@ export class Target {
   others: string[];
   bins: { [key: string]: number };
 
-  constructor(private word: string, private nspell: NSpell) {
+  constructor(private word: string, private manager: TargetManager) {
     this.submissions = new Set<string>();
     let letters: string[] = shuffle(word.split(""));
     this.centre = letters[0];
@@ -79,7 +68,7 @@ export class Target {
     for (let [letter, count] of Object.entries(bins)) {
       if (!(letter in this.bins) || count > this.bins[letter]) return false;
     }
-    if (!this.nspell.correct(word)) return false;
+    if (!this.manager.spellcheck(word)) return false;
     this.submissions.add(word);
     return true;
   }
@@ -88,25 +77,25 @@ export class Target {
 export class TargetManager {
   pool_three: string[][];
   pool_two: string[][];
-  dictionaries: { [key: string]: Dictionary };
-  nspell?: NSpell;
+  private dictionary: Set<string>;
 
   constructor() {
     let data: string[][] = JSON.parse(readFileSync(targetsPath, "utf-8"));
     this.pool_three = shuffle(data.filter((vals) => vals.length == 3));
     this.pool_two = shuffle(data.filter((vals) => vals.length == 2));
 
-    this.dictionaries = {};
-    this.nspell = undefined;
-    for (let dictName of dictionarySources) {
-      this.loadDictionary(dictName);
-    }
-    this.nspell = NSpell(Object.values(this.dictionaries));
-    console.log("nspell loaded");
+    this.dictionary = new Set(
+      readFileSync(dictionaryPath, "utf-8")
+        .split("\n")
+        .map((word) => word.trim())
+    );
+  }
+
+  spellcheck(word: string): boolean {
+    return this.dictionary.has(word);
   }
 
   getTargets(): Target[] | null {
-    if (!!!this.nspell) return null;
     let word3 = this.pool_three.pop();
     let words: (string[] | undefined)[] = !!word3 ? [word3] : [];
     while (words.length < 3) {
@@ -114,15 +103,6 @@ export class TargetManager {
     }
     return words
       .filter((vals): vals is string[] => !!vals)
-      .map((vals) => new Target(vals[0], this.nspell!));
-  }
-
-  loadDictionary(name: string) {
-    var base = dirname(require.resolve(name));
-    let dict = {
-      dic: readFileSync(join(base, "index.dic")),
-      aff: readFileSync(join(base, "index.aff")),
-    };
-    this.dictionaries[name] = dict;
+      .map((vals) => new Target(vals[0], this));
   }
 }

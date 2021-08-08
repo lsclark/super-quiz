@@ -10,6 +10,7 @@ export interface QuestionFreeText extends QuestionBase {
   type: "freetext";
   alternatives: string[];
   answer: string;
+  fuzzy?: boolean;
 }
 
 export interface QuestionMultiChoice extends QuestionBase {
@@ -77,6 +78,17 @@ export async function checkAnswerCorrect(
   if (question.type == "multichoice") {
     return Promise.resolve(question.answer == answer);
   } else {
+    answer = (answer as string)
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\s]/gi, "");
+    console.log(
+      answer,
+      question.alternatives,
+      question.alternatives.includes(answer)
+    );
+    if (!question.fuzzy) return question.alternatives.includes(answer);
+
     let matches: [string, number, number][] = await fuzz.extractAsPromised(
       answer,
       question.alternatives,

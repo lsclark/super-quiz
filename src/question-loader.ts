@@ -4,49 +4,66 @@ import * as path from "path";
 import { Question, QuestionSource } from "./question";
 
 const basePath = "./questions/test";
+const qnsPerPoint = 5;
 
-function drawAndRemove<T>(data: { [key: string]: T }): T {
-  let keys = Object.keys(data);
-  let selected = keys[Math.floor(Math.random() * keys.length)];
-  let output = data[selected];
-  delete data[selected];
-  return output;
+function shuffle<T>(array: T[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
 
 export default class QuestionLoader {
-  private questionPool: {
-    [points in 1 | 2 | 3]: { [key: string]: Question };
-  };
+  /** Available questions to assign. The key
+   * is a category name or "" for uncategorised. */
+  private questionPool: { [key: string]: Question[] } = { "": [] };
 
   constructor() {
-    this.questionPool = { 1: {}, 2: {}, 3: {} };
     let searchPath = path.join(basePath, "*.json");
     let matches = glob.sync(searchPath);
     for (let filepath of matches) {
       console.log("Question Loader: Loading", filepath);
       let raw = readFileSync(filepath, "utf-8");
       let data: QuestionSource = JSON.parse(raw);
-      this.loadQuestions(filepath, data);
+      this.loadQuestions(data);
+      Object.values(this.questionPool).forEach((qs) => shuffle(qs));
     }
   }
 
   deal(): Question[] {
     let questions: Question[] = [];
+    for (let [category, catQuestions] of Object.entries(this.questionPool)) {
+      if (!category.length || !catQuestions.length) continue;
+      questions.push(catQuestions.pop()!);
+    }
+    shuffle(questions);
     ([1, 2, 3] as const).forEach((points) => {
-      for (let draw = 0; draw < 5; draw++) {
-        let question = drawAndRemove(this.questionPool[points]);
+      let qnPoints = questions.filter((qn) => qn.points == points);
+      let oversample = qnPoints.length - qnsPerPoint;
+      while (oversample-- > 0) {
+        let qnRemove = qnPoints.pop()!;
+        questions = questions.filter((qn) => qn.question != qnRemove.question);
+        this.questionPool[qnRemove.category ?? ""].push(qnRemove);
+      }
+      for (let draw = qnPoints.length; draw < qnsPerPoint; draw++) {
+        let [question, idx] = this.questionPool[""]
+          .map((qn, idx): [Question, number] => [qn, idx])
+          .find(([qn]) => qn.points == points)!;
         questions.push(question);
+        this.questionPool[""].splice(idx, 1);
       }
     });
+    shuffle(questions);
     return questions;
   }
 
-  private loadQuestions(filepath: string, data: QuestionSource) {
-    let base = path.basename(filepath, ".json");
-    data.questions.forEach((question, index) => {
+  private loadQuestions(data: QuestionSource) {
+    data.questions.forEach((question) => {
       this.prepareQuestion(question);
       this.checkQuestion(question);
-      this.questionPool[question.points][`${base}-${index}`] = question;
+      if (!!question.category && !(question.category in this.questionPool))
+        this.questionPool[question.category ?? ""] = [];
+      this.questionPool[question.category ?? ""].push(question);
     });
   }
 

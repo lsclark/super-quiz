@@ -4,6 +4,7 @@ import fuzz from "fuzzball";
 export interface QuestionBase {
   points: 1 | 2 | 3;
   question: string;
+  category?: string;
 }
 
 export interface QuestionFreeText extends QuestionBase {

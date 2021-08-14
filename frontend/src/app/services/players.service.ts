@@ -6,7 +6,6 @@ import {
   DSScoreboardMessage,
   PlayerState,
 } from '../message-types';
-import { PlayerScore } from '../message-types';
 import { WebsocketService } from './websocket.service';
 import { SessionService } from './session.service';
 import { GroupChallengeService } from './group-challenge.service';
@@ -19,7 +18,7 @@ export class PlayersService {
   score: number;
   others: string[];
   playerState$?: Observable<PlayerState>;
-  scoreboard$?: Observable<PlayerScore[]>;
+  scoreboard$?: Observable<DSScoreboardMessage>;
 
   constructor(
     private websocketService: WebsocketService,
@@ -53,15 +52,12 @@ export class PlayersService {
     this.scoreboard$ = base$?.pipe(
       filter((msg): msg is DSScoreboardMessage => {
         return msg.type == 'scoreboard';
-      }),
-      map((msg) => msg.scores)
+      })
     );
     this.scoreboard$?.subscribe((msg) => {
-      msg
-        .filter((scoreobj) => scoreobj.name == this.session.username)
-        .forEach((scoreobj) => (this.score = scoreobj.score));
+      this.score = msg.score;
     });
-    this.scoreboard$?.subscribe((msg) => {
+    this.scoreboard$?.pipe(map((msg) => msg.scores)).subscribe((msg) => {
       this.others = msg
         .filter((scoreobj) => scoreobj.name != this.session.username)
         .map((scoreobj) => scoreobj.name);

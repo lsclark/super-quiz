@@ -118,10 +118,18 @@ export type PlayerScore = {
   score: number;
 };
 
+export type ScoreItem = {
+  description: string;
+  score: number;
+  bonus: boolean;
+};
+
 export type DSScoreboardMessage = {
   name: string;
+  score: number;
   type: "scoreboard";
   scores: PlayerScore[];
+  breakdown: ScoreItem[];
 };
 
 export type USTargetSubmitMessage = {

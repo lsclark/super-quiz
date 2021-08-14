@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
-import { PlayerScore, QuestionColumn, QuestionDisplay } from "./message-types";
+import { QuestionColumn, QuestionDisplay, ScoreItem } from "./message-types";
 import {
   checkAnswerCorrect,
   formatQuestion,
@@ -27,8 +27,12 @@ export enum QuestionState {
   DelegatedComplete,
 }
 
-type Bonus = {
-  identifier: string;
+type ChallengeScore = {
+  type:
+    | "group-origin"
+    | "group-responder"
+    | "personal-origin"
+    | "personal-delegate";
   points: number;
 };
 
@@ -49,7 +53,7 @@ export default class Player {
   private indexes: { [index: number]: Question };
   private displayQuestions: QuestionColumn[];
   private state: { [index: number]: QuestionState } = {};
-  private bonuses: Bonus[] = [];
+  private challenges: ChallengeScore[] = [];
   targets: Target[];
   private timeout = new Subject<true>();
 
@@ -95,7 +99,7 @@ export default class Player {
 
   getPlayerState(): PlayerState {
     return {
-      score: this.computeScore(),
+      score: this.quizHost.scorer.getScore(this),
       questions: this.state,
       answers: this.retrieveAnswers(),
     };
@@ -105,25 +109,56 @@ export default class Player {
     this.state[index] = state;
   }
 
-  computeScore(): number {
-    let score = 0;
-    getEntries(this.state).forEach(([index, state]) => {
-      if (state == QuestionState.Correct) {
-        score += this.indexes[index].points;
-      }
-    });
-    this.bonuses.forEach((bonus) => {
-      score += bonus.points;
-    });
-    score += Math.max(...this.targets.map((tgt) => tgt.getScore()));
-    return score;
+  private computeQuizScore(): ScoreItem {
+    return {
+      description: "Quiz Questions",
+      score: getEntries(this.state).reduce((acc: number, [index, state]) => {
+        return state == QuestionState.Correct
+          ? acc + this.indexes[index].points
+          : acc;
+      }, 0),
+      bonus: false,
+    };
   }
 
-  makePlayerScore(): PlayerScore {
+  private computeTargetScore(): ScoreItem {
     return {
-      name: this.name,
-      score: this.computeScore(),
+      description: "Target",
+      score: Math.max(...this.targets.map((tgt) => tgt.getScore())),
+      bonus: false,
     };
+  }
+
+  private computeChallengeScores(): ScoreItem[] {
+    return [
+      ["group-origin", "GC Origin"],
+      ["group-responder", "GC Winnings"],
+      ["personal-origin", "Shared Origin"],
+      ["personal-delegate", "Shared Delegate"],
+    ]
+      .map(([type, desc]): [string, number] => {
+        return [
+          desc,
+          this.challenges
+            .filter((chllng) => chllng.type == type)
+            .reduce((acc: number, chlng) => acc + chlng.points, 0),
+        ];
+      })
+      .filter(([, val]) => val != 0)
+      .map(([desc, score]): ScoreItem => {
+        return {
+          score: score,
+          description: desc,
+          bonus: false,
+        };
+      });
+  }
+
+  makePlayerScore(): ScoreItem[] {
+    let items: ScoreItem[] = [...this.computeChallengeScores()];
+    items.push(this.computeQuizScore());
+    items.push(this.computeTargetScore());
+    return items;
   }
 
   async submitAnswer(
@@ -141,9 +176,16 @@ export default class Player {
     }
   }
 
-  addBonus(identifier: string, points: number) {
-    this.bonuses.push({
-      identifier: identifier,
+  addChallenge(
+    type:
+      | "group-origin"
+      | "group-responder"
+      | "personal-origin"
+      | "personal-delegate",
+    points: number
+  ) {
+    this.challenges.push({
+      type: type,
       points: points,
     });
   }

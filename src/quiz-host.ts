@@ -1,9 +1,10 @@
 import { Subject } from "rxjs";
 import { GroupChallengeManager } from "./group-challenge";
-import { QuizMessage, PlayerScore, DSScoreboardMessage } from "./message-types";
+import { QuizMessage } from "./message-types";
 import { PersonalChallengeManager } from "./personal-challenge";
 import Player from "./player";
 import QuestionLoader from "./question-loader";
+import { Scorer } from "./scoring";
 import { TargetManager } from "./target";
 
 export default class QuizHost {
@@ -13,7 +14,9 @@ export default class QuizHost {
   private targetManager: TargetManager;
   private groupChallengeManager: GroupChallengeManager;
   private personalChallengeManager: PersonalChallengeManager;
-  players: { [key: string]: Player };
+  scorer: Scorer;
+
+  players: { [key: string]: Player } = {};
 
   constructor(
     private incoming$: Subject<QuizMessage>,
@@ -23,6 +26,7 @@ export default class QuizHost {
 
     this.questionLoader = new QuestionLoader();
     this.targetManager = new TargetManager();
+    this.scorer = new Scorer(this.outgoing$, this);
     this.groupChallengeManager = new GroupChallengeManager(
       this.outgoing$,
       this
@@ -31,7 +35,6 @@ export default class QuizHost {
       this.outgoing$,
       this
     );
-    this.players = {};
 
     this.incoming$.subscribe((message) => this.routeIncoming(message));
   }
@@ -120,11 +123,7 @@ export default class QuizHost {
       name: player.name,
       status: player.getPlayerState(),
     });
-    this.outgoing$.next({
-      type: "scoreboard",
-      name: "_broadcast",
-      scores: this.makeScoreboard(),
-    });
+    this.scorer.distributeScores();
     player.targets.forEach((target) => {
       this.outgoing$.next({
         type: "target_assignment",
@@ -143,11 +142,7 @@ export default class QuizHost {
     submission: number | string
   ) {
     if (await player.submitAnswer(index, submission, false))
-      this.outgoing$.next({
-        type: "scoreboard",
-        name: "_broadcast",
-        scores: this.makeScoreboard(),
-      });
+      this.scorer.distributeScores();
     this.outgoing$.next({
       type: "player_status",
       name: player.name,
@@ -168,22 +163,12 @@ export default class QuizHost {
     });
     if (valid) {
       this.outgoing$.next({
-        type: "scoreboard",
-        name: "_broadcast",
-        scores: this.makeScoreboard(),
-      });
-      this.outgoing$.next({
         type: "player_status",
         name: player.name,
         status: player.getPlayerState(),
       });
+      this.scorer.distributeScores();
     }
-  }
-
-  makeScoreboard(): PlayerScore[] {
-    return Object.values(this.players)
-      .filter((plyr) => plyr.alive)
-      .map((plyr) => plyr.makePlayerScore());
   }
 
   timeoutWarning(name: string) {
@@ -194,11 +179,6 @@ export default class QuizHost {
   }
 
   timedOut(name: string) {
-    let bcast: DSScoreboardMessage = {
-      type: "scoreboard",
-      name: "_broadcast",
-      scores: this.makeScoreboard(),
-    };
-    this.outgoing$.next(bcast);
+    this.scorer.distributeScores();
   }
 }

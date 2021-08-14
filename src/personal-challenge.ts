@@ -75,20 +75,13 @@ export class PersonalChallengeManager {
     );
 
     if (correct) {
-      challenge.delegate.addBonus(
-        `personal-${challenge.origin.name}-${question.index}`,
+      challenge.delegate.addChallenge(
+        "personal-delegate",
         question.points! / 2
       );
-      challenge.origin.addBonus(
-        `personal-${challenge.origin.name}-${question.index}`,
-        question.points! / 2
-      );
+      challenge.origin.addChallenge("personal-origin", question.points! / 2);
 
-      this.outgoing$.next({
-        type: "scoreboard",
-        name: "_broadcast",
-        scores: this.quizHost.makeScoreboard(),
-      });
+      this.quizHost.scorer.distributeScores();
       this.outgoing$.next({
         type: "player_status",
         name: challenge.origin.name,

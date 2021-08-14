@@ -114,19 +114,10 @@ export class GroupChallengeManager {
       QuestionState.DelegatedComplete
     );
     if (victor.name == challenge.origin.name) {
-      challenge.origin.addBonus(
-        `group-${challenge.origin.name}-${challenge.question.index}`,
-        challenge.wager
-      );
+      challenge.origin.addChallenge("group-origin", challenge.wager);
     } else {
-      victor.addBonus(
-        `group-${challenge.origin.name}-${challenge.question.index}`,
-        challenge.wager
-      );
-      challenge.origin.addBonus(
-        `group-${challenge.origin.name}-${challenge.question.index}`,
-        -challenge.wager
-      );
+      victor.addChallenge("group-responder", challenge.wager);
+      challenge.origin.addChallenge("group-origin", -challenge.wager);
     }
     this.outgoing$.next({
       type: "group-outcome",
@@ -141,10 +132,6 @@ export class GroupChallengeManager {
       name: challenge.origin.name,
       status: challenge.origin.getPlayerState(),
     });
-    this.outgoing$.next({
-      type: "scoreboard",
-      name: "_broadcast",
-      scores: this.quizHost.makeScoreboard(),
-    });
+    this.quizHost.scorer.distributeScores();
   }
 }

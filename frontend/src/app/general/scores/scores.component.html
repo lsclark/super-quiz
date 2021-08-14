@@ -11,6 +11,36 @@
   </ul>
 </ng-template>
 
+<ng-template #breakdownTitle>Your Points</ng-template>
+<ng-template #breakdownContent>
+  <ul class="list-group">
+    <li
+      *ngFor="let item of scoreItems"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      <span class="item_description">
+        {{ item.description }}
+        <span *ngIf="item.bonus" class="badge bg-success">BONUS</span></span
+      >
+
+      <span class="item_score">{{ item.score }}</span>
+    </li>
+  </ul>
+</ng-template>
+
+<button
+  type="button"
+  class="btn btn-outline-secondary"
+  placement="bottom"
+  [ngbPopover]="breakdownContent"
+  [popoverTitle]="breakdownTitle"
+  triggers="mouseenter:mouseleave"
+  [openDelay]="200"
+  [closeDelay]="500"
+>
+  {{ session.username }} - {{ playerService.score | number: "1.0-3" }}
+</button>
+
 <button
   type="button"
   class="btn btn-outline-secondary"
@@ -21,5 +51,5 @@
   [openDelay]="200"
   [closeDelay]="500"
 >
-  {{ session.username }} - {{ playerService.score | number: "1.0-3" }}
+  {{ placeToWords(place) + " place" | titlecase }}
 </button>

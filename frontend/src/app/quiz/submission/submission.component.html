@@ -12,10 +12,10 @@
         class="w-100"
         *ngSwitchCase="true"
         id="response"
-        type="text"
+        type="{{ question.numeric ? 'number' : 'text' }}"
         ngbAutofocus
         [(ngModel)]="response"
-        (keyup)="responseChanged()"
+        (change)="responseChanged()"
       />
       <div
         *ngSwitchDefault

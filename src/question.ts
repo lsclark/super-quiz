@@ -20,7 +20,13 @@ export interface QuestionMultiChoice extends QuestionBase {
   answer: number;
 }
 
-export type Question = QuestionFreeText | QuestionMultiChoice;
+export interface QuestionNumeric extends QuestionBase {
+  type: "numeric";
+  answer: number;
+  tolerance?: number;
+}
+
+export type Question = QuestionFreeText | QuestionNumeric | QuestionMultiChoice;
 
 export interface QuestionSource {
   source: string;
@@ -51,6 +57,7 @@ export function formatQuestionsDisplay(
         text: question.question,
         points: question.points,
         ...(question.type == "multichoice" && { choices: question.choices }),
+        ...(question.type == "numeric" && { numeric: true }),
       });
       indexMap[index] = question;
       index++;
@@ -78,6 +85,14 @@ export async function checkAnswerCorrect(
 ): Promise<boolean> {
   if (question.type == "multichoice") {
     return Promise.resolve(question.answer == answer);
+  } else if (question.type == "numeric") {
+    if (question.tolerance) {
+      return Promise.resolve(
+        Math.abs((answer as number) - question.answer) <= question.tolerance
+      );
+    } else {
+      return Promise.resolve(question.answer == answer);
+    }
   } else {
     answer = (answer as string)
       .trim()

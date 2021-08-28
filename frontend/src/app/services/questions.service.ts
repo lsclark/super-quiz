@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import {
   QuestionState,
@@ -23,10 +23,14 @@ const getEntries = Object.entries as <T extends object>(
   providedIn: 'root',
 })
 export class QuestionsService {
-  questions$?: Observable<QuestionColumn[]>;
-  answers: DisplayAnswer[];
-  states$?: Observable<{ [index: number]: QuestionState }>;
-  submitted: Set<number | string>;
+  states$ = new Subject<[number, QuestionState]>();
+  ready$ = new Subject<boolean>();
+
+  questions: QuestionColumn[] = [];
+  answers: DisplayAnswer[] = [];
+  states: { [index: number]: QuestionState } = {};
+  submitted = new Set<number | string>();
+  ready: boolean = false;
 
   constructor(
     private websocketService: WebsocketService,
@@ -34,8 +38,6 @@ export class QuestionsService {
     private modalController: ModalControllerService,
     private session: SessionService
   ) {
-    this.answers = [];
-    this.submitted = new Set<number | string>();
     this.subscribe();
   }
 
@@ -48,24 +50,34 @@ export class QuestionsService {
         complete: () => console.log('Connection closed'),
       })
     );
-    this.states$ = base$?.pipe(
-      filter((msg): msg is DSPlayerStatusMessage => {
-        return msg.type == 'player_status';
-      }),
-      map((msg) => msg.status.questions)
-    );
-    this.states$?.subscribe((msg) => {
-      for (let [index, state] of getEntries(msg)) {
-        if (!this.submitted.has(index) && state !== QuestionState.UnAnswered)
-          this.submitted.add(index);
-      }
-    });
-    this.questions$ = base$?.pipe(
-      filter((msg): msg is DSQuestionsMessage => {
-        return msg.type == 'questions';
-      }),
-      map((msg) => msg.questions)
-    );
+    base$
+      ?.pipe(
+        filter((msg): msg is DSPlayerStatusMessage => {
+          return msg.type == 'player_status';
+        }),
+        map((msg) => msg.status.questions)
+      )
+      .subscribe((msg) => {
+        this.states = msg;
+        for (let [index, state] of getEntries(msg)) {
+          this.states$.next([index, state]);
+          if (!this.submitted.has(index) && state !== QuestionState.UnAnswered)
+            this.submitted.add(index);
+        }
+      });
+    base$
+      ?.pipe(
+        filter((msg): msg is DSQuestionsMessage => {
+          return msg.type == 'questions';
+        }),
+        map((msg) => msg.questions)
+      )
+      .subscribe((cols) => {
+        this.questions = cols;
+
+        this.ready = true;
+        this.ready$.next(true);
+      });
 
     base$
       ?.pipe(

@@ -14,7 +14,8 @@ export class WebsocketService {
   messages$?: Observable<QuizMessage>;
 
   constructor(private session: SessionService) {
-    this.connect();
+    this.session.registration$.subscribe(() => this.connect());
+    if (this.session.registered) this.connect();
   }
 
   connect() {

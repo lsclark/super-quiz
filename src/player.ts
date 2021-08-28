@@ -199,6 +199,7 @@ export default class Player {
     let question = this.indexes[index];
     if (question.type == "multichoice")
       return question.choices[question.answer];
+    else if (question.type == "numeric") return question.answer.toString();
     else return question.answer;
   }
 

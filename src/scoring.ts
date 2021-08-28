@@ -68,7 +68,7 @@ export class Scorer {
 
   private targetBonus(): [string, ScoreItem][] {
     let maxNames: string[] = [];
-    let maxSubmits: number = 0;
+    let maxSubmits: number = 1;
     for (let [name, player] of Object.entries(this.quizHost.players)) {
       if (!player.alive) continue;
       let submits = player.targets.reduce(

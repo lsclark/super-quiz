@@ -12,7 +12,7 @@ import { SessionService } from 'src/app/services/session.service';
 export class ScoresComponent {
   players: PlayerScore[] = [];
   scoreItems: ScoreItem[] = [];
-  place: number = 1;
+  place: number = 0;
 
   constructor(
     public playerService: PlayersService,
@@ -26,8 +26,8 @@ export class ScoresComponent {
           (p1: PlayerScore, p2: PlayerScore) => p1.score - p2.score
         );
         this.place = (this.players
-          .map((val, idx): [string, number] => [val.name, idx + 1])
-          .find(([val]) => val == this.session.username) ?? [0, 1])[1];
+          .map((val, idx): [string, number] => [val.name, idx])
+          .find(([val]) => val == this.session.username) ?? [0, 0])[1];
       });
     this.playerService.scoreboard$
       ?.pipe(map((msg) => msg.breakdown))
@@ -60,7 +60,7 @@ export class ScoresComponent {
       'nineteenth',
       'twentieth',
     ];
-    if (place <= 20 && place >= 1) return words[place];
+    if (place < 20) return words[place];
     else return 'Unknown';
   }
 }

@@ -1,6 +1,9 @@
 <div>
   <div class="row row-eq-height">
-    <div *ngFor="let column of columns" class="col-12 col-lg-4">
+    <div
+      *ngFor="let column of questionService.questions"
+      class="col-12 col-lg-4"
+    >
       <app-quiz-column
         class="h-100"
         [points]="column.points"

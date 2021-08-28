@@ -1,32 +1,27 @@
 import { Injectable } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
-  username: string;
+  username: string = '';
+  registered: boolean = false;
+  registration$ = new Subject<boolean>();
 
-  constructor() {
-    this.username = 'tester-' + this.getBrowserName();
+  register(username: string) {
+    this.username = username;
+    this.registered = true;
+    this.cookies.set('username', username);
+    this.registration$.next(true);
   }
 
-  public getBrowserName() {
-    const agent = window.navigator.userAgent.toLowerCase();
-    switch (true) {
-      case agent.indexOf('edge') > -1:
-        return 'edge';
-      case agent.indexOf('opr') > -1 && !!(<any>window).opr:
-        return 'opera';
-      case agent.indexOf('chrome') > -1 && !!(<any>window).chrome:
-        return 'chrome';
-      case agent.indexOf('trident') > -1:
-        return 'ie';
-      case agent.indexOf('firefox') > -1:
-        return 'firefox';
-      case agent.indexOf('safari') > -1:
-        return 'safari';
-      default:
-        return 'other';
+  constructor(private cookies: CookieService) {
+    if (this.cookies.check('username')) {
+      this.username = this.cookies.get('username');
+      this.registered = true;
+      this.registration$.next(true);
     }
   }
 }

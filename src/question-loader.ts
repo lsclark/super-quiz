@@ -3,7 +3,7 @@ import glob from "glob";
 import * as path from "path";
 import { Question, QuestionSource } from "./question";
 
-const basePath = "./questions/test";
+const basePath = "./questions";
 const qnsPerPoint = 5;
 
 function shuffle<T>(array: T[]) {
@@ -48,7 +48,11 @@ export default class QuestionLoader {
       for (let draw = qnPoints.length; draw < qnsPerPoint; draw++) {
         let [question, idx] = this.questionPool[""]
           .map((qn, idx): [Question, number] => [qn, idx])
-          .find(([qn]) => qn.points == points)!;
+          .find(([qn]) => qn.points == points) ?? [null, null];
+        if (question === null || idx === null) {
+          console.log("RAN OUT OF QUESTIONS");
+          break;
+        }
         questions.push(question);
         this.questionPool[""].splice(idx, 1);
       }
@@ -92,6 +96,9 @@ export default class QuestionLoader {
       if ("fuzzy" in question) throw "Multichoice can't have fuzzy";
       if (typeof question.answer != "number")
         throw "Multichoice answer is not a number";
+    } else if (question.type == "numeric") {
+      if (typeof question.answer !== "number")
+        throw "Numeric answer must be numberic";
     } else {
       if ("choices" in question) throw "Freetext can't have choices";
       if (typeof question.answer != "string")

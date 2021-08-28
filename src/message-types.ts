@@ -3,6 +3,7 @@ import { PlayerState } from "./player";
 export interface QuestionDisplay {
   index: number;
   text: string;
+  numeric?: boolean;
   choices?: string[];
   points?: 1 | 2 | 3;
 }

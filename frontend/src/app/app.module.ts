@@ -4,10 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
+import { CookieService } from 'ngx-cookie-service';
 
 import { AppComponent } from './app.component';
 import { ColumnComponent } from './quiz/column/column.component';
-import { QuestionComponent } from './quiz/column/question/question.component';
+import { QuestionComponent } from './quiz/question/question.component';
 import { QuizComponent } from './quiz/quiz.component';
 import { SubmissionComponent } from './quiz/submission/submission.component';
 import { SolutionsComponent } from './quiz/solutions/solutions.component';
@@ -23,6 +24,8 @@ import { AccordionComponent } from './general/accordion/accordion.component';
 import { GridComponent } from './target/grid/grid.component';
 import { TargetInputComponent } from './target/input/input.component';
 import { TabbingComponent } from './target/tabbing/tabbing.component';
+import { LoginComponent } from './general/login/login.component';
+import { WaitComponent } from './general/wait/wait.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +47,8 @@ import { TabbingComponent } from './target/tabbing/tabbing.component';
     TargetInputComponent,
     TabbingComponent,
     NotificationComponent,
+    LoginComponent,
+    WaitComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,7 +57,7 @@ import { TabbingComponent } from './target/tabbing/tabbing.component';
     ReactiveFormsModule,
     NgbModule,
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,0 +1,16 @@
+<div class="form-group mx-auto mt-5 p-5">
+  <h2>Welcome</h2>
+  <div class="input-group">
+    <input
+      placeholder="Who are you?"
+      class="w-100 mb-3"
+      type="text"
+      ngbAutofocus
+      (keydown.enter)="submit()"
+      [(ngModel)]="name"
+    />
+  </div>
+  <div class="d-grid col-6 mx-auto">
+    <button class="btn btn-outline-dark" (click)="submit()">That's me</button>
+  </div>
+</div>

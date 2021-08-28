@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 
 import {
@@ -11,12 +11,16 @@ import { TargetLetters, TargetResult } from '../target/message-types';
 import { SessionService } from './session.service';
 import { WebsocketService } from './websocket.service';
 
+const EXPECTED = 3;
+
 @Injectable({
   providedIn: 'root',
 })
 export class TargetService {
   assignments: { [key: string]: TargetLetters };
   results$?: Observable<TargetResult>;
+  ready$ = new Subject<boolean>();
+  ready: boolean = false;
 
   constructor(
     private websocketService: WebsocketService,
@@ -64,6 +68,10 @@ export class TargetService {
             previous: msg.previous,
             initScore: msg.score,
           };
+        if (Object.keys(this.assignments).length >= EXPECTED) {
+          this.ready = true;
+          this.ready$.next(true);
+        }
       });
   }
 

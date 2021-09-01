@@ -1,0 +1,7 @@
+<div *ngIf="session.registered; else LoginBlock">
+  <app-admin-navigation></app-admin-navigation>
+</div>
+
+<ng-template #LoginBlock>
+  <app-admin-login></app-admin-login>
+</ng-template>

@@ -1,0 +1,14 @@
+<div *ngIf="session.registered; else LoginBlock">
+  <div *ngIf="readyService.ready; else WaitBlock">
+    <app-navbar></app-navbar>
+    <app-accordion></app-accordion>
+  </div>
+</div>
+
+<ng-template #LoginBlock>
+  <app-login></app-login>
+</ng-template>
+
+<ng-template #WaitBlock>
+  <app-wait></app-wait>
+</ng-template>

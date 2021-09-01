@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { filter } from 'rxjs/operators';
-import { NotificationComponent } from '../general/notification/notification.component';
+import { NotificationComponent } from '../quiz/general/notification/notification.component';
 import {
   DSPersonalChallengeDistribute,
   DSPersonalChallengeOutcome,
@@ -8,9 +8,9 @@ import {
   QuestionDisplay,
   USPersonalChallengeOrigin,
   USPersonalChallengeSubmit,
-} from '../message-types';
-import { PersonalDelegatedComponent } from '../quiz/personal/delegated/delegated.component';
-import { PersonalOriginatorComponent } from '../quiz/personal/originator/originator.component';
+} from '../models/quiz-message-types';
+import { PersonalDelegatedComponent } from '../quiz/quiz/personal/delegated/delegated.component';
+import { PersonalOriginatorComponent } from '../quiz/quiz/personal/originator/originator.component';
 import { ModalControllerService, ModalSpec } from './modal-controller.service';
 import { SessionService } from './session.service';
 import { WebsocketService } from './websocket.service';

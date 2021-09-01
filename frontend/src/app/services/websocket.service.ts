@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { QuizMessage } from '../message-types';
+import { AdminMessage } from '../models/admin-message-types';
+import { QuizMessage } from '../models/quiz-message-types';
 import { SessionService } from './session.service';
 
 @Injectable({
@@ -10,8 +11,8 @@ import { SessionService } from './session.service';
 })
 export class WebsocketService {
   url: string = 'ws://localhost:8080/';
-  private connection$?: WebSocketSubject<QuizMessage>;
-  messages$?: Observable<QuizMessage>;
+  private connection$?: WebSocketSubject<QuizMessage | AdminMessage>;
+  messages$?: Observable<QuizMessage | AdminMessage>;
 
   constructor(private session: SessionService) {
     this.connect();

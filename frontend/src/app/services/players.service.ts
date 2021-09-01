@@ -5,7 +5,7 @@ import {
   DSPlayerStatusMessage,
   DSScoreboardMessage,
   PlayerState,
-} from '../message-types';
+} from '../models/quiz-message-types';
 import { WebsocketService } from './websocket.service';
 import { SessionService } from './session.service';
 import { GroupChallengeService } from './group-challenge.service';

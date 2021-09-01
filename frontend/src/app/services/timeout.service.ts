@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { filter } from 'rxjs/operators';
-import { NotificationComponent } from '../general/notification/notification.component';
-import { DSTimeoutMessage } from '../message-types';
+import { NotificationComponent } from '../quiz/general/notification/notification.component';
+import { DSTimeoutMessage } from '../models/quiz-message-types';
 import { ModalControllerService, ModalSpec } from './modal-controller.service';
 import { WebsocketService } from './websocket.service';
 

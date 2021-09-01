@@ -6,8 +6,8 @@ import {
   DSTargetAssignment,
   DSTargetMarking,
   USTargetSubmitMessage,
-} from '../message-types';
-import { TargetLetters, TargetResult } from '../target/message-types';
+} from '../models/quiz-message-types';
+import { TargetLetters, TargetResult } from '../quiz/target/message-types';
 import { SessionService } from './session.service';
 import { WebsocketService } from './websocket.service';
 

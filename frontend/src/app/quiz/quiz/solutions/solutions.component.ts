@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { QuestionsService } from '../../../services/questions.service';
+import { QuestionsService } from '../../services/questions.service';
 
 @Component({
   selector: 'app-solutions',

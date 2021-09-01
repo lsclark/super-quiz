@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ModalControllerService } from 'src/app/services/modal-controller.service';
+import { ModalControllerService } from 'src/app/quiz/services/modal-controller.service';
 
 @Component({
   selector: 'app-notification',

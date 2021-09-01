@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { PlayerScore, ScoreItem } from 'src/app/models/quiz-message-types';
-import { PlayersService } from 'src/app/services/players.service';
-import { SessionService } from 'src/app/services/session.service';
+import { PlayersService } from 'src/app/quiz/services/players.service';
+import { SessionService } from 'src/app/quiz/services/session.service';
 
 @Component({
   selector: 'app-scores',

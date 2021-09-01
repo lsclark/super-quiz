@@ -7,13 +7,13 @@ import {
   DSQuestionsMessage,
   DisplayAnswer,
   QuestionDisplay,
-} from '../models/quiz-message-types';
-import { QuestionColumn } from '../models/quiz-message-types';
-import { WebsocketService } from './websocket.service';
+} from '../../models/quiz-message-types';
+import { QuestionColumn } from '../../models/quiz-message-types';
+import { WebsocketService } from '../../services/websocket.service';
 import { SessionService } from './session.service';
 import { SaveResponsesService } from './save-responses.service';
 import { ModalControllerService, ModalSpec } from './modal-controller.service';
-import { SubmissionComponent } from '../quiz/quiz/submission/submission.component';
+import { SubmissionComponent } from '../quiz/submission/submission.component';
 
 const getEntries = Object.entries as <T extends object>(
   obj: T

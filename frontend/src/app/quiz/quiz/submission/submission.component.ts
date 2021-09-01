@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GroupChallengeService } from 'src/app/services/group-challenge.service';
+import { GroupChallengeService } from 'src/app/quiz/services/group-challenge.service';
 
-import { ModalControllerService } from 'src/app/services/modal-controller.service';
-import { PersonalChallengeService } from 'src/app/services/personal-challenge.service';
-import { QuestionsService } from 'src/app/services/questions.service';
-import { SaveResponsesService } from 'src/app/services/save-responses.service';
+import { ModalControllerService } from 'src/app/quiz/services/modal-controller.service';
+import { PersonalChallengeService } from 'src/app/quiz/services/personal-challenge.service';
+import { QuestionsService } from 'src/app/quiz/services/questions.service';
+import { SaveResponsesService } from 'src/app/quiz/services/save-responses.service';
 import { QuestionDisplay } from '../../../models/quiz-message-types';
 
 @Component({

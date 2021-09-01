@@ -8,7 +8,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { filter } from 'rxjs/operators';
-import { TargetService } from 'src/app/services/target.service';
+import { TargetService } from 'src/app/quiz/services/target.service';
 import { TargetInputComponent } from '../input/input.component';
 import { TargetLetters, TargetState } from '../message-types';
 

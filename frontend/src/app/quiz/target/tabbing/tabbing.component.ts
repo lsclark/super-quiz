@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgbNav } from '@ng-bootstrap/ng-bootstrap';
-import { TargetService } from 'src/app/services/target.service';
+import { TargetService } from 'src/app/quiz/services/target.service';
 
 @Component({
   selector: 'app-target-tabbing',

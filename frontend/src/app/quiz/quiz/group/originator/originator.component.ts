@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { QuestionDisplay } from 'src/app/models/quiz-message-types';
-import { GroupChallengeService } from 'src/app/services/group-challenge.service';
-import { ModalControllerService } from 'src/app/services/modal-controller.service';
-import { PlayersService } from 'src/app/services/players.service';
+import { GroupChallengeService } from 'src/app/quiz/services/group-challenge.service';
+import { ModalControllerService } from 'src/app/quiz/services/modal-controller.service';
+import { PlayersService } from 'src/app/quiz/services/players.service';
 
 @Component({
   selector: 'app-group-originator',

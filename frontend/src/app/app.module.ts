@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CookieService } from 'ngx-cookie-service';
 
+import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { QuizMainComponent } from './quiz/quiz-main.component';
@@ -35,6 +36,7 @@ import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
+    AppComponent,
     QuizMainComponent,
     AdminComponent,
     AdminLoginComponent,
@@ -68,6 +70,6 @@ import { AdminComponent } from './admin/admin.component';
     NgbModule,
   ],
   providers: [CookieService],
-  bootstrap: [QuizMainComponent],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

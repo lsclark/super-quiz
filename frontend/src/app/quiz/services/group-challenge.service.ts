@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { filter } from 'rxjs/operators';
-import { NotificationComponent } from '../quiz/general/notification/notification.component';
+import { NotificationComponent } from '../general/notification/notification.component';
 import {
   DSGroupChallengeDistribute,
   DSGroupChallengeOutcome,
   QuestionDisplay,
   USGroupChallengeOrigin,
   USGroupChallengeSubmit,
-} from '../models/quiz-message-types';
-import { GroupChallengedComponent } from '../quiz/quiz/group/challenged/challenged.component';
-import { GroupOriginatorComponent } from '../quiz/quiz/group/originator/originator.component';
+} from '../../models/quiz-message-types';
+import { GroupChallengedComponent } from '../quiz/group/challenged/challenged.component';
+import { GroupOriginatorComponent } from '../quiz/group/originator/originator.component';
 import { ModalControllerService, ModalSpec } from './modal-controller.service';
 import { SessionService } from './session.service';
-import { WebsocketService } from './websocket.service';
+import { WebsocketService } from '../../services/websocket.service';
 
 @Injectable({
   providedIn: 'root',

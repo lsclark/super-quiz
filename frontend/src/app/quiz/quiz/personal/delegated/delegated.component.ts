@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { QuestionDisplay } from 'src/app/models/quiz-message-types';
-import { ModalControllerService } from 'src/app/services/modal-controller.service';
-import { PersonalChallengeService } from 'src/app/services/personal-challenge.service';
+import { ModalControllerService } from 'src/app/quiz/services/modal-controller.service';
+import { PersonalChallengeService } from 'src/app/quiz/services/personal-challenge.service';
 
 @Component({
   selector: 'app-personal-delegated',

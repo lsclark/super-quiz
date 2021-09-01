@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { ReadyService } from '../services/ready.service';
-import { SessionService } from '../services/session.service';
-import { TimeoutService } from '../services/timeout.service';
+import { ReadyService } from './services/ready.service';
+import { SessionService } from './services/session.service';
+import { TimeoutService } from './services/timeout.service';
 
 @Component({
   selector: 'app-quiz-main',

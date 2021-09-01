@@ -6,10 +6,10 @@ import {
   DSTargetAssignment,
   DSTargetMarking,
   USTargetSubmitMessage,
-} from '../models/quiz-message-types';
-import { TargetLetters, TargetResult } from '../quiz/target/message-types';
+} from '../../models/quiz-message-types';
+import { TargetLetters, TargetResult } from '../target/message-types';
 import { SessionService } from './session.service';
-import { WebsocketService } from './websocket.service';
+import { WebsocketService } from '../../services/websocket.service';
 
 const EXPECTED = 3;
 

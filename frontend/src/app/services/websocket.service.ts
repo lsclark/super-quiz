@@ -4,7 +4,7 @@ import { share } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { AdminMessage } from '../models/admin-message-types';
 import { QuizMessage } from '../models/quiz-message-types';
-import { SessionService } from './session.service';
+import { SessionService } from '../quiz/services/session.service';
 
 @Injectable({
   providedIn: 'root',

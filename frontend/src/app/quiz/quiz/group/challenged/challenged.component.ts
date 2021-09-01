@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { QuestionDisplay } from 'src/app/models/quiz-message-types';
-import { GroupChallengeService } from 'src/app/services/group-challenge.service';
-import { ModalControllerService } from 'src/app/services/modal-controller.service';
+import { GroupChallengeService } from 'src/app/quiz/services/group-challenge.service';
+import { ModalControllerService } from 'src/app/quiz/services/modal-controller.service';
 
 @Component({
   selector: 'app-group-challenged',

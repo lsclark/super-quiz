@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 import { QuestionDisplay } from '../../../models/quiz-message-types';
-import { QuestionsService } from '../../../services/questions.service';
+import { QuestionsService } from '../../services/questions.service';
 
 @Component({
   selector: 'app-quiz-column',

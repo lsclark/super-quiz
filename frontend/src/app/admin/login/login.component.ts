@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SessionService } from 'src/app/services/session.service';
+import { SessionService } from 'src/app/quiz/services/session.service';
 
 @Component({
   selector: 'app-admin-login',

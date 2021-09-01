@@ -11,17 +11,21 @@ export class SessionService {
   registration$ = new Subject<boolean>();
 
   register(username: string) {
-    this.username = username;
-    this.registered = true;
-    this.cookies.set('username', username);
-    this.registration$.next(true);
+    if (username) {
+      this.username = username;
+      this.cookies.set('username', username);
+      this.registered = true;
+      this.registration$.next(true);
+    }
   }
 
   constructor(private cookies: CookieService) {
     if (this.cookies.check('username')) {
       this.username = this.cookies.get('username');
-      this.registered = true;
-      this.registration$.next(true);
+      if (this.username) {
+        this.registered = true;
+        this.registration$.next(true);
+      }
     }
   }
 }

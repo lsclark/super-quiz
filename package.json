@@ -6,8 +6,9 @@
   "scripts": {
     "build:back": "tsc && node dist/index.js",
     "back": "npx nodemon",
-    "front": "cd frontend && ng serve",
-    "start": "npx concurrently -p \"[{name}]\" -n \"FRONT,BACK\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run front\" \"npm run back\""
+    "front": "cd frontend && ng serve --live-reload=false",
+    "admin": "cd admin && ng serve --port 4201",
+    "start": "npx concurrently -p \"[{name}]\" -n \"FRONT,BACK,ADMIN\" -c \"bgBlue.bold,bgGreen.bold,bgMagenta.bold\" \"npm run front\" \"npm run back\" \"npm run admin\""
   },
   "keywords": [
     "trivia"

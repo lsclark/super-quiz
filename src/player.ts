@@ -1,5 +1,6 @@
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
+import { AdminPlayer, AdminQuestionState } from "./admin-message-types";
 import { QuestionColumn, QuestionDisplay, ScoreItem } from "./message-types";
 import {
   checkAnswerCorrect,
@@ -11,8 +12,8 @@ import QuestionLoader from "./question-loader";
 import QuizHost from "./quiz-host";
 import { Target, TargetManager } from "./target";
 
-const TIMEOUT_WARNING = 1 * 60 * 1000;
-const TIMEOUT_DEATH = 2 * 60 * 1000;
+const TIMEOUT_WARNING = 4 * 60 * 1000;
+const TIMEOUT_DEATH = 5 * 60 * 1000;
 
 const getKeys = Object.keys as <T extends object>(obj: T) => Array<keyof T>;
 const getEntries = Object.entries as <T extends object>(
@@ -54,6 +55,7 @@ export default class Player {
   private displayQuestions: QuestionColumn[];
   private state: { [index: number]: QuestionState } = {};
   private challenges: ChallengeScore[] = [];
+  private submissions: { [index: number]: number | string } = {};
   targets: Target[];
   private timeout = new Subject<true>();
 
@@ -166,6 +168,7 @@ export default class Player {
     submission: string | number,
     challenge: boolean
   ): Promise<boolean> {
+    this.submissions[index] = submission;
     let question = this.indexes[index];
     if (await checkAnswerCorrect(question, submission)) {
       if (!challenge) this.state[index] = QuestionState.Correct;
@@ -215,5 +218,28 @@ export default class Player {
       }
     }
     return output;
+  }
+
+  adminState(): AdminPlayer {
+    return {
+      name: this.name,
+      questions: getEntries(this.indexes).reduce(
+        (data: { [index: number]: AdminQuestionState }, [index, question]) => {
+          data[index] = {
+            question: question.question,
+            answer: question.answer,
+            type: question.type,
+            status: this.state[index],
+            submission: this.submissions[index] ?? null,
+            ...(question.type == "multichoice"
+              ? { choices: question.choices }
+              : {}),
+          };
+          return data;
+        },
+        {}
+      ),
+      scores: [],
+    };
   }
 }

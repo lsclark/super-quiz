@@ -1,0 +1,19 @@
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <div class="navbar-brand">Quiz Administration</div>
+    <div ngbDropdown class="d-inline-block">
+      <button
+        class="btn btn-outline-primary"
+        id="playerDropdown"
+        ngbDropdownToggle
+      >
+        Players
+      </button>
+      <div ngbDropdownMenu>
+        <button *ngFor="let state of stateService.states" ngbDropdownItem>
+          {{ state.name }}
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

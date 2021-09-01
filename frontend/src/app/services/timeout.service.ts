@@ -13,7 +13,6 @@ export class TimeoutService {
     private websocketService: WebsocketService,
     private modalController: ModalControllerService
   ) {
-    console.log('HB CONSTRUCT');
     this.websocketService.messages$
       ?.pipe(
         filter((msg): msg is DSTimeoutMessage => {
@@ -21,7 +20,6 @@ export class TimeoutService {
         })
       )
       .subscribe(() => {
-        console.log('TIMEOUT');
         let modalSpec: ModalSpec = {
           component: NotificationComponent,
           inputs: {

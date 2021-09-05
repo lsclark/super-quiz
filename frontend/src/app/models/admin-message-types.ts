@@ -14,6 +14,7 @@ export enum QuestionState {
 
 export type AdminQuestionState = {
   question: string;
+  tolerance?: number;
   choices?: string[];
   answer: number | string;
   type: 'freetext' | 'multichoice' | 'numeric';
@@ -44,4 +45,22 @@ export interface AdminUSConnect extends AdminUS {
   type: 'adminConnect';
 }
 
-export type AdminMessage = AdminDSPlayerState | AdminUSConnect;
+export interface AdminUSQuestionOverride extends AdminUS {
+  type: 'adminQuestionOverride';
+  name: string;
+  index: number;
+  state: QuestionState;
+}
+
+export interface AdminUSAwardBonus extends AdminUS {
+  type: 'adminAwardBonus';
+  name: string;
+  description: string;
+  score: number;
+}
+
+export type AdminMessage =
+  | AdminDSPlayerState
+  | AdminUSConnect
+  | AdminUSQuestionOverride
+  | AdminUSAwardBonus;

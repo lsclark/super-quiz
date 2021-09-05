@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AdminSessionService } from './services/admin-session.service';
+import { ViewManagerService } from './services/view-manager.service';
 
 @Component({
   selector: 'app-admin',
@@ -9,5 +10,8 @@ import { AdminSessionService } from './services/admin-session.service';
 export class AdminComponent {
   title = 'admin';
 
-  constructor(public session: AdminSessionService) {}
+  constructor(
+    public session: AdminSessionService,
+    public viewManager: ViewManagerService
+  ) {}
 }

@@ -1,7 +1,16 @@
 <div *ngIf="session.registered; else LoginBlock">
   <app-admin-navigation></app-admin-navigation>
+
+  <app-admin-player-state
+    *ngIf="viewManager.player; else MainView"
+    [player]="viewManager.player"
+  ></app-admin-player-state>
 </div>
 
 <ng-template #LoginBlock>
   <app-admin-login></app-admin-login>
+</ng-template>
+
+<ng-template #MainView>
+  <app-admin-main></app-admin-main>
 </ng-template>

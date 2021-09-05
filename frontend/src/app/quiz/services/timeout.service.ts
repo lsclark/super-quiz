@@ -4,6 +4,7 @@ import { NotificationComponent } from '../general/notification/notification.comp
 import { DSTimeoutMessage } from '../../models/quiz-message-types';
 import { ModalControllerService, ModalSpec } from './modal-controller.service';
 import { WebsocketService } from '../../services/websocket.service';
+import { SessionService } from './session.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,7 @@ import { WebsocketService } from '../../services/websocket.service';
 export class TimeoutService {
   constructor(
     private websocketService: WebsocketService,
+    private session: SessionService,
     private modalController: ModalControllerService
   ) {
     this.websocketService.messages$
@@ -26,7 +28,7 @@ export class TimeoutService {
             title: 'Wake Up',
             body: "It's been a while since you've done anything. Are you still there?",
             button: "I'm here!",
-            dismiss_cb: () => this.websocketService.reportAlive(),
+            dismiss_cb: () => this.session.reportAlive(),
           },
         };
         this.modalController.launch(modalSpec);

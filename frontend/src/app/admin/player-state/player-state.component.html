@@ -1,1 +1,63 @@
-<p>player-state works!</p>
+<div class="container">
+  <h2 class="my-2">{{ player | uppercase }}</h2>
+  <div *ngIf="questions && scores" class="row">
+    <div class="col-8">
+      <h4>Questions</h4>
+      <select
+        class="form-select form-select-lg mb-3 w-100"
+        [(ngModel)]="selected"
+      >
+        <option
+          *ngFor="let idxQuestion of questions"
+          value="{{ idxQuestion[0] }}"
+        >
+          Q{{ idxQuestion[0] + 1 }}: {{ idxQuestion[1].question }}
+        </option>
+      </select>
+      <app-admin-question-data
+        [player]="player"
+        [index]="questions[selected][0]"
+        [state]="questions[selected][1]"
+      ></app-admin-question-data>
+    </div>
+    <div class="col-4">
+      <div>
+        <h4>Add Bonus</h4>
+        <form [formGroup]="bonusForm" (ngSubmit)="submitBonus()">
+          <div class="form-group">
+            <label for="bonusDescription">Description</label>
+            <input
+              class="form-control"
+              id="bonusDescription"
+              placeholder="Enter description"
+              formControlName="description"
+            />
+          </div>
+          <div class="form-group">
+            <label for="bonusScore">Score</label>
+            <input
+              type="number"
+              class="form-control"
+              id="bonusScore"
+              placeholder="Bonus"
+              formControlName="score"
+            />
+          </div>
+          <div class="d-flex flex-row-reverse">
+            <button type="submit" class="btn btn-dark">Submit</button>
+          </div>
+        </form>
+      </div>
+      <hr />
+      <div>
+        <h4>Score Breakdown</h4>
+        <ul class="list-group">
+          <li *ngFor="let scoreItem of scores" class="list-group-item">
+            {{ scoreItem.score }} - {{ scoreItem.bonus ? "bonus - " : "" }}
+            {{ scoreItem.description }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

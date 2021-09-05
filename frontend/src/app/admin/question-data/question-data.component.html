@@ -1,0 +1,42 @@
+<table class="table table-striped">
+  <tbody>
+    <tr>
+      <th scope="row">Question</th>
+      <td>{{ state.question }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Type</th>
+      <td>{{ state.type }}</td>
+    </tr>
+    <tr *ngIf="state.choices">
+      <th scope="row">Choices</th>
+      <td>[{{ state.choices }}]</td>
+    </tr>
+    <tr *ngIf="state.tolerance">
+      <th scope="row">Tolerance</th>
+      <td>[{{ state.tolerance }}]</td>
+    </tr>
+    <tr>
+      <th scope="row">Answer</th>
+      <td>
+        {{ state.answer }}
+        <span *ngIf="state.choices">
+          ({{ state.choices[$any(state.answer)] }})
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Status</th>
+      <td>{{ QuestionState[state.status] }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Submission</th>
+      <td>{{ state.submission }}</td>
+    </tr>
+  </tbody>
+</table>
+<div class="btn-toolbar d-flex flex-row-reverse">
+  <button class="btn btn-dark" (click)="markIncorrect()">Incorrect</button>
+  <button class="btn btn-dark mr-1" (click)="markCorrect()">Correct</button>
+  <button class="btn btn-dark mr-1" (click)="markReset()">Reset</button>
+</div>

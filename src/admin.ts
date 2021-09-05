@@ -7,7 +7,7 @@ import {
 } from "./admin-message-types";
 import QuizHost from "./quiz-host";
 
-const PERIOD = 30 * 1000;
+const PERIOD = 15 * 1000;
 const AUTH_TOKEN = "i-am-leon";
 
 export class Administrator {

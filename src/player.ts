@@ -58,6 +58,7 @@ export default class Player {
   private submissions: { [index: number]: number | string } = {};
   targets: Target[];
   private timeout = new Subject<true>();
+  private lastScore: ScoreItem[] = [];
 
   constructor(
     public name: string,
@@ -160,6 +161,7 @@ export default class Player {
     let items: ScoreItem[] = [...this.computeChallengeScores()];
     items.push(this.computeQuizScore());
     items.push(this.computeTargetScore());
+    this.lastScore = items;
     return items;
   }
 
@@ -234,12 +236,15 @@ export default class Player {
             ...(question.type == "multichoice"
               ? { choices: question.choices }
               : {}),
+            ...(question.type == "numeric" && !!question.tolerance
+              ? { tolerance: question.tolerance }
+              : {}),
           };
           return data;
         },
         {}
       ),
-      scores: [],
+      scores: this.lastScore,
     };
   }
 }

@@ -4,6 +4,7 @@ import { QuestionState } from "./player";
 export type AdminQuestionState = {
   question: string;
   choices?: string[];
+  tolerance?: number;
   answer: number | string;
   type: "freetext" | "multichoice" | "numeric";
   status: QuestionState;
@@ -40,4 +41,15 @@ export interface AdminUSQuestionOverride extends AdminUS {
   state: QuestionState;
 }
 
-export type AdminMessage = AdminDSPlayerState | AdminUSConnect | AdminUSQuestionOverride;
+export interface AdminUSAwardBonus extends AdminUS {
+  type: "adminAwardBonus";
+  name: string;
+  description: string;
+  score: number;
+}
+
+export type AdminMessage =
+  | AdminDSPlayerState
+  | AdminUSConnect
+  | AdminUSQuestionOverride
+  | AdminUSAwardBonus;

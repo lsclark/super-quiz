@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AdminGameStateService } from '../services/admin-game-state.service';
+import { ViewManagerService } from '../services/view-manager.service';
 
 @Component({
   selector: 'app-admin-navigation',
@@ -7,5 +8,16 @@ import { AdminGameStateService } from '../services/admin-game-state.service';
   styleUrls: ['./navigation.component.scss'],
 })
 export class AdminNavigationComponent {
-  constructor(public stateService: AdminGameStateService) {}
+  constructor(
+    public stateService: AdminGameStateService,
+    private viewManager: ViewManagerService
+  ) {}
+
+  selectPlayer(player: string) {
+    this.viewManager.showPlayer(player);
+  }
+
+  viewMain() {
+    this.viewManager.viewMain();
+  }
 }

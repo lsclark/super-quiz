@@ -58,7 +58,10 @@ class TriviaServer {
 
         if ("admin" in message) {
           if (!this.administrator.authorise((message as AdminUS).auth)) return;
-          if (!this.admins.has(socket)) this.admins.add(socket);
+          if (!this.admins.has(socket)) {
+            this.admins.add(socket);
+            this.administrator.stateUpdate();
+          }
           console.log("ADMIN RCV:", message);
 
           this.toAdmin$.next(message);

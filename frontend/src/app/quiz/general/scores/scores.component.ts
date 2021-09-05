@@ -23,7 +23,7 @@ export class ScoresComponent {
       .subscribe((msg) => {
         this.players = msg;
         this.players.sort(
-          (p1: PlayerScore, p2: PlayerScore) => p1.score - p2.score
+          (p1: PlayerScore, p2: PlayerScore) => p2.score - p1.score
         );
         this.place = (this.players
           .map((val, idx): [string, number] => [val.name, idx])

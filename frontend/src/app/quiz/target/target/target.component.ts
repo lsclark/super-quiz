@@ -12,7 +12,7 @@ import { TargetService } from 'src/app/quiz/services/target.service';
 import { TargetInputComponent } from '../input/input.component';
 import { TargetLetters, TargetState } from '../message-types';
 
-const NUMINPUTS = 8 * 3;
+const NUMINPUTS = 10 * 3;
 
 @Component({
   selector: 'app-target',

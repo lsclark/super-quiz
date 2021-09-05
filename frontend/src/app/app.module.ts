@@ -33,6 +33,8 @@ import { AdminLoginComponent } from './admin/login/login.component';
 import { AdminNavigationComponent } from './admin/navigation/navigation.component';
 import { AdminPlayerStateComponent } from './admin/player-state/player-state.component';
 import { AdminComponent } from './admin/admin.component';
+import { AdminQuestionDataComponent } from './admin/question-data/question-data.component';
+import { MainComponent } from './admin/main/main.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +63,8 @@ import { AdminComponent } from './admin/admin.component';
     NotificationComponent,
     LoginComponent,
     WaitComponent,
+    AdminQuestionDataComponent,
+    MainComponent,
   ],
   imports: [
     BrowserModule,

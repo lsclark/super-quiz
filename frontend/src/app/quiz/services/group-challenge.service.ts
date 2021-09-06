@@ -58,7 +58,7 @@ export class GroupChallengeService {
         })
       )
       .subscribe((msg) => {
-        if (this.session.username == msg.origin) {
+        if (this.session.username == msg.origin && !!msg.victor) {
           let spec = {
             component: NotificationComponent,
             inputs: {

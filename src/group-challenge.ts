@@ -107,6 +107,28 @@ export class GroupChallengeManager {
     this.submissions$.next(sub);
   }
 
+  cancel(player: string, index: number) {
+    console.log("END", player, index);
+    this.challenges
+      .filter((challenge) => {
+        if (challenge.complete) return false;
+        if (challenge.origin.name !== player) return false;
+        if (challenge.question.index !== index) return false;
+        return true;
+      })
+      .forEach((challenge) => {
+        challenge.complete = true;
+        this.outgoing$.next({
+          type: "group-outcome",
+          name: "_broadcast",
+          victor: null,
+          origin: challenge.origin.name,
+          question: challenge.question,
+          wager: challenge.wager,
+        });
+      });
+  }
+
   closeout(challenge: GroupChallenge, victor: Player) {
     challenge.complete = true;
     challenge.origin.setQuestionState(

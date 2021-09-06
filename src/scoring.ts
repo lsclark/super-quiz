@@ -4,10 +4,19 @@ import Player from "./player";
 import QuizHost from "./quiz-host";
 
 export class Scorer {
+  private manualBonuses: [string, ScoreItem][] = [];
+
   constructor(
     private outgoing$: Subject<QuizMessage>,
     private quizHost: QuizHost
   ) {}
+
+  addManual(player: string, description: string, value: number): void {
+    this.manualBonuses.push([
+      player,
+      { bonus: true, description: description, score: value },
+    ]);
+  }
 
   private scoreItems(): { [key: string]: ScoreItem[] } {
     let scores = this.makeBaseScores();
@@ -63,7 +72,7 @@ export class Scorer {
   }
 
   private makeBonuses(): [string, ScoreItem][] {
-    return [...this.targetBonus()];
+    return [...this.manualBonuses, ...this.targetBonus()];
   }
 
   private targetBonus(): [string, ScoreItem][] {

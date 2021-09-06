@@ -103,7 +103,20 @@ export class PersonalChallengeManager {
     });
   }
 
-  timeout(challenge: PersonalChallenge) {
+  cancel(origin: string, index: number) {
+    this.challenges
+      .filter((challenge) => {
+        if (challenge.complete) return false;
+        if (challenge.origin.name !== origin) return false;
+        if (challenge.question.index !== index) return false;
+        return true;
+      })
+      .forEach((challenge) => {
+        this.timeout(challenge, true);
+      });
+  }
+
+  timeout(challenge: PersonalChallenge, cancel = false) {
     if (challenge.complete) return;
     challenge.origin.setQuestionState(
       challenge.question.index,
@@ -117,6 +130,7 @@ export class PersonalChallengeManager {
         origin: challenge.origin.name,
         delegate: challenge.delegate.name,
         question: challenge.question,
+        cancel: cancel,
       };
       this.outgoing$.next(timeoutMsg);
     });

@@ -57,7 +57,9 @@ export class Target {
   }
 
   checkSubmission(word: string): boolean {
+    word = word.toLowerCase();
     if (word.length <= 3) return false;
+    if (word.length > 9) return false;
     if (this.submissions.has(word)) return false;
     if (!word.includes(this.centre)) return false;
     let bins: { [key: string]: number } = {};

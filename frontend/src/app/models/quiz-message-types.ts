@@ -138,6 +138,7 @@ export type DSPersonalChallengeTimeout = {
   origin: string;
   delegate: string;
   question: QuestionDisplay;
+  cancel?: boolean;
 };
 
 export type USConnectMessage = {

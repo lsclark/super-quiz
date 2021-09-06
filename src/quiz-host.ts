@@ -12,8 +12,8 @@ export default class QuizHost {
 
   private questionLoader: QuestionLoader;
   private targetManager: TargetManager;
-  private groupChallengeManager: GroupChallengeManager;
-  private personalChallengeManager: PersonalChallengeManager;
+  groupChallengeManager: GroupChallengeManager;
+  personalChallengeManager: PersonalChallengeManager;
   scorer: Scorer;
 
   players: { [key: string]: Player } = {};
@@ -39,18 +39,19 @@ export default class QuizHost {
     this.incoming$.subscribe((message) => this.routeIncoming(message));
   }
 
-  getPlayer(name: string) {
+  getPlayer(name: string): Player | undefined {
     if (!(name in this.players)) {
       this.newPlayer(name);
     }
     let player = this.players[name];
-    player.accessed();
+    if (player) player.accessed();
     return player;
   }
 
   async routeIncoming(message: QuizMessage) {
     console.log(`Incoming: ${JSON.stringify(message)}`);
     let player = this.getPlayer(message.name);
+    if (!player) return;
     switch (message.type) {
       case "connect":
         this.handleConnect(player);
@@ -65,10 +66,12 @@ export default class QuizHost {
         break;
 
       case "personal-origin":
+        let delegate = this.getPlayer(message.delegate);
+        if (!delegate) return;
         this.personalChallengeManager.create(
           player,
           player.getQuestion(message.index),
-          this.getPlayer(message.delegate)
+          delegate
         );
         break;
 
@@ -143,11 +146,7 @@ export default class QuizHost {
   ) {
     if (await player.submitAnswer(index, submission, false))
       this.scorer.distributeScores();
-    this.outgoing$.next({
-      type: "player_status",
-      name: player.name,
-      status: player.getPlayerState(),
-    });
+    this.sendPlayerState(player);
   }
 
   handleTargetSubmit(player: Player, letters: string, submission: string) {
@@ -162,13 +161,17 @@ export default class QuizHost {
       score: score,
     });
     if (valid) {
-      this.outgoing$.next({
-        type: "player_status",
-        name: player.name,
-        status: player.getPlayerState(),
-      });
+      this.sendPlayerState(player);
       this.scorer.distributeScores();
     }
+  }
+
+  sendPlayerState(player: Player) {
+    this.outgoing$.next({
+      type: "player_status",
+      name: player.name,
+      status: player.getPlayerState(),
+    });
   }
 
   timeoutWarning(name: string) {

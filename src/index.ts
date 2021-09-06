@@ -38,7 +38,8 @@ class TriviaServer {
     this.administrator = new Administrator(
       this.quizHost,
       this.toAdmin$,
-      this.fromAdmin$
+      this.fromAdmin$,
+      this.fromQuizHost$
     );
 
     this.setupRoutes();
@@ -100,7 +101,7 @@ class TriviaServer {
     });
   }
 
-  messageSender(message: QuizMessage) {
+  private messageSender(message: QuizMessage) {
     let serialised = JSON.stringify(message);
     if (message.name == "_broadcast") {
       for (let socket of Object.values(this.players)) {
@@ -114,7 +115,7 @@ class TriviaServer {
     }
   }
 
-  adminSender(message: AdminMessage) {
+  private adminSender(message: AdminMessage) {
     console.log("ADMIN SEND:", message);
     let serialised = JSON.stringify(message);
     for (const socket of this.admins) {

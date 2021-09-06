@@ -196,6 +196,7 @@ export default class Player {
   }
 
   submitTarget(letters: string, submission: string): [boolean, number] {
+    submission = submission.toLowerCase();
     let target = this.targets.filter((target) => target.equivalent(letters))[0];
     return [target.checkSubmission(submission), target.getScore()];
   }

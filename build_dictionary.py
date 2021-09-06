@@ -12,7 +12,7 @@ for dictionary in dictionaries:
                 "'" in word
                 or word[0].isupper()
                 or len(word) < 4
-                or len(word) > 9
+                # or len(word) > 9
                 or not re.match(r"^[a-z]*$", word)
             ):
                 continue

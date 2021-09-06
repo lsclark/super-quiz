@@ -98,15 +98,20 @@ export class PersonalChallengeService {
           component: NotificationComponent,
           identifier: identifier,
           inputs: {
-            title: this.session.username == msg.origin ? 'Refund' : 'Too Slow',
-            body:
-              this.session.username == msg.origin
-                ? `${
-                    msg.delegate
-                  } took too long. You can try to answer question ${
-                    msg.question.index + 1
-                  } again.`
-                : `You took too long to answer ${msg.origin}'s question.`,
+            title: msg.cancel
+              ? 'Challenge cancelled'
+              : this.session.username == msg.origin
+              ? 'Refund'
+              : 'Too Slow',
+            body: msg.cancel
+              ? 'The challenge was cancelled.'
+              : this.session.username == msg.origin
+              ? `${
+                  msg.delegate
+                } took too long. You can try to answer question ${
+                  msg.question.index + 1
+                } again.`
+              : `You took too long to answer ${msg.origin}'s question.`,
             button: "Let's move on",
           },
         };

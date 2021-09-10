@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Lexicography Challenge</h4>
+</div>
+<div class="modal-body">
+  <p>Longest (real) word wins!</p>
+  <p>
+    0.333 points per letter. At least nine letters to qualify. 30 seconds. Go...
+  </p>
+  <div class="form-group">
+    <input class="w-100" id="response" ngbAutofocus [(ngModel)]="response" />
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="submit()">
+    Submit
+  </button>
+</div>

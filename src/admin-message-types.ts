@@ -48,8 +48,18 @@ export interface AdminUSAwardBonus extends AdminUS {
   score: number;
 }
 
+export interface AdminUSGameControl extends AdminUS {
+  type: "adminGameControl";
+  state: "start" | "stop";
+}
+export interface AdminUSChallengeStart extends AdminUS {
+  type: "adminStartChallenge";
+  challenge: "vocabulary" | "collision";
+}
 export type AdminMessage =
   | AdminDSPlayerState
   | AdminUSConnect
   | AdminUSQuestionOverride
-  | AdminUSAwardBonus;
+  | AdminUSAwardBonus
+  | AdminUSGameControl
+  | AdminUSChallengeStart;

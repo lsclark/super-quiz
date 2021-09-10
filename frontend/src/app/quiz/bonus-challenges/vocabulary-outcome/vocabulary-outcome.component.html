@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Vocabulary Challenge</h4>
+</div>
+
+<div class="modal-body">
+  <p *ngIf="winners.length == 0">Noone gets any points</p>
+  <p *ngIf="winners.length == 1">{{ winners[0] }} gets {{ points }} points</p>
+  <p *ngIf="winners.length > 1">
+    {{ makeList(winners) }} get {{ points }} points
+  </p>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Player</th>
+        <th scope="col">Submission</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let submission of submissions">
+        <td>{{ submission[0] }}</td>
+        <td [class.incorrect]="!submission[2]">{{ submission[1] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="dismiss()">
+    Close
+  </button>
+</div>

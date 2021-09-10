@@ -1,4 +1,5 @@
 import { Subject } from "rxjs";
+import { CollisionChallenge, VocabularyChallenge } from "./bonus-challenges";
 import { GroupChallengeManager } from "./group-challenge";
 import { QuizMessage } from "./message-types";
 import { PersonalChallengeManager } from "./personal-challenge";
@@ -8,6 +9,8 @@ import { Scorer } from "./scoring";
 import { TargetManager } from "./target";
 
 export default class QuizHost {
+  private active: boolean = false;
+  private pendingMessages: QuizMessage[] = [];
   update$: Subject<boolean>;
 
   private questionLoader: QuestionLoader;
@@ -15,6 +18,9 @@ export default class QuizHost {
   groupChallengeManager: GroupChallengeManager;
   personalChallengeManager: PersonalChallengeManager;
   scorer: Scorer;
+
+  private vocabChallenge?: VocabularyChallenge;
+  private collisionChallenge?: CollisionChallenge;
 
   players: { [key: string]: Player } = {};
 
@@ -36,7 +42,21 @@ export default class QuizHost {
       this
     );
 
-    this.incoming$.subscribe((message) => this.routeIncoming(message));
+    this.incoming$.subscribe((message) => {
+      this.active
+        ? this.routeIncoming(message)
+        : this.pendingMessages.push(message);
+    });
+  }
+
+  startQuiz() {
+    this.active = true;
+    this.pendingMessages.forEach((msg) => this.routeIncoming(msg));
+    this.pendingMessages = [];
+  }
+
+  stopQuiz() {
+    this.active = false;
   }
 
   getPlayer(name: string): Player | undefined {
@@ -99,6 +119,14 @@ export default class QuizHost {
           message.question,
           message.submission
         );
+        break;
+
+      case "vocabulary_challenge_submit":
+        this.vocabChallenge?.submit(message.name, message.submission);
+        break;
+
+      case "collision_challenge_submit":
+        this.collisionChallenge?.submit(message.name, message.submission);
         break;
 
       default:
@@ -183,5 +211,37 @@ export default class QuizHost {
 
   timedOut(name: string) {
     this.scorer.distributeScores();
+  }
+
+  startVocabChallenge() {
+    if (this.vocabChallenge && !this.vocabChallenge.complete) return;
+    this.vocabChallenge = new VocabularyChallenge(
+      Object.values(this.players)
+        .filter((plyr) => plyr.alive)
+        .map((plyr) => plyr.name),
+      this.targetManager,
+      this.outgoing$,
+      this
+    );
+    this.outgoing$.next({
+      type: "vocabulary_challenge_start",
+      name: "_broadcast",
+    });
+  }
+
+  startCollisionChallenge() {
+    if (this.collisionChallenge && !this.collisionChallenge.complete) return;
+    this.collisionChallenge = new CollisionChallenge(
+      Object.values(this.players)
+        .filter((plyr) => plyr.alive)
+        .map((plyr) => plyr.name),
+      this.outgoing$,
+      this
+    );
+    this.outgoing$.next({
+      type: "collision_challenge_start",
+      name: "_broadcast",
+      players: this.collisionChallenge.players.length,
+    });
   }
 }

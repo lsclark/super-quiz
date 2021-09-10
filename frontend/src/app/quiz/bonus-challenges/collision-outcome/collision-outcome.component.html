@@ -1,0 +1,29 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Collision Challenge</h4>
+</div>
+
+<div class="modal-body">
+  <p *ngIf="!winner">Noone gets any points</p>
+  <p *ngIf="winner">{{ winner }} gets {{ points }} points</p>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Player</th>
+        <th scope="col">Submission</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let submission of submissions">
+        <td>{{ submission[0] }}</td>
+        <td>{{ submission[1] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="dismiss()">
+    Close
+  </button>
+</div>

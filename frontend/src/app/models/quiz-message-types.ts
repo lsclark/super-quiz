@@ -176,6 +176,45 @@ export type DSTargetMarking = {
   score: number;
 };
 
+export type DSCollisionChallengeStart = {
+  name: string;
+  type: 'collision_challenge_start';
+  players: number;
+};
+
+export type USCollisionChallengeSubmit = {
+  name: string;
+  type: 'collision_challenge_submit';
+  submission: number;
+};
+
+export type DSCollisionChallengeOutcome = {
+  name: string;
+  type: 'collision_challenge_outcome';
+  winner: string;
+  points: number | null;
+  submissions: [string, number][];
+};
+
+export type DSVocabularyChallengeStart = {
+  name: string;
+  type: 'vocabulary_challenge_start';
+};
+
+export type USVocabularyChallengeSubmit = {
+  name: string;
+  type: 'vocabulary_challenge_submit';
+  submission: string;
+};
+
+export type DSVocabularyChallengeOutcome = {
+  name: string;
+  type: 'vocabulary_challenge_outcome';
+  winners: string[];
+  points: number;
+  submissions: [string, string, boolean][];
+};
+
 export type QuizMessage =
   | USConnectMessage
   | DSTimeoutMessage
@@ -194,4 +233,10 @@ export type QuizMessage =
   | USGroupChallengeOrigin
   | USGroupChallengeSubmit
   | USPersonalChallengeOrigin
-  | USPersonalChallengeSubmit;
+  | USPersonalChallengeSubmit
+  | USVocabularyChallengeSubmit
+  | DSVocabularyChallengeOutcome
+  | DSVocabularyChallengeStart
+  | DSCollisionChallengeOutcome
+  | USCollisionChallengeSubmit
+  | DSCollisionChallengeStart;

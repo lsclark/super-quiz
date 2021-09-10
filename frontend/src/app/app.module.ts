@@ -35,6 +35,10 @@ import { AdminPlayerStateComponent } from './admin/player-state/player-state.com
 import { AdminComponent } from './admin/admin.component';
 import { AdminQuestionDataComponent } from './admin/question-data/question-data.component';
 import { MainComponent } from './admin/main/main.component';
+import { VocabularyChallengeComponent } from './quiz/bonus-challenges/vocabulary/vocabulary.component';
+import { CollisionChallengeComponent } from './quiz/bonus-challenges/collision/collision.component';
+import { CollisionChallengeOutcomeComponent } from './quiz/bonus-challenges/collision-outcome/collision-outcome.component';
+import { VocabularyChallengeOutcomeComponent } from './quiz/bonus-challenges/vocabulary-outcome/vocabulary-outcome.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +69,10 @@ import { MainComponent } from './admin/main/main.component';
     WaitComponent,
     AdminQuestionDataComponent,
     MainComponent,
+    VocabularyChallengeComponent,
+    CollisionChallengeComponent,
+    CollisionChallengeOutcomeComponent,
+    VocabularyChallengeOutcomeComponent,
   ],
   imports: [
     BrowserModule,

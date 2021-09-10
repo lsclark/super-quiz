@@ -4,6 +4,8 @@ import {
   AdminDSPlayerState,
   AdminMessage,
   AdminUSAwardBonus,
+  AdminUSChallengeStart,
+  AdminUSGameControl,
   AdminUSQuestionOverride,
 } from "./admin-message-types";
 import { QuizMessage } from "./message-types";
@@ -40,6 +42,37 @@ export class Administrator {
         filter((msg): msg is AdminUSAwardBonus => msg.type == "adminAwardBonus")
       )
       .subscribe((msg) => this.awardBonus(msg));
+
+    this.incoming
+      .pipe(
+        filter(
+          (msg): msg is AdminUSGameControl => msg.type == "adminGameControl"
+        )
+      )
+      .subscribe((msg) => {
+        if (msg.state == "start") this.quizHost.startQuiz();
+        else if (msg.state == "stop") this.quizHost.stopQuiz();
+      });
+
+    this.incoming
+      .pipe(
+        filter(
+          (msg): msg is AdminUSChallengeStart =>
+            msg.type == "adminStartChallenge"
+        )
+      )
+      .subscribe((msg) => {
+        switch (msg.challenge) {
+          case "collision":
+            this.quizHost.startCollisionChallenge();
+            break;
+          case "vocabulary":
+            this.quizHost.startVocabChallenge();
+            break;
+          default:
+            break;
+        }
+      });
   }
 
   authorise(token: string): boolean {

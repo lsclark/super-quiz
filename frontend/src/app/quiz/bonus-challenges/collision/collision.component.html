@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Free Points!</h4>
+</div>
+<div class="modal-body">
+  <p>
+    How many points would you like? The highest unique request will be
+    fulfilled.
+  </p>
+  <div class="form-group">
+    <div
+      id="request-choices"
+      class="btn-group btn-group-toggle w-100"
+      ngbRadioGroup
+    >
+      <label ngbButtonLabel class="btn-light" *ngFor="let request of choices">
+        <input type="radio" (click)="selectChoice(request)" ngbButton />
+        {{ request }}
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="submit()">
+    Gimme
+  </button>
+</div>

@@ -1,0 +1,129 @@
+{
+  "source": "Monash Questions - Hand Generated",
+  "questions": [
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": ["Monash Club", "Hargrave-Andrew Library", "New Horizons"],
+      "answer": 1,
+      "points": 2,
+      "question": "Which building occupies the address 13 College Walk, Monash Clayton?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": [
+        "John Monash Science School",
+        "Chancellery",
+        "North One Carpark"
+      ],
+      "answer": 2,
+      "points": 2,
+      "question": "Which building occupies the address 10 Research Way, Monash Clayton?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": [
+        "Sir Louis Matheson Library",
+        "Old Science Laboratories",
+        "Menzies Building"
+      ],
+      "answer": 0,
+      "points": 2,
+      "question": "What at Monash Clayton is Building Four (4)?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": [
+        "Robert Blackwood Hall",
+        "Biology - First Year",
+        "Menzies Building"
+      ],
+      "answer": 2,
+      "points": 2,
+      "question": "Which building occupies the address 20 Chancellors Walk, Monash Clayton?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": [
+        "Religious Centre",
+        "Law Building and Library",
+        "South-West One Carpark"
+      ],
+      "answer": 0,
+      "points": 2,
+      "question": "Which building occupies the address 38 Exhibition Walk, Monash Clayton?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": [
+        "Robert Blackwood Hall",
+        "Monash Sport",
+        "Sir Louis Matheson Library"
+      ],
+      "answer": 1,
+      "points": 2,
+      "question": "What at Monash Clayton is Building One (1)?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": ["Chancellery", "Performing Arts", "Robert Blackwood Hall"],
+      "answer": 2,
+      "points": 2,
+      "question": "Which building occupies the address 49 Scenic Boulevard, Monash Clayton?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": ["Monash Club", "Monash Sport", "Campus Centre"],
+      "answer": 0,
+      "points": 2,
+      "question": "Which building occupies the address 32 Exhibition Walk, Monash Clayton?"
+    },
+    {
+      "type": "numeric",
+      "category": "monash",
+      "answer": 57,
+      "points": 3,
+      "tolerance": 3,
+      "question": "What is Monash's Times Higher Education 2022 World Ranking (to within 3 places)?"
+    },
+    {
+      "type": "numeric",
+      "category": "monash",
+      "answer": 80,
+      "points": 3,
+      "tolerance": 3,
+      "question": "What is Monash's 2021 Academic Ranking of World Universities (Shanghai) Ranking (to within 3 places)?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": [
+        "The University of Queensland",
+        "Monash University",
+        "University of Sydney"
+      ],
+      "answer": 0,
+      "points": 2,
+      "question": "Which is ranked highest in the Times Higher Education 2022 World Rankings?"
+    },
+    {
+      "type": "multichoice",
+      "category": "monash",
+      "choices": [
+        "UNSW",
+        "The University of Queensland",
+        "University of Sydney"
+      ],
+      "answer": 1,
+      "points": 2,
+      "question": "According to the 2021 (Shanghai) Academic Ranking of World Universities, what is Australia's number two university?"
+    }
+  ]
+}

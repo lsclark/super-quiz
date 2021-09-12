@@ -1,11 +1,16 @@
 import { Component } from '@angular/core';
+import { Observable, timer } from 'rxjs';
 import {
   AdminUSChallengeStart,
   AdminUSGameControl,
+  AdminUSTerminate,
 } from 'src/app/models/admin-message-types';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { AdminGameStateService } from '../services/admin-game-state.service';
 import { AdminSessionService } from '../services/admin-session.service';
+
+const TERMINATION_TIME = 5 * 1000;
+const TERMINATION_CLICKS = 3;
 
 @Component({
   selector: 'app-admin-main',
@@ -13,6 +18,9 @@ import { AdminSessionService } from '../services/admin-session.service';
   styleUrls: ['./main.component.scss'],
 })
 export class MainComponent {
+  termClicks: number = 0;
+  private termTimer?: Observable<number>;
+
   constructor(
     public gameStateService: AdminGameStateService,
     private session: AdminSessionService,
@@ -37,5 +45,25 @@ export class MainComponent {
       challenge: challenge,
     };
     this.websocket.send(msg);
+  }
+
+  terminate() {
+    this.termClicks++;
+
+    if (!this.termTimer) {
+      this.termTimer = timer(TERMINATION_TIME);
+      this.termTimer.subscribe(() => {
+        if (this.termClicks > TERMINATION_CLICKS) {
+          let msg: AdminUSTerminate = {
+            admin: true,
+            auth: this.session.token,
+            type: 'adminTerminate',
+          };
+          this.websocket.send(msg);
+        }
+        this.termClicks = 0;
+        this.termTimer = undefined;
+      });
+    }
   }
 }

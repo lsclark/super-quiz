@@ -52,14 +52,21 @@ export interface AdminUSGameControl extends AdminUS {
   type: "adminGameControl";
   state: "start" | "stop";
 }
+
 export interface AdminUSChallengeStart extends AdminUS {
   type: "adminStartChallenge";
   challenge: "vocabulary" | "collision";
 }
+
+export interface AdminUSTerminate extends AdminUS {
+  type: "adminTerminate";
+}
+
 export type AdminMessage =
   | AdminDSPlayerState
   | AdminUSConnect
   | AdminUSQuestionOverride
   | AdminUSAwardBonus
   | AdminUSGameControl
-  | AdminUSChallengeStart;
+  | AdminUSChallengeStart
+  | AdminUSTerminate;

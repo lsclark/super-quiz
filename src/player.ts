@@ -34,6 +34,7 @@ type ChallengeScore = {
     | "group-responder"
     | "personal-origin"
     | "personal-delegate";
+  player: string;
   points: number;
 };
 
@@ -53,12 +54,14 @@ export default class Player {
   private questions: Question[];
   private indexes: { [index: number]: Question };
   private displayQuestions: QuestionColumn[];
-  private state: { [index: number]: QuestionState } = {};
-  private challenges: ChallengeScore[] = [];
+  state: { [index: number]: QuestionState } = {};
+  challenges: ChallengeScore[] = [];
   private submissions: { [index: number]: number | string } = {};
   targets: Target[];
   private timeout = new Subject<true>();
   private lastScore: ScoreItem[] = [];
+
+  targetSubmissions = new Set<string>();
 
   constructor(
     public name: string,
@@ -134,10 +137,10 @@ export default class Player {
 
   private computeChallengeScores(): ScoreItem[] {
     return [
-      ["group-origin", "GC Origin"],
-      ["group-responder", "GC Winnings"],
-      ["personal-origin", "Shared Origin"],
-      ["personal-delegate", "Shared Delegate"],
+      ["group-origin", "Lost Betting Against Intellects"],
+      ["group-responder", "Gains from Others' Wagers"],
+      ["personal-origin", "Help from Friends"],
+      ["personal-delegate", "Gains Helping Friends"],
     ]
       .map(([type, desc]): [string, number] => {
         return [
@@ -187,16 +190,20 @@ export default class Player {
       | "group-responder"
       | "personal-origin"
       | "personal-delegate",
+    player: string,
     points: number
   ) {
     this.challenges.push({
       type: type,
+      player: player,
       points: points,
     });
   }
 
   submitTarget(letters: string, submission: string): [boolean, number] {
     submission = submission.toLowerCase();
+    if (submission.length <= 9 && submission.length > 3)
+      this.targetSubmissions.add(submission);
     let target = this.targets.filter((target) => target.equivalent(letters))[0];
     return [target.checkSubmission(submission), target.getScore()];
   }

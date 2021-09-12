@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { PlayerScore, QuizMessage, ScoreItem } from "./message-types";
-import Player from "./player";
+import Player, { QuestionState } from "./player";
 import QuizHost from "./quiz-host";
 
 export class Scorer {
@@ -72,10 +72,17 @@ export class Scorer {
   }
 
   private makeBonuses(): [string, ScoreItem][] {
-    return [...this.manualBonuses, ...this.targetBonus()];
+    return [
+      ...this.manualBonuses,
+      ...this.targetCorrectBonus(),
+      ...this.targetSubmissionsBonus(),
+      ...this.delegatorBonus(),
+      ...this.quizNonMasterBonus(),
+      ...this.profiteerBonus(),
+    ];
   }
 
-  private targetBonus(): [string, ScoreItem][] {
+  private targetCorrectBonus(): [string, ScoreItem][] {
     let maxNames: string[] = [];
     let maxSubmits: number = 1;
     for (let [name, player] of Object.entries(this.quizHost.players)) {
@@ -96,8 +103,125 @@ export class Scorer {
         name,
         {
           bonus: true,
-          description: "Most Target Submissions",
-          score: maxNames.length > 1 ? 2.5 : 5,
+          description: "Most Correct Target Words",
+          score: maxNames.length > 1 ? 3 : 6,
+        },
+      ];
+    });
+  }
+
+  private targetSubmissionsBonus(): [string, ScoreItem][] {
+    let maxNames: string[] = [];
+    let maxSubmits: number = 1;
+    for (let [name, player] of Object.entries(this.quizHost.players)) {
+      if (!player.alive) continue;
+      let submits = player.targetSubmissions.size;
+      if (submits > maxSubmits) {
+        maxNames = [name];
+        maxSubmits = submits;
+      } else if (submits == maxSubmits) {
+        maxNames.push(name);
+      }
+    }
+    return maxNames.map((name) => {
+      return [
+        name,
+        {
+          bonus: true,
+          description: "Most Target Tries",
+          score: maxNames.length > 1 ? 1.5 : 3,
+        },
+      ];
+    });
+  }
+
+  private quizNonMasterBonus(): [string, ScoreItem][] {
+    let maxNames: string[] = [];
+    let maxWrongs: number = 1;
+    for (let [name, player] of Object.entries(this.quizHost.players)) {
+      if (!player.alive) continue;
+      let wrongs = Object.values(player.state).reduce(
+        (agg, state) => (state == QuestionState.Incorrect ? agg + 1 : agg),
+        0
+      );
+      if (wrongs > maxWrongs) {
+        maxNames = [name];
+        maxWrongs = wrongs;
+      } else if (wrongs == maxWrongs) {
+        maxNames.push(name);
+      }
+    }
+    return maxNames.map((name) => {
+      return [
+        name,
+        {
+          bonus: true,
+          description: "Quiz Dilettante",
+          score: maxNames.length > 1 ? 2 : 4,
+        },
+      ];
+    });
+  }
+
+  private delegatorBonus(): [string, ScoreItem][] {
+    let maxNames: string[] = [];
+    let maxDelegations: number = 1;
+    for (let [name, player] of Object.entries(this.quizHost.players)) {
+      if (!player.alive) continue;
+      let delegations = Object.values(player.state).reduce(
+        (agg, state) =>
+          state == QuestionState.DelegatedComplete ||
+          state == QuestionState.DelegatedPending
+            ? agg + 1
+            : agg,
+        0
+      );
+      if (delegations > maxDelegations) {
+        maxNames = [name];
+        maxDelegations = delegations;
+      } else if (delegations == maxDelegations) {
+        maxNames.push(name);
+      }
+    }
+    return maxNames.map((name) => {
+      return [
+        name,
+        {
+          bonus: true,
+          description: "The Delegator",
+          score: maxNames.length > 1 ? 1.5 : 3,
+        },
+      ];
+    });
+  }
+
+  private profiteerBonus(): [string, ScoreItem][] {
+    let maxNames: string[] = [];
+    let maxProfits: number = 0.001;
+    for (let [name, player] of Object.entries(this.quizHost.players)) {
+      if (!player.alive) continue;
+      let profits = Object.values(player.challenges).reduce(
+        (agg, challenge) =>
+          challenge.type == "group-responder" ||
+          challenge.type == "personal-delegate"
+            ? agg + challenge.points
+            : agg,
+        0
+      );
+      if (profits > maxProfits) {
+        maxNames = [name];
+        maxProfits = profits;
+      } else if (profits == maxProfits) {
+        maxNames.push(name);
+      }
+    }
+    return maxNames.map((name) => {
+      return [
+        name,
+        {
+          bonus: true,
+          description: "The Profiteer",
+          score: maxNames.length > 1 ? 1.5 : 3,
         },
       ];
     });

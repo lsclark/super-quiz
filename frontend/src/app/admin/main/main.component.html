@@ -29,6 +29,14 @@
       <button class="btn btn-danger w-100 my-1" (click)="gameState('stop')">
         Stop Game
       </button>
+      <button
+        class="btn w-100 my-1"
+        [class.btn-dark]="termClicks == 0"
+        [class.btn-light]="termClicks != 0"
+        (click)="terminate()"
+      >
+        Terminate Server
+      </button>
       <hr />
       <button
         class="btn btn-dark w-100 my-1"

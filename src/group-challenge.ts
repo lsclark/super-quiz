@@ -136,10 +136,22 @@ export class GroupChallengeManager {
       QuestionState.DelegatedComplete
     );
     if (victor.name == challenge.origin.name) {
-      challenge.origin.addChallenge("group-origin", challenge.wager);
+      challenge.origin.addChallenge(
+        "group-origin",
+        challenge.origin.name,
+        challenge.wager
+      );
     } else {
-      victor.addChallenge("group-responder", challenge.wager);
-      challenge.origin.addChallenge("group-origin", -challenge.wager);
+      victor.addChallenge(
+        "group-responder",
+        challenge.origin.name,
+        challenge.wager
+      );
+      challenge.origin.addChallenge(
+        "group-origin",
+        victor.name,
+        -challenge.wager
+      );
     }
     this.outgoing$.next({
       type: "group-outcome",

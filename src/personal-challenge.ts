@@ -77,9 +77,14 @@ export class PersonalChallengeManager {
     if (correct) {
       challenge.delegate.addChallenge(
         "personal-delegate",
+        challenge.origin.name,
         question.points! / 2
       );
-      challenge.origin.addChallenge("personal-origin", question.points! / 2);
+      challenge.origin.addChallenge(
+        "personal-origin",
+        challenge.delegate.name,
+        question.points! / 2
+      );
 
       this.quizHost.scorer.distributeScores();
       this.outgoing$.next({

@@ -1,6 +1,7 @@
 .vscode
 
 questions/*
+!questions/*.json
 frontend/src/assets/*
 
 # Logs

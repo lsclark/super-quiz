@@ -1,5 +1,6 @@
 import express from "express";
 import WebSocket from "ws";
+import { Server } from "http";
 import QuizHost from "./quiz-host";
 import { Subject } from "rxjs";
 import { QuizMessage } from "./message-types";
@@ -9,7 +10,9 @@ import { Administrator } from "./admin";
 const port = process.env.TRIVIA_PORT || 8080;
 
 class TriviaServer {
-  app: express.Express;
+  private app: express.Express;
+  private httpServer?: Server;
+
   clients = new Set<WebSocket>();
   players: { [key: string]: WebSocket } = {};
   admins = new Set<WebSocket>();
@@ -65,6 +68,9 @@ class TriviaServer {
           }
           console.log("ADMIN RCV:", message);
 
+          if (message.type == "adminTerminate")
+            process.kill(process.pid, "SIGINT");
+
           this.toAdmin$.next(message);
         } else {
           name = message.name;
@@ -91,14 +97,26 @@ class TriviaServer {
   }
 
   start() {
-    const server = this.app.listen(port, () => {
+    this.httpServer = this.app.listen(port, () => {
       console.log(`Listening on http://localhost:${port}`);
     });
-    server.on("upgrade", (request, socket, head) => {
+    this.httpServer.on("upgrade", (request, socket, head) => {
       this.wsServer.handleUpgrade(request, socket, head, (socket) => {
         this.wsServer.emit("connection", socket, request);
       });
     });
+    return new Promise<void>((resolve, reject) => {
+      this.httpServer?.on("close", () => {
+        console.log("Quiz server terminated");
+        resolve();
+      });
+    });
+  }
+
+  stop() {
+    console.log("Server Stopping");
+    this.httpServer?.close();
+    this.wsServer.close();
   }
 
   private messageSender(message: QuizMessage) {
@@ -116,6 +134,7 @@ class TriviaServer {
   }
 
   private adminSender(message: AdminMessage) {
+    if (!this.admins.size) return;
     console.log("ADMIN SEND:", message);
     let serialised = JSON.stringify(message);
     for (const socket of this.admins) {
@@ -128,3 +147,8 @@ class TriviaServer {
 
 let server = new TriviaServer();
 server.start();
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM Received: Terminating");
+  server.stop();
+});

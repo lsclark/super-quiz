@@ -69,10 +69,15 @@ export interface AdminUSChallengeStart extends AdminUS {
   challenge: 'vocabulary' | 'collision';
 }
 
+export interface AdminUSTerminate extends AdminUS {
+  type: 'adminTerminate';
+}
+
 export type AdminMessage =
   | AdminDSPlayerState
   | AdminUSConnect
   | AdminUSQuestionOverride
   | AdminUSAwardBonus
   | AdminUSGameControl
-  | AdminUSChallengeStart;
+  | AdminUSChallengeStart
+  | AdminUSTerminate;

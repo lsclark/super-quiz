@@ -1,0 +1,6 @@
+<span
+  class="badge"
+  [class.badge-success]="maximum"
+  [class.badge-secondary]="!maximum"
+  >{{ score || 0 | number: "1.1-2" }}
+</span>

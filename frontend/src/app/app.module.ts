@@ -39,6 +39,7 @@ import { VocabularyChallengeComponent } from './quiz/bonus-challenges/vocabulary
 import { CollisionChallengeComponent } from './quiz/bonus-challenges/collision/collision.component';
 import { CollisionChallengeOutcomeComponent } from './quiz/bonus-challenges/collision-outcome/collision-outcome.component';
 import { VocabularyChallengeOutcomeComponent } from './quiz/bonus-challenges/vocabulary-outcome/vocabulary-outcome.component';
+import { TabScoreComponent } from './quiz/target/tab-score/tab-score.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { VocabularyChallengeOutcomeComponent } from './quiz/bonus-challenges/voc
     CollisionChallengeComponent,
     CollisionChallengeOutcomeComponent,
     VocabularyChallengeOutcomeComponent,
+    TabScoreComponent,
   ],
   imports: [
     BrowserModule,

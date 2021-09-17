@@ -40,7 +40,6 @@ export class SubmissionComponent implements OnInit {
   }
 
   selectChoice(event: number) {
-    console.log(event);
     this.saveService.set(this.question.index, event);
     this.multiChoice = event;
   }

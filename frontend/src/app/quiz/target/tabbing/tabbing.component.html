@@ -12,22 +12,12 @@
   >
     <a ngbNavLink
       >Target {{ idx + 1 }}
-      <span
-        class="badge"
-        [class.badge-success]="
-          tabScores[idx] == tabScores[scored] && tabScores[idx] > 0
-        "
-        [class.badge-secondary]="
-          tabScores[idx] != tabScores[scored] || tabScores[idx] == 0
-        "
-        >{{ tabScores[idx] || 0 | number: "1.1-2" }}</span
-      ></a
-    >
-    <ng-template ngbNavContent>
-      <app-target
+      <app-quiz-target-tab-score
         [targetSpec]="target.value"
-        (scoreUpdate)="receiveScore(idx, $event)"
-      ></app-target>
+      ></app-quiz-target-tab-score
+    ></a>
+    <ng-template ngbNavContent>
+      <app-target [targetSpec]="target.value"></app-target>
     </ng-template>
   </ng-container>
 </nav>

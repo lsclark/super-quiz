@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import {
   DSPlayerStatusMessage,
   DSScoreboardMessage,
@@ -34,13 +34,7 @@ export class PlayersService {
 
   subscribe() {
     if (!this.websocketService.messages$) this.websocketService.connect();
-    let base$ = this.websocketService.messages$?.pipe(
-      tap({
-        next: (msg) => console.log(`Received: ${msg.type}`),
-        error: (error) => console.log(`Connection error: ${error}`),
-        complete: () => console.log('Connection closed'),
-      })
-    );
+    let base$ = this.websocketService.messages$;
     this.playerState$ = base$?.pipe(
       filter((msg): msg is DSPlayerStatusMessage => {
         return msg.type == 'player_status';

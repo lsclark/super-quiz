@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnInit,
+  AfterContentInit,
   Output,
   QueryList,
   ViewChildren,
@@ -19,7 +20,7 @@ const NUMINPUTS = 10 * 3;
   templateUrl: './target.component.html',
   styleUrls: ['./target.component.scss'],
 })
-export class TargetComponent implements OnInit {
+export class TargetComponent implements OnInit, AfterContentInit {
   @ViewChildren(TargetInputComponent) inputs!: QueryList<TargetInputComponent>;
   @Input() targetSpec!: TargetLetters;
   letters: string;
@@ -36,26 +37,6 @@ export class TargetComponent implements OnInit {
       .forEach((state) => {
         this.columns[state.index % 3].push(state);
       });
-
-    targetService.results$
-      ?.pipe(filter((res) => this.equivalent(res.letters)))
-      .subscribe((result) => {
-        this.scoreUpdate.emit(result.score);
-        let states = this.columns
-          .flat(1)
-          .filter((state) => state.input === result.submission);
-        for (let state of states) {
-          if (!result.correct) state.input = undefined;
-          state.fixed = result.correct;
-          state.correct = result.correct;
-        }
-      });
-  }
-
-  equivalent(word: string): boolean {
-    return (
-      this.letters.split('').sort().join() === word.split('').sort().join()
-    );
   }
 
   ngOnInit(): void {
@@ -73,6 +54,26 @@ export class TargetComponent implements OnInit {
         });
       idx++;
     }
+  }
+
+  ngAfterContentInit(): void {
+    this.targetService.results$
+      ?.pipe(
+        filter((res) =>
+          this.targetService.equivalent(res.letters, this.letters)
+        )
+      )
+      .subscribe((result) => {
+        this.scoreUpdate.emit(result.score);
+        let states = this.columns
+          .flat(1)
+          .filter((state) => state.input === result.submission);
+        for (let state of states) {
+          if (!result.correct) state.input = undefined;
+          state.fixed = result.correct;
+          state.correct = result.correct;
+        }
+      });
   }
 
   makeSubmission(index: number, event: [string, boolean]) {
@@ -101,7 +102,6 @@ export class TargetComponent implements OnInit {
       index = this.getNextIndex(index);
       component = this.inputs.filter((comp) => comp.index == index)[0];
     } while (component?.fixed);
-    console.log('nextindex=', index);
     component.makeFocus();
   }
 }

@@ -15,12 +15,6 @@ export class ColumnComponent {
   constructor(private questionService: QuestionsService) {}
 
   clickQuestion(index: number) {
-    console.log(
-      index,
-      typeof index,
-      this.questionService.submitted,
-      index in this.questionService.submitted
-    );
     if (
       !this.questionService.submitted.has(index) &&
       !this.questionService.submitted.has((+index).toString())

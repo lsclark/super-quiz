@@ -135,7 +135,6 @@ class TriviaServer {
 
   private adminSender(message: AdminMessage) {
     if (!this.admins.size) return;
-    console.log("ADMIN SEND:", message);
     let serialised = JSON.stringify(message);
     for (const socket of this.admins) {
       if (!!socket && socket.readyState == WebSocket.OPEN) {

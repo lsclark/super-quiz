@@ -14,7 +14,6 @@ export class AccordionComponent implements OnInit {
   ngOnInit(): void {}
 
   onPanelChange(event: NgbPanelChangeEvent) {
-    console.log(event);
     if (event.nextState === false) {
       event.preventDefault();
       let open =

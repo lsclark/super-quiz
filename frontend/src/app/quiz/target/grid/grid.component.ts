@@ -26,6 +26,5 @@ export class GridComponent implements OnInit {
       [shuffled[3], this.targetData.centre, shuffled[4]],
       shuffled.slice(5),
     ];
-    console.log(this.ordering);
   }
 }

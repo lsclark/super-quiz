@@ -13,6 +13,7 @@
         *ngSwitchCase="true"
         id="response"
         type="{{ question.numeric ? 'number' : 'text' }}"
+        spellcheck="false"
         ngbAutofocus
         [(ngModel)]="response"
         (change)="responseChanged()"

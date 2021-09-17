@@ -26,7 +26,6 @@ export class WebsocketService {
 
   send(message: QuizMessage | AdminMessage): void {
     if (this.connection$) {
-      console.log('SENDING', message);
       this.connection$.next(message);
     }
   }
@@ -40,7 +39,6 @@ export class WebsocketService {
   }
 
   ngOnDestroy() {
-    console.log('Websocket Service Destroyed');
     this.closeConnection();
   }
 }

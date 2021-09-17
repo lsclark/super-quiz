@@ -87,22 +87,27 @@ export default class QuestionLoader {
 
   private checkQuestion(question: Question) {
     if (typeof question.points !== "number")
-      throw "Question needs to have points";
+      throw `Question needs to have points [${question.question}]`;
     if (![1, 2, 3].includes(question.points))
-      throw "Question points must be 1/2/3";
+      throw `Question points must be 1/2/3 [${question.question}]`;
     if (question.type == "multichoice") {
       if ("alternatives" in question)
-        throw "Multichoice can't have alternatives";
-      if ("fuzzy" in question) throw "Multichoice can't have fuzzy";
+        // @ts-expect-error
+        throw `Multichoice can't have alternatives [${question.question}]`;
+      if ("fuzzy" in question)
+        // @ts-expect-error
+        throw `Multichoice can't have fuzzy [${question.question}]`;
       if (typeof question.answer != "number")
-        throw "Multichoice answer is not a number";
+        throw `Multichoice answer is not a number [${question.question}]`;
     } else if (question.type == "numeric") {
       if (typeof question.answer !== "number")
-        throw "Numeric answer must be numberic";
+        throw `Numeric answer must be numberic [${question.question}]`;
     } else {
-      if ("choices" in question) throw "Freetext can't have choices";
+      if ("choices" in question)
+        // @ts-expect-error
+        throw `Freetext can't have choices [${question.question}]`;
       if (typeof question.answer != "string")
-        throw "Multichoice answer is not a string";
+        throw `Multichoice answer is not a string [${question.question}]`;
     }
   }
 }

@@ -39,13 +39,11 @@ export class TargetInputComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('ngonchangefired');
     if (
       !!changes.input &&
       !changes.input.currentValue &&
       !!changes.input.previousValue
     ) {
-      console.log('reset input');
       this.inputValue = '';
     }
   }
@@ -61,7 +59,6 @@ export class TargetInputComponent implements OnInit, OnChanges {
   }
 
   makeFocus() {
-    console.log('I will focus', this.index);
     setTimeout(() => {
       this.inputElement.nativeElement.focus();
     }, 0);

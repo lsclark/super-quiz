@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import {
   DSTargetAssignment,
@@ -18,6 +18,7 @@ const EXPECTED = 3;
 })
 export class TargetService {
   assignments: { [key: string]: TargetLetters };
+  private scores: { [key: string]: number } = {};
   results$?: Observable<TargetResult>;
   ready$ = new Subject<boolean>();
   ready: boolean = false;
@@ -32,23 +33,25 @@ export class TargetService {
 
   subscribe() {
     if (!this.websocketService.messages$) this.websocketService.connect();
-    let base$ = this.websocketService.messages$?.pipe(
-      tap({
-        error: (error) => console.log(`Connection error: ${error}`),
-        complete: () => console.log('Connection closed'),
-      })
-    );
+    let base$ = this.websocketService.messages$;
 
     this.results$ = base$?.pipe(
       filter((msg): msg is DSTargetMarking => {
         return msg.type == 'target_marking';
       }),
       map((msg) => {
+        const match = Object.entries(this.scores).find(([letters, score]) => {
+          this.equivalent(letters, msg.letters);
+        });
+        this.scores[match ? match[0] : msg.letters] = msg.score;
         return {
           letters: msg.letters,
           submission: msg.submission,
           correct: msg.correct,
           score: msg.score,
+          maximum:
+            msg.score == Math.max(...Object.values(this.scores)) &&
+            msg.score > 0,
         };
       })
     );
@@ -83,5 +86,9 @@ export class TargetService {
       submission: submission,
     };
     this.websocketService.send(data);
+  }
+
+  equivalent(word1: string, word2: string): boolean {
+    return word1.split('').sort().join() === word2.split('').sort().join();
   }
 }

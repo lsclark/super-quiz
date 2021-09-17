@@ -5,9 +5,9 @@
       "type": "numeric",
       "category": "phd",
       "answer": 135277,
-      "tolerance": 2000,
+      "tolerance": 2706,
       "points": 3,
-      "question": "In 2016, how many PhDs were there in Australia (to within 2000)?"
+      "question": "In 2016, how many PhDs were there in Australia?"
     },
     {
       "type": "multichoice",
@@ -20,10 +20,10 @@
     {
       "type": "freetext",
       "category": "phd",
-      "question": "Which OECD country has the highest per capita proportion of PhD graduates?",
-      "answer": "Switzerland",
+      "question": "Which OECD country had the highest per capita proportion of PhD graduates in 2018?",
+      "answer": "Slovenia",
       "points": 3,
-      "alternatives": ["swizerland"]
+      "alternatives": []
     },
     {
       "type": "multichoice",
@@ -37,15 +37,15 @@
       "type": "multichoice",
       "category": "phd",
       "choices": ["Above", "Below"],
-      "question": "Does Australia have a per capita proportion of PhD graduates above or below the OECD average?",
+      "question": "In 2018, did Australia have a per capita proportion of PhD graduates above or below the OECD average?",
       "answer": 0,
       "points": 1
     },
     {
       "type": "multichoice",
       "category": "phd",
-      "choices": ["USA", "Germany", "Slovenia", "United Kingdom"],
-      "question": "Which of the following countries has the highest per capita proportion of PhD graduates?",
+      "choices": ["USA", "Germany", "Luxembourg", "United Kingdom"],
+      "question": "Which of the following countries had the highest per capita proportion of PhD graduates in 2018?",
       "answer": 2,
       "points": 2
     },
@@ -53,7 +53,7 @@
       "type": "multichoice",
       "category": "phd",
       "choices": ["Australia", "Korea", "New Zealand", "Norway"],
-      "question": "Which of the following countries has the highest per capita proportion of PhD graduates?",
+      "question": "Which of the following countries had the highest per capita proportion of PhD graduates in 2012?",
       "answer": 0,
       "points": 2
     },
@@ -61,16 +61,16 @@
       "type": "multichoice",
       "category": "phd",
       "choices": ["Italy", "Turkey", "Greece", "Russia"],
-      "question": "Which of the following countries has the lowest per capita proportion of PhD graduates?",
+      "question": "Which of the following countries had the lowest per capita proportion of PhD graduates in 2018?",
       "answer": 3,
       "points": 2
     },
     {
       "type": "numeric",
       "category": "phd",
-      "question": "In 2017, how many domestic PhD graduates were there in Australia (to within 250)?",
+      "question": "In 2017, how many domestic PhD graduates were there in Australia?",
       "answer": 5525,
-      "tolerance": 250,
+      "tolerance": 111,
       "points": 2
     },
     {
@@ -78,7 +78,7 @@
       "category": "phd",
       "question": "In 2012, how PhD graduates were there across the OECD (to within 2000)?",
       "answer": 247000,
-      "tolerance": 2000,
+      "tolerance": 4540,
       "points": 3
     },
     {
@@ -86,7 +86,7 @@
       "category": "phd",
       "question": "How PhD graduates were produced in Australia between 1948 and 2009 (to within 2000)?",
       "answer": 94423,
-      "tolerance": 2000,
+      "tolerance": 1888,
       "points": 3
     }
   ]

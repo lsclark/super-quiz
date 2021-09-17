@@ -7,7 +7,6 @@ export class ViewManagerService {
   player?: string;
 
   showPlayer(player: string) {
-    console.log('SHOW', player);
     this.player = player;
   }
 

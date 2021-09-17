@@ -17,4 +17,5 @@ export type TargetResult = {
   submission: string;
   correct: boolean;
   score: number;
+  maximum?: boolean;
 };

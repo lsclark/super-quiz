@@ -6,6 +6,7 @@
       "points": 3,
       "category": "nine-letter-words",
       "question": "How many nine-letter words (UK and US English) have another nine-letter word anagram?",
+      "tolerance": 9.6,
       "answer": 486
     },
     {
@@ -13,6 +14,7 @@
       "points": 3,
       "category": "nine-letter-words",
       "question": "How many nine-letter words (UK and US English) have at least two nine-letter word anagrams?",
+      "tolerance": 1,
       "answer": 36
     },
     {

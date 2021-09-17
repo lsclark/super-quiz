@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterContentInit, Component, Input } from '@angular/core';
 import { QuestionsService } from '../../services/questions.service';
 import { QuestionState } from '../../../models/quiz-message-types';
 import { filter, map } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { filter, map } from 'rxjs/operators';
   templateUrl: './question.component.html',
   styleUrls: ['./question.component.scss'],
 })
-export class QuestionComponent implements AfterViewInit {
+export class QuestionComponent implements AfterContentInit {
   @Input() index!: number;
   @Input() text!: string;
   submitted?: boolean;
@@ -29,7 +29,7 @@ export class QuestionComponent implements AfterViewInit {
       });
   }
 
-  ngAfterViewInit(): void {
+  ngAfterContentInit(): void {
     let state = this.questionService.states[this.index];
     if (!!state) this.update(state);
   }

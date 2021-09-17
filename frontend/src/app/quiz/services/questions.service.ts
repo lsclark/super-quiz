@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import {
   QuestionState,
   DSPlayerStatusMessage,
@@ -43,13 +43,7 @@ export class QuestionsService {
 
   subscribe() {
     if (!this.websocketService.messages$) this.websocketService.connect();
-    let base$ = this.websocketService.messages$?.pipe(
-      tap({
-        next: (msg) => console.log(`Received: ${msg.type}`),
-        error: (error) => console.log(`Connection error: ${error}`),
-        complete: () => console.log('Connection closed'),
-      })
-    );
+    let base$ = this.websocketService.messages$;
     base$
       ?.pipe(
         filter((msg): msg is DSPlayerStatusMessage => {
@@ -88,7 +82,6 @@ export class QuestionsService {
       )
       .subscribe((msg) => {
         this.answers = msg;
-        console.log(this.answers);
         this.answers.sort((s1, s2) => s1.index - s2.index);
       });
   }

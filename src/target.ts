@@ -94,7 +94,7 @@ export class TargetManager {
   }
 
   spellcheck(word: string): boolean {
-    return this.dictionary.has(word);
+    return this.dictionary.has(word.toLowerCase());
   }
 
   getTargets(): Target[] | null {

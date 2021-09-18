@@ -4,6 +4,9 @@ questions/*
 !questions/*.json
 frontend/src/assets/*
 
+dictionary.txt
+targets.json
+
 # Logs
 logs
 *.log

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
+import { BehaviorSubject } from 'rxjs';
 import { USConnectMessage } from 'src/app/models/quiz-message-types';
 import { WebsocketService } from 'src/app/services/websocket.service';
 
@@ -8,7 +9,7 @@ import { WebsocketService } from 'src/app/services/websocket.service';
 })
 export class SessionService {
   username: string = '';
-  registered: boolean = false;
+  registered$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private cookies: CookieService,
@@ -17,7 +18,7 @@ export class SessionService {
     if (this.cookies.check('username')) {
       this.username = this.cookies.get('username');
       if (this.username) {
-        this.registered = true;
+        this.registered$.next(true);
         this.initialConnection();
       }
     }
@@ -34,7 +35,7 @@ export class SessionService {
     if (username) {
       this.username = username;
       this.cookies.set('username', username);
-      this.registered = true;
+      this.registered$.next(true);
       this.initialConnection();
     }
   }

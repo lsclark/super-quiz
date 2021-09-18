@@ -7,7 +7,7 @@ import { QuizMessage } from "./message-types";
 import { AdminMessage, AdminUS } from "./admin-message-types";
 import { Administrator } from "./admin";
 
-const port = process.env.TRIVIA_PORT || 8080;
+const port = process.env.PORT || 8080;
 
 class TriviaServer {
   private app: express.Express;
@@ -49,9 +49,13 @@ class TriviaServer {
   }
 
   setupRoutes() {
-    this.app.get("/", (req, res) => {
-      res.send("Hello world");
+    this.app.use(express.static(__dirname + "/frontend"));
+    this.app.use("*", (req, res) => {
+      res.sendFile(__dirname + "/frontend/index.html");
     });
+    // this.app.get("/", (req, res) => {
+    //   res.send("Hello world");
+    // });
 
     this.wsServer.on("connection", (socket: WebSocket) => {
       this.clients.add(socket);

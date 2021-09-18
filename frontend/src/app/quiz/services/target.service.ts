@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 import {
@@ -20,8 +20,7 @@ export class TargetService {
   assignments: { [key: string]: TargetLetters };
   private scores: { [key: string]: number } = {};
   results$?: Observable<TargetResult>;
-  ready$ = new Subject<boolean>();
-  ready: boolean = false;
+  ready$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private websocketService: WebsocketService,
@@ -72,7 +71,6 @@ export class TargetService {
             initScore: msg.score,
           };
         if (Object.keys(this.assignments).length >= EXPECTED) {
-          this.ready = true;
           this.ready$.next(true);
         }
       });

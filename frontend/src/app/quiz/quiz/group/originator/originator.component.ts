@@ -14,14 +14,14 @@ import { PlayersService } from 'src/app/quiz/services/players.service';
 export class GroupOriginatorComponent {
   @Input() question!: QuestionDisplay;
   wager: number = 3.0;
-  wagerChanges = new Subject<true>();
+  wagerChanges$ = new Subject<void>();
 
   constructor(
     public modalController: ModalControllerService,
     public playerService: PlayersService,
     private groupChallengeSvc: GroupChallengeService
   ) {
-    this.wagerChanges
+    this.wagerChanges$
       .pipe(debounceTime(1000))
       .subscribe(() => this.validateWager());
   }
@@ -34,7 +34,7 @@ export class GroupOriginatorComponent {
   }
 
   wagerChanged() {
-    this.wagerChanges.next(true);
+    this.wagerChanges$.next();
   }
 
   submit() {

@@ -5,10 +5,11 @@
       *ngFor="let player of players"
       class="list-group-item d-flex justify-content-between align-items-center"
     >
-      <span class="player_score">{{ player.score }}</span>
+      <span class="player_score mr-1">{{ player.score }}</span>
       <span class="player_name">{{ player.name | uppercase }}</span>
     </li>
   </ul>
+  <span *ngIf="!players.length">Scores will load soon</span>
 </ng-template>
 
 <ng-template #breakdownTitle>Your Points</ng-template>
@@ -26,6 +27,20 @@
       <span class="item_score">{{ item.score }}</span>
     </li>
   </ul>
+  <span *ngIf="!scoreItems.length"
+    >Nothing here yet&mdash;go score some points</span
+  >
+</ng-template>
+
+<ng-template #helpTitle>Some Notes</ng-template>
+<ng-template #helpContent>
+  <ul class="list-group">
+    <li class="list-group-item">Surnames are fine for answers</li>
+    <li class="list-group-item">Numeric answers have a &#177;3% tolerance</li>
+    <li class="list-group-item">
+      Valid words are determined by the British and American Debian wordlists
+    </li>
+  </ul>
 </ng-template>
 
 <button
@@ -38,12 +53,13 @@
   [openDelay]="200"
   [closeDelay]="500"
 >
-  {{ session.username }} - {{ playerService.score | number: "1.0-3" }}
+  <i class="bi bi-person-circle"></i>
+  <!--{{ session.username }} - {{ playerService.score | number: "1.0-3" }} -->
 </button>
 
 <button
   type="button"
-  class="btn btn-outline-secondary"
+  class="btn btn-outline-secondary mr-2"
   placement="bottom"
   [ngbPopover]="scoreContent"
   [popoverTitle]="scoreTitle"
@@ -51,5 +67,19 @@
   [openDelay]="200"
   [closeDelay]="500"
 >
-  {{ placeToWords(place) + " place" | titlecase }}
+  <i class="bi bi-list-ol"></i>
+  <!-- {{ placeToWords(place) + " place" | titlecase }} -->
+</button>
+
+<button
+  type="button"
+  class="btn btn-outline-secondary"
+  placement="bottom"
+  [ngbPopover]="helpContent"
+  [popoverTitle]="helpTitle"
+  triggers="mouseenter:mouseleave"
+  [openDelay]="200"
+  [closeDelay]="500"
+>
+  <i class="bi bi-signpost-2-fill"></i>
 </button>

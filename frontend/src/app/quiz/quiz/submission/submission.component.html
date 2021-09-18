@@ -16,6 +16,7 @@
         spellcheck="false"
         ngbAutofocus
         [(ngModel)]="response"
+        (keyup.enter)="submit()"
         (change)="responseChanged()"
       />
       <div
@@ -34,6 +35,7 @@
           <input
             type="radio"
             [value]="idx"
+            (keyup.enter)="submit()"
             (click)="selectChoice(idx)"
             ngbButton
           />

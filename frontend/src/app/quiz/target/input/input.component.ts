@@ -26,7 +26,7 @@ export class TargetInputComponent implements OnInit, OnChanges {
   inputValue: string = '';
   @ViewChild('input') inputElement!: ElementRef;
 
-  debounceSubmit$: Subject<boolean> = new Subject<boolean>();
+  debounceSubmit$ = new Subject<boolean>();
 
   constructor() {
     this.debounceSubmit$.pipe(debounceTime(500)).subscribe((enter) => {

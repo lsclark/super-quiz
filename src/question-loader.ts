@@ -3,7 +3,7 @@ import glob from "glob";
 import * as path from "path";
 import { Question, QuestionSource } from "./question";
 
-const basePath = "./questions";
+const basePath = __dirname + "/questions";
 const qnsPerPoint = 5;
 
 function shuffle<T>(array: T[]) {
@@ -74,9 +74,9 @@ export default class QuestionLoader {
   private prepareQuestion(question: Question) {
     if (question.type == "freetext") {
       question.alternatives = question.alternatives.map((alt) =>
-        alt.toLowerCase().replace(/[^\w\s]/gi, "")
+        alt.toLowerCase().replace(/\W/gi, "")
       );
-      let answer = question.answer.toLowerCase().replace(/[^\w\s]/gi, "");
+      let answer = question.answer.toLowerCase().replace(/\W/gi, "");
       if (!(answer in question.alternatives))
         question.alternatives.push(answer);
       question.alternatives = question.alternatives.map((alt) =>
@@ -103,6 +103,9 @@ export default class QuestionLoader {
       if (typeof question.answer !== "number")
         throw `Numeric answer must be numberic [${question.question}]`;
     } else {
+      if (!("alternatives" in question))
+        // @ts-expect-error
+        throw `Freetext doesn't have alternatives [${question.question}]`;
       if ("choices" in question)
         // @ts-expect-error
         throw `Freetext can't have choices [${question.question}]`;

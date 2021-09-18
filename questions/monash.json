@@ -90,16 +90,16 @@
       "category": "monash",
       "answer": 57,
       "points": 3,
-      "tolerance": 1.6,
-      "question": "What is Monash's Times Higher Education 2022 World Ranking (to within 3 places)?"
+      "tolerance": 1.71,
+      "question": "What is Monash's Times Higher Education 2022 World Ranking?"
     },
     {
       "type": "numeric",
       "category": "monash",
       "answer": 80,
       "points": 3,
-      "tolerance": 1.6,
-      "question": "What is Monash's 2021 Academic Ranking of World Universities (Shanghai) Ranking (to within 3 places)?"
+      "tolerance": 2.4,
+      "question": "What is Monash's 2021 Academic Ranking of World Universities (Shanghai) Ranking?"
     },
     {
       "type": "multichoice",

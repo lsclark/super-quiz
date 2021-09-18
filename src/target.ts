@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 
-const targetsPath = "./targets.json";
-const dictionaryPath = "./dictionary.txt";
+const targetsPath = __dirname + "/targets.json";
+const dictionaryPath = __dirname + "/dictionary.txt";
 
 function shuffle<T>(array: Array<T>): Array<T> {
   return array

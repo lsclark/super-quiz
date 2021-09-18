@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import {
   AdminMessage,
@@ -12,14 +12,12 @@ import { WebsocketService } from 'src/app/services/websocket.service';
 })
 export class AdminSessionService {
   token: string = '';
-  registered: boolean = false;
-  registration$ = new Subject<boolean>();
+  registration$ = new BehaviorSubject<boolean>(false);
 
   constructor(private websocket: WebsocketService) {
     this.websocket.messages$
       ?.pipe(filter((msg): msg is AdminMessage => 'admin' in msg))
       .subscribe(() => {
-        this.registered = true;
         this.registration$.next(true);
       });
   }

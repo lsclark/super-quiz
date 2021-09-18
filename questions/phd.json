@@ -5,7 +5,7 @@
       "type": "numeric",
       "category": "phd",
       "answer": 135277,
-      "tolerance": 2706,
+      "tolerance": 4058,
       "points": 3,
       "question": "In 2016, how many PhDs were there in Australia?"
     },
@@ -70,23 +70,23 @@
       "category": "phd",
       "question": "In 2017, how many domestic PhD graduates were there in Australia?",
       "answer": 5525,
-      "tolerance": 111,
+      "tolerance": 165.8,
       "points": 2
     },
     {
       "type": "numeric",
       "category": "phd",
-      "question": "In 2012, how PhD graduates were there across the OECD (to within 2000)?",
+      "question": "In 2012, how PhD graduates were there across the OECD?",
       "answer": 247000,
-      "tolerance": 4540,
+      "tolerance": 7410,
       "points": 3
     },
     {
       "type": "numeric",
       "category": "phd",
-      "question": "How PhD graduates were produced in Australia between 1948 and 2009 (to within 2000)?",
+      "question": "How PhD graduates were produced in Australia between 1948 and 2009?",
       "answer": 94423,
-      "tolerance": 1888,
+      "tolerance": 2832.7,
       "points": 3
     }
   ]

@@ -1,4 +1,4 @@
-<div *ngIf="session.registered; else LoginBlock">
+<div *ngIf="session.registration$ | async; else LoginBlock">
   <app-admin-navigation></app-admin-navigation>
 
   <app-admin-player-state

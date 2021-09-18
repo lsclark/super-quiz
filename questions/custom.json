@@ -1,0 +1,43 @@
+{
+  "source": "Leon",
+  "questions": [
+    {
+      "type": "multichoice",
+      "points": 1,
+      "category": "custom",
+      "question": "How long is the land border between Victoria and Tasmania?",
+      "choices": ["There is no land border", "40 m", "85 m", "135 m"],
+      "answer": 2
+    },
+    {
+      "type": "multichoice",
+      "points": 1,
+      "category": "custom",
+      "question": "Which is closest to the median house price in Australia (at September 2021)?",
+      "choices": ["$531k", "$631k", "$666k", "$729k"],
+      "answer": 2
+    },
+    {
+      "type": "multichoice",
+      "points": 1,
+      "category": "custom",
+      "question": "Which of the following is the Pfizer COVID-19 vaccine?",
+      "choices": ["Vaxzevria", "Spikevax", "Comirnaty", "Janssen"],
+      "answer": 2
+    },
+    {
+      "type": "multichoice",
+      "points": 1,
+      "category": "custom",
+      "question": "Which of the following is not the name of a COVID-19 vaccine?",
+      "choices": [
+        "Vaxzevria",
+        "Coronashield",
+        "Spikevax",
+        "Comirnaty",
+        "Janssen"
+      ],
+      "answer": 1
+    }
+  ]
+}

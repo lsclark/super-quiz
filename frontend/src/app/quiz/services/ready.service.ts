@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { merge } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { QuestionsService } from './questions.service';
 import { TargetService } from './target.service';
 
@@ -7,21 +7,17 @@ import { TargetService } from './target.service';
   providedIn: 'root',
 })
 export class ReadyService {
-  ready: boolean = false;
+  ready$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private questionService: QuestionsService,
     private targetService: TargetService
   ) {
-    this.ready = this.testReady();
-    merge(this.questionService.ready$, this.targetService.ready$).subscribe(
-      () => {
-        this.ready = this.testReady();
-      }
+    combineLatest([
+      this.questionService.ready$,
+      this.targetService.ready$,
+    ]).subscribe(
+      ([qsReady, tsReady]) => qsReady && tsReady && this.ready$.next(true)
     );
-  }
-
-  private testReady(): boolean {
-    return this.questionService.ready && this.targetService.ready;
   }
 }

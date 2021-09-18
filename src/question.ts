@@ -94,10 +94,7 @@ export async function checkAnswerCorrect(
       return Promise.resolve(question.answer == answer);
     }
   } else {
-    answer = (answer as string)
-      .trim()
-      .toLowerCase()
-      .replace(/[^\w\s]/gi, "");
+    answer = (answer as string).trim().toLowerCase().replace(/\W/gi, "");
     console.log(
       answer,
       question.alternatives,

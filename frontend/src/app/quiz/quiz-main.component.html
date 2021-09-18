@@ -1,5 +1,5 @@
-<div *ngIf="session.registered; else LoginBlock">
-  <div *ngIf="readyService.ready; else WaitBlock">
+<div *ngIf="session.registered$ | async; else LoginBlock">
+  <div *ngIf="readyService.ready$ | async; else WaitBlock">
     <app-navbar></app-navbar>
     <app-accordion></app-accordion>
   </div>

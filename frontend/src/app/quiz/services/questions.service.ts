@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {
   QuestionState,
@@ -24,13 +24,12 @@ const getEntries = Object.entries as <T extends object>(
 })
 export class QuestionsService {
   states$ = new Subject<[number, QuestionState]>();
-  ready$ = new Subject<boolean>();
+  ready$ = new BehaviorSubject<boolean>(false);
 
   questions: QuestionColumn[] = [];
   answers: DisplayAnswer[] = [];
   states: { [index: number]: QuestionState } = {};
   submitted = new Set<number | string>();
-  ready: boolean = false;
 
   constructor(
     private websocketService: WebsocketService,
@@ -69,7 +68,6 @@ export class QuestionsService {
       .subscribe((cols) => {
         this.questions = cols;
 
-        this.ready = true;
         this.ready$.next(true);
       });
 

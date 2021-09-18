@@ -23,13 +23,15 @@ export class AdminGameStateService {
     this.updates$?.subscribe((statuses) => {
       this.states = statuses;
 
-      this.scores = statuses.map((playerData) => [
-        playerData.name,
-        playerData.scores.reduce(
-          (aggregate, scoreItem) => aggregate + scoreItem.score,
-          0
-        ),
-      ]);
+      this.scores = statuses
+        .map((playerData): [string, number] => [
+          playerData.name,
+          playerData.scores.reduce(
+            (aggregate, scoreItem) => aggregate + scoreItem.score,
+            0
+          ),
+        ])
+        .sort(([, ascore], [, bscore]) => bscore - ascore);
     });
   }
 

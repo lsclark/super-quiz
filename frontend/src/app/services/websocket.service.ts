@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { environment } from 'src/environments/environment';
 import { AdminMessage } from '../models/admin-message-types';
 import { QuizMessage } from '../models/quiz-message-types';
 
@@ -9,7 +10,11 @@ import { QuizMessage } from '../models/quiz-message-types';
   providedIn: 'root',
 })
 export class WebsocketService {
-  url: string = 'ws://localhost:8080/';
+  private port = environment.production
+    ? window.location.port
+    : environment.wsPort;
+  private protocol = environment.production ? 'wss' : 'ws';
+  url: string = `${this.protocol}://${window.location.hostname}:${this.port}/`;
   private connection$?: WebSocketSubject<QuizMessage | AdminMessage>;
   messages$?: Observable<QuizMessage | AdminMessage>;
 

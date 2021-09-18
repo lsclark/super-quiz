@@ -5,24 +5,40 @@
       "type": "numeric",
       "points": 3,
       "category": "nine-letter-words",
-      "question": "How many nine-letter words (UK and US English) have another nine-letter word anagram?",
-      "tolerance": 9.6,
+      "question": "How many nine-letter words have another nine-letter word anagram?",
+      "tolerance": 14.6,
       "answer": 486
     },
     {
       "type": "numeric",
       "points": 3,
       "category": "nine-letter-words",
-      "question": "How many nine-letter words (UK and US English) have at least two nine-letter word anagrams?",
-      "tolerance": 1,
+      "question": "How many nine-letter words have at least two nine-letter word anagrams?",
+      "tolerance": 1.08,
       "answer": 36
     },
     {
       "type": "numeric",
       "points": 2,
       "category": "nine-letter-words",
-      "question": "How many nine-letter words (UK and US English) have at least three nine-letter word anagrams?",
+      "question": "How many nine-letter words have at least three nine-letter word anagrams?",
       "answer": 0
+    },
+    {
+      "type": "freetext",
+      "points": 3,
+      "category": "nine-letter-words",
+      "question": "What is the first word in the dictionary with at least nine characters?",
+      "answer": "aardvarks",
+      "alternatives": []
+    },
+    {
+      "type": "freetext",
+      "points": 3,
+      "category": "nine-letter-words",
+      "question": "What is the last word in the dictionary with at least nine characters?",
+      "answer": "zucchinis",
+      "alternatives": []
     }
   ]
 }

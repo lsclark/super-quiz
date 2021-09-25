@@ -1,11 +1,12 @@
 import express from "express";
-import WebSocket from "ws";
 import { Server } from "http";
-import QuizHost from "./quiz-host";
 import { Subject } from "rxjs";
-import { QuizMessage } from "./models/game-message-types";
-import { AdminMessage, AdminUS } from "./models/admin-message-types";
+import WebSocket from "ws";
+
 import { Administrator } from "./admin";
+import { AdminMessage, AdminUS } from "./models/admin-message-types";
+import { QuizMessage } from "./models/game-message-types";
+import QuizHost from "./quiz-host";
 
 const port = process.env.PORT || 8080;
 
@@ -53,9 +54,6 @@ class TriviaServer {
     this.app.use("*", (req, res) => {
       res.sendFile(__dirname + "/frontend/index.html");
     });
-    // this.app.get("/", (req, res) => {
-    //   res.send("Hello world");
-    // });
 
     this.wsServer.on("connection", (socket: WebSocket) => {
       this.clients.add(socket);

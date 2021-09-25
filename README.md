@@ -2,6 +2,8 @@
 
 A real-time multiplayer quiz game built to mimic newspaper quizzes. Built using websockets, Angular, and NodeJS/Express.
 
+https://user-images.githubusercontent.com/35763577/134766395-7a019e91-e66c-492c-bf6d-27aa2ba05839.mp4
+
 ## Features
 
 System features include the content below, some of which are shown in the video above.

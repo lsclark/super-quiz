@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { filter } from 'rxjs/operators';
+
 import { TargetService } from '../../services/target.service';
 import { TargetLetters, TargetResult } from '../message-types';
 

@@ -1,15 +1,16 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
+
 import {
   DSPlayerStatusMessage,
   DSScoreboardMessage,
   PlayerState,
 } from "../../models/quiz-message-types";
 import { WebsocketService } from "../../services/websocket.service";
-import { SessionService } from "./session.service";
 import { GroupChallengeService } from "./group-challenge.service";
 import { PersonalChallengeService } from "./personal-challenge.service";
+import { SessionService } from "./session.service";
 
 @Injectable({
   providedIn: "root",

@@ -1,19 +1,20 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map } from "rxjs/operators";
+
 import {
-  QuestionState,
+  DisplayAnswer,
   DSPlayerStatusMessage,
   DSQuestionsMessage,
-  DisplayAnswer,
   QuestionDisplay,
+  QuestionState,
 } from "../../models/quiz-message-types";
 import { QuestionColumn } from "../../models/quiz-message-types";
 import { WebsocketService } from "../../services/websocket.service";
-import { SessionService } from "./session.service";
-import { SaveResponsesService } from "./save-responses.service";
-import { ModalControllerService, ModalSpec } from "./modal-controller.service";
 import { SubmissionComponent } from "../quiz/submission/submission.component";
+import { ModalControllerService, ModalSpec } from "./modal-controller.service";
+import { SaveResponsesService } from "./save-responses.service";
+import { SessionService } from "./session.service";
 
 const getEntries = Object.entries as <T>(
   obj: T

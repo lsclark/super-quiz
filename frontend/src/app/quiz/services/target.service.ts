@@ -7,9 +7,9 @@ import {
   DSTargetMarking,
   USTargetSubmitMessage,
 } from "../../models/quiz-message-types";
+import { WebsocketService } from "../../services/websocket.service";
 import { TargetLetters, TargetResult } from "../target/message-types";
 import { SessionService } from "./session.service";
-import { WebsocketService } from "../../services/websocket.service";
 
 const EXPECTED = 3;
 

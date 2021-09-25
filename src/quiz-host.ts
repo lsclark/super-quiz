@@ -1,11 +1,12 @@
 import { Subject } from "rxjs";
+
 import {
   CollisionChallenge,
   VocabularyChallenge,
 } from "./challenges/bonus-challenges";
 import { GroupChallengeManager } from "./challenges/group-challenge";
-import { QuizMessage } from "./models/game-message-types";
 import { PersonalChallengeManager } from "./challenges/personal-challenge";
+import { QuizMessage } from "./models/game-message-types";
 import Player from "./player";
 import QuestionLoader from "./questions/question-loader";
 import { Scorer } from "./scoring";

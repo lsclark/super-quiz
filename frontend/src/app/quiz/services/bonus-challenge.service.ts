@@ -7,10 +7,11 @@ import {
   DSVocabularyChallengeStart,
 } from "src/app/models/quiz-message-types";
 import { WebsocketService } from "src/app/services/websocket.service";
-import { CollisionChallengeOutcomeComponent } from "../bonus-challenges/collision-outcome/collision-outcome.component";
+
 import { CollisionChallengeComponent } from "../bonus-challenges/collision/collision.component";
-import { VocabularyChallengeOutcomeComponent } from "../bonus-challenges/vocabulary-outcome/vocabulary-outcome.component";
+import { CollisionChallengeOutcomeComponent } from "../bonus-challenges/collision-outcome/collision-outcome.component";
 import { VocabularyChallengeComponent } from "../bonus-challenges/vocabulary/vocabulary.component";
+import { VocabularyChallengeOutcomeComponent } from "../bonus-challenges/vocabulary-outcome/vocabulary-outcome.component";
 import { ModalControllerService, ModalSpec } from "./modal-controller.service";
 
 @Injectable({

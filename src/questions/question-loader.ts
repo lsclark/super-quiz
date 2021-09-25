@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import glob from "glob";
 import * as path from "path";
+
 import { Question, QuestionSource } from "./question";
 
 const basePath = __dirname + "/questions";

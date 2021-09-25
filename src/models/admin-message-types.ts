@@ -1,5 +1,5 @@
-import { ScoreItem } from "./game-message-types";
 import { QuestionState } from "../player";
+import { ScoreItem } from "./game-message-types";
 
 export type AdminQuestionState = {
   question: string;

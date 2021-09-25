@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { filter } from "rxjs/operators";
-import { NotificationComponent } from "../general/notification/notification.component";
+
 import {
   DSGroupChallengeDistribute,
   DSGroupChallengeOutcome,
@@ -8,11 +8,12 @@ import {
   USGroupChallengeOrigin,
   USGroupChallengeSubmit,
 } from "../../models/quiz-message-types";
+import { WebsocketService } from "../../services/websocket.service";
+import { NotificationComponent } from "../general/notification/notification.component";
 import { GroupChallengedComponent } from "../quiz/group/challenged/challenged.component";
 import { GroupOriginatorComponent } from "../quiz/group/originator/originator.component";
 import { ModalControllerService, ModalSpec } from "./modal-controller.service";
 import { SessionService } from "./session.service";
-import { WebsocketService } from "../../services/websocket.service";
 
 @Injectable({
   providedIn: "root",

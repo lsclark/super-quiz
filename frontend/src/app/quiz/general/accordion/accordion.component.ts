@@ -1,5 +1,5 @@
 import { Component, ViewChild } from "@angular/core";
-import { NgbPanelChangeEvent, NgbAccordion } from "@ng-bootstrap/ng-bootstrap";
+import { NgbAccordion,NgbPanelChangeEvent } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: "app-accordion",

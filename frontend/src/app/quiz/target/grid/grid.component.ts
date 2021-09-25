@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
+
 import { TargetLetters } from "../message-types";
 
 @Component({

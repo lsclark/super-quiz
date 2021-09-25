@@ -1,15 +1,16 @@
 import {
+  AfterContentInit,
   Component,
   EventEmitter,
   Input,
   OnInit,
-  AfterContentInit,
   Output,
   QueryList,
   ViewChildren,
 } from "@angular/core";
 import { filter } from "rxjs/operators";
 import { TargetService } from "src/app/quiz/services/target.service";
+
 import { TargetInputComponent } from "../input/input.component";
 import { TargetLetters, TargetState } from "../message-types";
 

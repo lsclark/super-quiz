@@ -1,5 +1,6 @@
-import { QuestionColumn, QuestionDisplay } from "../models/game-message-types";
 import fuzz from "fuzzball";
+
+import { QuestionColumn, QuestionDisplay } from "../models/game-message-types";
 
 export interface QuestionBase {
   points: 1 | 2 | 3;

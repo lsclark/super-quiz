@@ -38,6 +38,27 @@
         "Janssen"
       ],
       "answer": 1
+    },
+    {
+      "type": "freetext",
+      "points": 1,
+      "question": "What is the capital city of Australia?",
+      "answer": "Canberra",
+      "alternatives": []
+    },
+    {
+      "type": "freetext",
+      "points": 1,
+      "question": "Where is this repository hosted?",
+      "answer": "GitHub",
+      "alternatives": []
+    },
+    {
+      "type": "multichoice",
+      "points": 1,
+      "question": "Which web framework is this website built upon?",
+      "choices": ["Vue", "React", "Angular"],
+      "answer": 2
     }
   ]
 }

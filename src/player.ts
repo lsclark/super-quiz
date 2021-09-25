@@ -142,7 +142,7 @@ export default class Player {
 
   private computeChallengeScores(): ScoreItem[] {
     return [
-      ["group-origin", "Lost Betting Against Intellects"],
+      ["group-origin", "The Outcomes of Betting Against Intellects"],
       ["group-responder", "Gains from Others' Wagers"],
       ["personal-origin", "Help from Friends"],
       ["personal-delegate", "Gains Helping Friends"],

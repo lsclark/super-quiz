@@ -14,7 +14,10 @@ import QuizHost from "./quiz-host";
 
 const PERIOD = 15 * 1000;
 const DEBOUNCE = 0.5 * 1000;
-const AUTH_TOKEN = "i-am-leon";
+/**
+ * The token used when logging into the admin interface
+ */
+const AUTH_TOKEN = "i-am-lsc";
 
 export class Administrator {
   constructor(

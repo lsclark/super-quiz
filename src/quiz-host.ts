@@ -8,7 +8,7 @@ import { GroupChallengeManager } from "./challenges/group-challenge";
 import { PersonalChallengeManager } from "./challenges/personal-challenge";
 import { QuizMessage } from "./models/game-message-types";
 import Player from "./player";
-import QuestionLoader from "./questions/question-loader";
+import QuestionLoader from "./question/question-loader";
 import { Scorer } from "./scoring";
 import { TargetManager } from "./target";
 

@@ -4,7 +4,7 @@ import * as path from "path";
 
 import { Question, QuestionSource } from "./question";
 
-const basePath = __dirname + "/questions";
+const basePath = path.join(__dirname, "..", "questions");
 const qnsPerPoint = 5;
 
 function shuffle<T>(array: T[]) {

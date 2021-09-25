@@ -1,4 +1,4 @@
-import { Subject } from "rxjs";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 
 import { AdminPlayer, AdminQuestionState } from "./models/admin-message-types";
@@ -12,8 +12,8 @@ import {
   formatQuestion,
   formatQuestionsDisplay,
   Question,
-} from "./questions/question";
-import QuestionLoader from "./questions/question-loader";
+} from "./question/question";
+import QuestionLoader from "./question/question-loader";
 import QuizHost from "./quiz-host";
 import { Target, TargetManager } from "./target";
 
@@ -65,6 +65,7 @@ export default class Player {
   targets: Target[];
   private timeout = new Subject<true>();
   private lastScore: ScoreItem[] = [];
+  private busy$ = new BehaviorSubject<boolean>(false);
 
   targetSubmissions = new Set<string>();
 
@@ -261,5 +262,13 @@ export default class Player {
       ),
       scores: this.lastScore,
     };
+  }
+
+  setBusy(busy: boolean): void {
+    this.busy$.next(busy);
+  }
+
+  getBusy(): Observable<boolean> {
+    return this.busy$;
   }
 }

@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalControllerService } from '../../services/modal-controller.service';
+import { Component, Input, OnInit } from "@angular/core";
+import { ModalControllerService } from "../../services/modal-controller.service";
 
 @Component({
-  selector: 'app-vocabulary-outcome',
-  templateUrl: './vocabulary-outcome.component.html',
-  styleUrls: ['./vocabulary-outcome.component.scss'],
+  selector: "app-vocabulary-outcome",
+  templateUrl: "./vocabulary-outcome.component.html",
+  styleUrls: ["./vocabulary-outcome.component.scss"],
 })
 export class VocabularyChallengeOutcomeComponent implements OnInit {
   @Input() winners!: string[];
@@ -19,20 +19,20 @@ export class VocabularyChallengeOutcomeComponent implements OnInit {
     );
   }
 
-  dismiss() {
+  dismiss(): void {
     this.modalController.dismissTop();
   }
 
   makeList(list: string[]): string {
     switch (list.length) {
       case 0:
-        return '';
+        return "";
       case 1:
         return list[0];
       case 2:
-        return list[0] + ' and ' + list[1];
+        return list[0] + " and " + list[1];
       default:
-        return list.slice(0, -1).join(', ') + ', and ' + list[list.length - 1];
+        return list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
     }
   }
 }

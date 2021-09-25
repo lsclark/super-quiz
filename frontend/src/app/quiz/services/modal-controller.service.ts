@@ -1,22 +1,22 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
   NgbModal,
   NgbModalOptions,
   NgbModalRef,
-} from '@ng-bootstrap/ng-bootstrap';
+} from "@ng-bootstrap/ng-bootstrap";
 
 export interface ModalSpec {
-  component: any;
+  component: unknown;
   identifier?: string | number;
-  inputs: { [key: string]: any };
+  inputs: { [key: string]: unknown };
 }
 
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
-  backdrop: 'static',
+  backdrop: "static",
 };
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ModalControllerService {
   private stack: ModalSpec[];
@@ -30,7 +30,7 @@ export class ModalControllerService {
    *
    * @param identifier If provided, any ModalSpecs on the stack with this identifier are removed
    */
-  dismissTop(identifier: number | string | null = null) {
+  dismissTop(identifier: number | string | null = null): void {
     this.topModal?.close();
     this.stack.pop();
     if (identifier !== null) {
@@ -39,8 +39,8 @@ export class ModalControllerService {
     this.launchStackTop();
   }
 
-  purgeIdentifier(identifier: number | string) {
-    let open = this.stack[this.stack.length - 1];
+  purgeIdentifier(identifier: number | string): void {
+    const open = this.stack[this.stack.length - 1];
     if (!!open && open.identifier === identifier) {
       this.dismissTop(identifier);
     } else {
@@ -54,18 +54,18 @@ export class ModalControllerService {
     }
   }
 
-  launch(spec: ModalSpec) {
+  launch(spec: ModalSpec): void {
     this.topModal?.close();
     this.stack.push(spec);
     this.make(spec);
   }
 
   private make(spec: ModalSpec) {
-    let modalRef = this.modalService.open(
+    const modalRef = this.modalService.open(
       spec.component,
       DEFAULT_MODAL_OPTIONS
     );
-    for (let [input, value] of Object.entries(spec.inputs)) {
+    for (const [input, value] of Object.entries(spec.inputs)) {
       modalRef.componentInstance[input] = value;
     }
     this.topModal = modalRef;

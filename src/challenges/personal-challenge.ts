@@ -4,9 +4,9 @@ import {
   DSPersonalChallengeTimeout,
   QuestionDisplay,
   QuizMessage,
-} from "./message-types";
-import Player, { QuestionState } from "./player";
-import QuizHost from "./quiz-host";
+} from "../models/game-message-types";
+import Player, { QuestionState } from "../player";
+import QuizHost from "../quiz-host";
 
 const timeout = 30 * 1000;
 
@@ -25,8 +25,8 @@ export class PersonalChallengeManager {
     private quizHost: QuizHost
   ) {}
 
-  create(origin: Player, question: QuestionDisplay, delegate: Player) {
-    let challenge: PersonalChallenge = {
+  create(origin: Player, question: QuestionDisplay, delegate: Player): void {
+    const challenge: PersonalChallenge = {
       origin: origin,
       delegate: delegate,
       question: question,
@@ -55,15 +55,15 @@ export class PersonalChallengeManager {
     delegate: string,
     question: QuestionDisplay,
     submission: number | string
-  ) {
-    let challenge = this.challenges.find(
+  ): Promise<void> {
+    const challenge = this.challenges.find(
       (ch) =>
         origin == ch.origin.name &&
         delegate == ch.delegate.name &&
         question.index == ch.question.index
     );
     if (!challenge || challenge.complete) return;
-    let correct = await challenge.origin.submitAnswer(
+    const correct = await challenge.origin.submitAnswer(
       question.index,
       submission,
       true
@@ -78,12 +78,12 @@ export class PersonalChallengeManager {
       challenge.delegate.addChallenge(
         "personal-delegate",
         challenge.origin.name,
-        question.points! / 2
+        (question.points ?? 0) / 2
       );
       challenge.origin.addChallenge(
         "personal-origin",
         challenge.delegate.name,
-        question.points! / 2
+        (question.points ?? 0) / 2
       );
 
       this.quizHost.scorer.distributeScores();
@@ -93,9 +93,9 @@ export class PersonalChallengeManager {
         status: challenge.origin.getPlayerState(),
       });
     }
-    let answer = challenge.origin.getAnswer(question.index);
+    const answer = challenge.origin.getAnswer(question.index);
     [challenge.origin.name, challenge.delegate.name].forEach((name) => {
-      let outcome_delegate: DSPersonalChallengeOutcome = {
+      const outcome_delegate: DSPersonalChallengeOutcome = {
         type: "personal-outcome",
         name: name,
         origin: origin,
@@ -108,7 +108,7 @@ export class PersonalChallengeManager {
     });
   }
 
-  cancel(origin: string, index: number) {
+  cancel(origin: string, index: number): void {
     this.challenges
       .filter((challenge) => {
         if (challenge.complete) return false;
@@ -121,7 +121,7 @@ export class PersonalChallengeManager {
       });
   }
 
-  timeout(challenge: PersonalChallenge, cancel = false) {
+  timeout(challenge: PersonalChallenge, cancel = false): void {
     if (challenge.complete) return;
     challenge.origin.setQuestionState(
       challenge.question.index,
@@ -129,7 +129,7 @@ export class PersonalChallengeManager {
     );
     challenge.complete = true;
     [challenge.origin.name, challenge.delegate.name].forEach((name) => {
-      let timeoutMsg: DSPersonalChallengeTimeout = {
+      const timeoutMsg: DSPersonalChallengeTimeout = {
         type: "personal-timeout",
         name: name,
         origin: challenge.origin.name,

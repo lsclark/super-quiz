@@ -1,26 +1,26 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Subject } from "rxjs";
+import { filter, map } from "rxjs/operators";
 import {
   QuestionState,
   DSPlayerStatusMessage,
   DSQuestionsMessage,
   DisplayAnswer,
   QuestionDisplay,
-} from '../../models/quiz-message-types';
-import { QuestionColumn } from '../../models/quiz-message-types';
-import { WebsocketService } from '../../services/websocket.service';
-import { SessionService } from './session.service';
-import { SaveResponsesService } from './save-responses.service';
-import { ModalControllerService, ModalSpec } from './modal-controller.service';
-import { SubmissionComponent } from '../quiz/submission/submission.component';
+} from "../../models/quiz-message-types";
+import { QuestionColumn } from "../../models/quiz-message-types";
+import { WebsocketService } from "../../services/websocket.service";
+import { SessionService } from "./session.service";
+import { SaveResponsesService } from "./save-responses.service";
+import { ModalControllerService, ModalSpec } from "./modal-controller.service";
+import { SubmissionComponent } from "../quiz/submission/submission.component";
 
-const getEntries = Object.entries as <T extends object>(
+const getEntries = Object.entries as <T>(
   obj: T
 ) => Array<[keyof T, T[keyof T]]>;
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class QuestionsService {
   states$ = new Subject<[number, QuestionState]>();
@@ -40,19 +40,19 @@ export class QuestionsService {
     this.subscribe();
   }
 
-  subscribe() {
+  subscribe(): void {
     if (!this.websocketService.messages$) this.websocketService.connect();
-    let base$ = this.websocketService.messages$;
+    const base$ = this.websocketService.messages$;
     base$
       ?.pipe(
         filter((msg): msg is DSPlayerStatusMessage => {
-          return msg.type == 'player_status';
+          return msg.type == "player_status";
         }),
         map((msg) => msg.status.questions)
       )
       .subscribe((msg) => {
         this.states = msg;
-        for (let [index, state] of getEntries(msg)) {
+        for (const [index, state] of getEntries(msg)) {
           this.states$.next([index, state]);
           if (!this.submitted.has(index) && state !== QuestionState.UnAnswered)
             this.submitted.add(index);
@@ -61,7 +61,7 @@ export class QuestionsService {
     base$
       ?.pipe(
         filter((msg): msg is DSQuestionsMessage => {
-          return msg.type == 'questions';
+          return msg.type == "questions";
         }),
         map((msg) => msg.questions)
       )
@@ -74,7 +74,7 @@ export class QuestionsService {
     base$
       ?.pipe(
         filter((msg): msg is DSPlayerStatusMessage => {
-          return msg.type == 'player_status';
+          return msg.type == "player_status";
         }),
         map((msg) => msg.status.answers)
       )
@@ -84,8 +84,8 @@ export class QuestionsService {
       });
   }
 
-  launchSubmission(question: QuestionDisplay) {
-    let spec: ModalSpec = {
+  launchSubmission(question: QuestionDisplay): void {
+    const spec: ModalSpec = {
       component: SubmissionComponent,
       identifier: question.index,
       inputs: { question: question },
@@ -93,15 +93,15 @@ export class QuestionsService {
     this.modalController.launch(spec);
   }
 
-  submitAnswer(index: number) {
-    let response = this.saveService.get(index);
+  submitAnswer(index: number): void {
+    const response = this.saveService.get(index);
     if (
-      (typeof response == 'string' && response.length) ||
-      (typeof response == 'number' && response >= 0)
+      (typeof response == "string" && response.length) ||
+      (typeof response == "number" && response >= 0)
     )
       this.websocketService.send({
         name: this.session.username,
-        type: 'submission',
+        type: "submission",
         index: index,
         submission: response,
       });

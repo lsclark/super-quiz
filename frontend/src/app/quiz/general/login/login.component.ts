@@ -1,17 +1,17 @@
-import { Component } from '@angular/core';
-import { SessionService } from 'src/app/quiz/services/session.service';
+import { Component } from "@angular/core";
+import { SessionService } from "src/app/quiz/services/session.service";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
-  name: string = '';
+  name = "";
 
   constructor(private session: SessionService) {}
 
-  submit() {
+  submit(): void {
     this.session.register(this.name);
   }
 }

@@ -3,8 +3,8 @@ import WebSocket from "ws";
 import { Server } from "http";
 import QuizHost from "./quiz-host";
 import { Subject } from "rxjs";
-import { QuizMessage } from "./message-types";
-import { AdminMessage, AdminUS } from "./admin-message-types";
+import { QuizMessage } from "./models/game-message-types";
+import { AdminMessage, AdminUS } from "./models/admin-message-types";
 import { Administrator } from "./admin";
 
 const port = process.env.PORT || 8080;
@@ -62,7 +62,7 @@ class TriviaServer {
       let name: string | undefined = undefined;
 
       socket.on("message", (data: string) => {
-        let message: QuizMessage | AdminMessage = JSON.parse(data);
+        const message: QuizMessage | AdminMessage = JSON.parse(data);
 
         if ("admin" in message) {
           if (!this.administrator.authorise((message as AdminUS).auth)) return;
@@ -88,7 +88,7 @@ class TriviaServer {
         console.log(`Client disconnected (${name})`);
         this.clients.delete(socket);
         this.admins.delete(socket);
-        if (!!name) delete this.players[name];
+        if (name) delete this.players[name];
       });
     });
 
@@ -109,7 +109,7 @@ class TriviaServer {
         this.wsServer.emit("connection", socket, request);
       });
     });
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       this.httpServer?.on("close", () => {
         console.log("Quiz server terminated");
         resolve();
@@ -124,13 +124,13 @@ class TriviaServer {
   }
 
   private messageSender(message: QuizMessage) {
-    let serialised = JSON.stringify(message);
+    const serialised = JSON.stringify(message);
     if (message.name == "_broadcast") {
-      for (let socket of Object.values(this.players)) {
+      for (const socket of Object.values(this.players)) {
         if (socket.readyState == WebSocket.OPEN) socket.send(serialised);
       }
     } else {
-      let socket = this.players[message.name];
+      const socket = this.players[message.name];
       if (!!socket && socket.readyState == WebSocket.OPEN) {
         socket.send(serialised);
       }
@@ -139,7 +139,7 @@ class TriviaServer {
 
   private adminSender(message: AdminMessage) {
     if (!this.admins.size) return;
-    let serialised = JSON.stringify(message);
+    const serialised = JSON.stringify(message);
     for (const socket of this.admins) {
       if (!!socket && socket.readyState == WebSocket.OPEN) {
         socket.send(serialised);
@@ -148,7 +148,7 @@ class TriviaServer {
   }
 }
 
-let server = new TriviaServer();
+const server = new TriviaServer();
 server.start();
 
 process.on("SIGTERM", () => {

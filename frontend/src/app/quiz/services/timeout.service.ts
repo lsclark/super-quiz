@@ -22,7 +22,7 @@ export class TimeoutService {
         })
       )
       .subscribe(() => {
-        let modalSpec: ModalSpec = {
+        const modalSpec: ModalSpec = {
           component: NotificationComponent,
           inputs: {
             title: 'Wake Up',

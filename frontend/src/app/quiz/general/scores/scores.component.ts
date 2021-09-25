@@ -12,7 +12,7 @@ import { SessionService } from 'src/app/quiz/services/session.service';
 export class ScoresComponent {
   players: PlayerScore[] = [];
   scoreItems: ScoreItem[] = [];
-  place: number = 0;
+  place = 0;
 
   constructor(
     public playerService: PlayersService,

@@ -7,8 +7,8 @@ import {
   AdminUSChallengeStart,
   AdminUSGameControl,
   AdminUSQuestionOverride,
-} from "./admin-message-types";
-import { QuizMessage } from "./message-types";
+} from "./models/admin-message-types";
+import { QuizMessage } from "./models/game-message-types";
 import QuizHost from "./quiz-host";
 
 const PERIOD = 15 * 1000;
@@ -81,7 +81,7 @@ export class Administrator {
   }
 
   questionStateOverride(message: AdminUSQuestionOverride): void {
-    let player = this.quizHost.getPlayer(message.name);
+    const player = this.quizHost.getPlayer(message.name);
     this.quizHost.personalChallengeManager.cancel(message.name, message.index);
     this.quizHost.groupChallengeManager.cancel(message.name, message.index);
     if (!player) return;
@@ -95,13 +95,13 @@ export class Administrator {
       message.description,
       message.score
     );
-    let player = this.quizHost.getPlayer(message.name);
+    const player = this.quizHost.getPlayer(message.name);
     if (player) this.quizHost.sendPlayerState(player);
     this.quizHost.scorer.distributeScores();
   }
 
   stateUpdate(): void {
-    let msg: AdminDSPlayerState = {
+    const msg: AdminDSPlayerState = {
       type: "adminState",
       admin: true,
       statuses: Object.values(this.quizHost.players).map((player) =>

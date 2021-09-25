@@ -1,16 +1,16 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input } from "@angular/core";
 import {
   AdminQuestionState,
   AdminUSQuestionOverride,
   QuestionState,
-} from 'src/app/models/admin-message-types';
-import { WebsocketService } from 'src/app/services/websocket.service';
-import { AdminSessionService } from '../services/admin-session.service';
+} from "src/app/models/admin-message-types";
+import { WebsocketService } from "src/app/services/websocket.service";
+import { AdminSessionService } from "../services/admin-session.service";
 
 @Component({
-  selector: 'app-admin-question-data',
-  templateUrl: './question-data.component.html',
-  styleUrls: ['./question-data.component.scss'],
+  selector: "app-admin-question-data",
+  templateUrl: "./question-data.component.html",
+  styleUrls: ["./question-data.component.scss"],
 })
 export class AdminQuestionDataComponent {
   @Input() index!: number;
@@ -24,9 +24,9 @@ export class AdminQuestionDataComponent {
   ) {}
 
   private sendState(state: QuestionState) {
-    let msg: AdminUSQuestionOverride = {
+    const msg: AdminUSQuestionOverride = {
       admin: true,
-      type: 'adminQuestionOverride',
+      type: "adminQuestionOverride",
       auth: this.session.token,
       index: this.index,
       name: this.player,
@@ -35,15 +35,15 @@ export class AdminQuestionDataComponent {
     this.websocket.send(msg);
   }
 
-  markCorrect() {
+  markCorrect(): void {
     this.sendState(QuestionState.Correct);
   }
 
-  markIncorrect() {
+  markIncorrect(): void {
     this.sendState(QuestionState.Incorrect);
   }
 
-  markReset() {
+  markReset(): void {
     this.sendState(QuestionState.UnAnswered);
   }
 }

@@ -1,23 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { TargetLetters } from '../message-types';
+import { Component, Input, OnInit } from "@angular/core";
+import { TargetLetters } from "../message-types";
 
 @Component({
-  selector: 'app-grid',
-  templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.scss'],
+  selector: "app-grid",
+  templateUrl: "./grid.component.html",
+  styleUrls: ["./grid.component.scss"],
 })
 export class GridComponent implements OnInit {
   @Input() targetData!: TargetLetters;
   ordering?: string[][];
 
-  constructor() {}
-
   ngOnInit(): void {
     this.shuffleLetters();
   }
 
-  shuffleLetters() {
-    let shuffled = this.targetData.others
+  shuffleLetters(): void {
+    const shuffled = this.targetData.others
       .map((char) => ({ sort: Math.random(), value: char }))
       .sort((a, b) => a.sort - b.sort)
       .map((a) => a.value);

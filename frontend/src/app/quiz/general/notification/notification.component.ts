@@ -1,10 +1,10 @@
-import { Component, Input } from '@angular/core';
-import { ModalControllerService } from 'src/app/quiz/services/modal-controller.service';
+import { Component, Input } from "@angular/core";
+import { ModalControllerService } from "src/app/quiz/services/modal-controller.service";
 
 @Component({
-  selector: 'app-notification',
-  templateUrl: './notification.component.html',
-  styleUrls: ['./notification.component.scss'],
+  selector: "app-notification",
+  templateUrl: "./notification.component.html",
+  styleUrls: ["./notification.component.scss"],
 })
 export class NotificationComponent {
   @Input() title!: string;
@@ -14,8 +14,8 @@ export class NotificationComponent {
 
   constructor(private modalController: ModalControllerService) {}
 
-  dismiss() {
+  dismiss(): void {
     this.modalController.dismissTop();
-    if (!!this.dismiss_cb) this.dismiss_cb();
+    if (this.dismiss_cb) this.dismiss_cb();
   }
 }

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
-import { AdminGameStateService } from '../services/admin-game-state.service';
-import { ViewManagerService } from '../services/view-manager.service';
+import { Component } from "@angular/core";
+import { AdminGameStateService } from "../services/admin-game-state.service";
+import { ViewManagerService } from "../services/view-manager.service";
 
 @Component({
-  selector: 'app-admin-navigation',
-  templateUrl: './navigation.component.html',
-  styleUrls: ['./navigation.component.scss'],
+  selector: "app-admin-navigation",
+  templateUrl: "./navigation.component.html",
+  styleUrls: ["./navigation.component.scss"],
 })
 export class AdminNavigationComponent {
   constructor(
@@ -13,11 +13,11 @@ export class AdminNavigationComponent {
     private viewManager: ViewManagerService
   ) {}
 
-  selectPlayer(player: string) {
+  selectPlayer(player: string): void {
     this.viewManager.showPlayer(player);
   }
 
-  viewMain() {
+  viewMain(): void {
     this.viewManager.viewMain();
   }
 }

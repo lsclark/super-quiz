@@ -12,8 +12,8 @@ export class GroupChallengedComponent {
   @Input() question!: QuestionDisplay;
   @Input() player!: string;
   @Input() wager!: number;
-  response: string = '';
-  multiChoice: number = -1;
+  response = '';
+  multiChoice = -1;
 
   constructor(
     private groupChallengeSvc: GroupChallengeService,

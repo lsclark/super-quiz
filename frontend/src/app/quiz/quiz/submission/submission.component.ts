@@ -1,21 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { GroupChallengeService } from 'src/app/quiz/services/group-challenge.service';
+import { Component, Input, OnInit } from "@angular/core";
+import { GroupChallengeService } from "src/app/quiz/services/group-challenge.service";
 
-import { ModalControllerService } from 'src/app/quiz/services/modal-controller.service';
-import { PersonalChallengeService } from 'src/app/quiz/services/personal-challenge.service';
-import { QuestionsService } from 'src/app/quiz/services/questions.service';
-import { SaveResponsesService } from 'src/app/quiz/services/save-responses.service';
-import { QuestionDisplay } from '../../../models/quiz-message-types';
+import { ModalControllerService } from "src/app/quiz/services/modal-controller.service";
+import { PersonalChallengeService } from "src/app/quiz/services/personal-challenge.service";
+import { QuestionsService } from "src/app/quiz/services/questions.service";
+import { SaveResponsesService } from "src/app/quiz/services/save-responses.service";
+import { QuestionDisplay } from "../../../models/quiz-message-types";
 
 @Component({
-  selector: 'app-quiz-submission',
-  templateUrl: './submission.component.html',
-  styleUrls: ['./submission.component.scss'],
+  selector: "app-quiz-submission",
+  templateUrl: "./submission.component.html",
+  styleUrls: ["./submission.component.scss"],
 })
 export class SubmissionComponent implements OnInit {
   @Input() question!: QuestionDisplay;
-  response: string = '';
-  multiChoice: number = -1;
+  response = "";
+  multiChoice = -1;
 
   constructor(
     private modalController: ModalControllerService,
@@ -29,35 +29,35 @@ export class SubmissionComponent implements OnInit {
     this.restoreSaved();
   }
 
-  responseChanged() {
+  responseChanged(): void {
     this.saveService.set(this.question.index, this.response);
   }
 
-  restoreSaved() {
-    let saved = this.saveService.get(this.question.index);
-    if (typeof saved == 'string') this.response = saved;
-    if (typeof saved == 'number') this.multiChoice = saved;
+  restoreSaved(): void {
+    const saved = this.saveService.get(this.question.index);
+    if (typeof saved == "string") this.response = saved;
+    if (typeof saved == "number") this.multiChoice = saved;
   }
 
-  selectChoice(event: number) {
+  selectChoice(event: number): void {
     this.saveService.set(this.question.index, event);
     this.multiChoice = event;
   }
 
-  dismiss() {
+  dismiss(): void {
     this.modalController.dismissTop();
   }
 
-  submit() {
+  submit(): void {
     this.questionService.submitAnswer(this.question.index);
     this.modalController.dismissTop();
   }
 
-  groupChallenge() {
+  groupChallenge(): void {
     this.groupChallengeSvc.initiate(this.question);
   }
 
-  personalChallenge() {
+  personalChallenge(): void {
     this.personalChallengeSvc.initiate(this.question);
   }
 }

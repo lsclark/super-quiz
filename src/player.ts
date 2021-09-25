@@ -1,22 +1,26 @@
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
-import { AdminPlayer, AdminQuestionState } from "./admin-message-types";
-import { QuestionColumn, QuestionDisplay, ScoreItem } from "./message-types";
+import { AdminPlayer, AdminQuestionState } from "./models/admin-message-types";
+import {
+  QuestionColumn,
+  QuestionDisplay,
+  ScoreItem,
+} from "./models/game-message-types";
 import {
   checkAnswerCorrect,
   formatQuestion,
   formatQuestionsDisplay,
   Question,
-} from "./question";
-import QuestionLoader from "./question-loader";
+} from "./questions/question";
+import QuestionLoader from "./questions/question-loader";
 import QuizHost from "./quiz-host";
 import { Target, TargetManager } from "./target";
 
 const TIMEOUT_WARNING = 4 * 60 * 1000;
 const TIMEOUT_DEATH = 5 * 60 * 1000;
 
-const getKeys = Object.keys as <T extends object>(obj: T) => Array<keyof T>;
-const getEntries = Object.entries as <T extends object>(
+const getKeys = Object.keys as <T>(obj: T) => Array<keyof T>;
+const getEntries = Object.entries as <T>(
   obj: T
 ) => Array<[keyof T, T[keyof T]]>;
 
@@ -71,7 +75,7 @@ export default class Player {
   ) {
     this.alive = true;
     this.questions = questionManager.deal();
-    this.targets = targetManager.getTargets()!;
+    this.targets = targetManager.getTargets() ?? [];
 
     [this.indexes, this.displayQuestions] = formatQuestionsDisplay(
       this.questions
@@ -89,13 +93,13 @@ export default class Player {
     });
   }
 
-  accessed() {
+  accessed(): void {
     this.alive = true;
     this.timeout.next(true);
   }
 
   getQuestion(index: number): QuestionDisplay {
-    let question = this.indexes[index];
+    const question = this.indexes[index];
     return formatQuestion(index, question);
   }
 
@@ -111,7 +115,7 @@ export default class Player {
     };
   }
 
-  setQuestionState(index: number, state: QuestionState) {
+  setQuestionState(index: number, state: QuestionState): void {
     this.state[index] = state;
   }
 
@@ -161,7 +165,7 @@ export default class Player {
   }
 
   makePlayerScore(): ScoreItem[] {
-    let items: ScoreItem[] = [...this.computeChallengeScores()];
+    const items: ScoreItem[] = [...this.computeChallengeScores()];
     items.push(this.computeQuizScore());
     items.push(this.computeTargetScore());
     this.lastScore = items;
@@ -174,7 +178,7 @@ export default class Player {
     challenge: boolean
   ): Promise<boolean> {
     this.submissions[index] = submission;
-    let question = this.indexes[index];
+    const question = this.indexes[index];
     if (await checkAnswerCorrect(question, submission)) {
       if (!challenge) this.state[index] = QuestionState.Correct;
       return true;
@@ -192,7 +196,7 @@ export default class Player {
       | "personal-delegate",
     player: string,
     points: number
-  ) {
+  ): void {
     this.challenges.push({
       type: type,
       player: player,
@@ -204,12 +208,14 @@ export default class Player {
     submission = submission.toLowerCase();
     if (submission.length <= 9 && submission.length > 3)
       this.targetSubmissions.add(submission);
-    let target = this.targets.filter((target) => target.equivalent(letters))[0];
+    const target = this.targets.filter((target) =>
+      target.equivalent(letters)
+    )[0];
     return [target.checkSubmission(submission), target.getScore()];
   }
 
   getAnswer(index: number): string {
-    let question = this.indexes[index];
+    const question = this.indexes[index];
     if (question.type == "multichoice")
       return question.choices[question.answer];
     else if (question.type == "numeric") return question.answer.toString();
@@ -217,13 +223,13 @@ export default class Player {
   }
 
   retrieveAnswers(): DisplayAnswer[] {
-    let output: DisplayAnswer[] = [];
-    for (let [index, state] of getEntries(this.state)) {
+    const output: DisplayAnswer[] = [];
+    for (const [index, state] of getEntries(this.state)) {
       if (
         state != QuestionState.UnAnswered &&
         state != QuestionState.DelegatedPending
       ) {
-        let answer = this.getAnswer(index);
+        const answer = this.getAnswer(index);
         output.push({ index: index, answer: answer });
       }
     }

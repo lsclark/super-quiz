@@ -1,15 +1,18 @@
 import { Subject } from "rxjs";
-import { CollisionChallenge, VocabularyChallenge } from "./bonus-challenges";
-import { GroupChallengeManager } from "./group-challenge";
-import { QuizMessage } from "./message-types";
-import { PersonalChallengeManager } from "./personal-challenge";
+import {
+  CollisionChallenge,
+  VocabularyChallenge,
+} from "./challenges/bonus-challenges";
+import { GroupChallengeManager } from "./challenges/group-challenge";
+import { QuizMessage } from "./models/game-message-types";
+import { PersonalChallengeManager } from "./challenges/personal-challenge";
 import Player from "./player";
-import QuestionLoader from "./question-loader";
+import QuestionLoader from "./questions/question-loader";
 import { Scorer } from "./scoring";
 import { TargetManager } from "./target";
 
 export default class QuizHost {
-  private active: boolean = false;
+  private active = false;
   private pendingMessages: QuizMessage[] = [];
   update$: Subject<boolean>;
 
@@ -49,13 +52,13 @@ export default class QuizHost {
     });
   }
 
-  startQuiz() {
+  startQuiz(): void {
     this.active = true;
     this.pendingMessages.forEach((msg) => this.routeIncoming(msg));
     this.pendingMessages = [];
   }
 
-  stopQuiz() {
+  stopQuiz(): void {
     this.active = false;
   }
 
@@ -63,14 +66,14 @@ export default class QuizHost {
     if (!(name in this.players)) {
       this.newPlayer(name);
     }
-    let player = this.players[name];
+    const player = this.players[name];
     if (player) player.accessed();
     return player;
   }
 
-  async routeIncoming(message: QuizMessage) {
+  async routeIncoming(message: QuizMessage): Promise<void> {
     console.log(`Incoming: ${JSON.stringify(message)}`);
-    let player = this.getPlayer(message.name);
+    const player = this.getPlayer(message.name);
     if (!player) return;
     switch (message.type) {
       case "connect":
@@ -86,13 +89,15 @@ export default class QuizHost {
         break;
 
       case "personal-origin":
-        let delegate = this.getPlayer(message.delegate);
-        if (!delegate) return;
-        this.personalChallengeManager.create(
-          player,
-          player.getQuestion(message.index),
-          delegate
-        );
+        {
+          const delegate = this.getPlayer(message.delegate);
+          if (!delegate) return;
+          this.personalChallengeManager.create(
+            player,
+            player.getQuestion(message.index),
+            delegate
+          );
+        }
         break;
 
       case "personal-submit":
@@ -143,7 +148,7 @@ export default class QuizHost {
     );
   }
 
-  handleConnect(player: Player) {
+  handleConnect(player: Player): void {
     this.outgoing$.next({
       name: player.name,
       type: "questions",
@@ -171,14 +176,18 @@ export default class QuizHost {
     player: Player,
     index: number,
     submission: number | string
-  ) {
+  ): Promise<void> {
     if (await player.submitAnswer(index, submission, false))
       this.scorer.distributeScores();
     this.sendPlayerState(player);
   }
 
-  handleTargetSubmit(player: Player, letters: string, submission: string) {
-    let [valid, score] = player.submitTarget(letters, submission);
+  handleTargetSubmit(
+    player: Player,
+    letters: string,
+    submission: string
+  ): void {
+    const [valid, score] = player.submitTarget(letters, submission);
     console.log(player.name, submission, valid ? "correct" : "incorrect");
     this.outgoing$.next({
       type: "target_marking",
@@ -194,7 +203,7 @@ export default class QuizHost {
     }
   }
 
-  sendPlayerState(player: Player) {
+  sendPlayerState(player: Player): void {
     this.outgoing$.next({
       type: "player_status",
       name: player.name,
@@ -202,18 +211,14 @@ export default class QuizHost {
     });
   }
 
-  timeoutWarning(name: string) {
+  timeoutWarning(name: string): void {
     this.outgoing$.next({
       type: "timeout",
       name: name,
     });
   }
 
-  timedOut(name: string) {
-    this.scorer.distributeScores();
-  }
-
-  startVocabChallenge() {
+  startVocabChallenge(): void {
     if (this.vocabChallenge && !this.vocabChallenge.complete) return;
     this.vocabChallenge = new VocabularyChallenge(
       Object.values(this.players)
@@ -229,7 +234,7 @@ export default class QuizHost {
     });
   }
 
-  startCollisionChallenge() {
+  startCollisionChallenge(): void {
     if (this.collisionChallenge && !this.collisionChallenge.complete) return;
     this.collisionChallenge = new CollisionChallenge(
       Object.values(this.players)

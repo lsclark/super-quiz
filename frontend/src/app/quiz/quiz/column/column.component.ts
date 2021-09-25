@@ -1,12 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input } from "@angular/core";
 
-import { QuestionDisplay } from '../../../models/quiz-message-types';
-import { QuestionsService } from '../../services/questions.service';
+import { QuestionDisplay } from "../../../models/quiz-message-types";
+import { QuestionsService } from "../../services/questions.service";
 
 @Component({
-  selector: 'app-quiz-column',
-  templateUrl: './column.component.html',
-  styleUrls: ['./column.component.scss'],
+  selector: "app-quiz-column",
+  templateUrl: "./column.component.html",
+  styleUrls: ["./column.component.scss"],
 })
 export class ColumnComponent {
   @Input() questions!: QuestionDisplay[];
@@ -14,13 +14,13 @@ export class ColumnComponent {
 
   constructor(private questionService: QuestionsService) {}
 
-  clickQuestion(index: number) {
+  clickQuestion(index: number): void {
     if (
       !this.questionService.submitted.has(index) &&
       !this.questionService.submitted.has((+index).toString())
     ) {
-      let question = this.questions.find((q) => q.index == index);
-      if (!!question) this.questionService.launchSubmission(question);
+      const question = this.questions.find((q) => q.index == index);
+      if (question) this.questionService.launchSubmission(question);
     }
   }
 }

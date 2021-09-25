@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
+import { filter, map } from "rxjs/operators";
 
 import {
   DSTargetAssignment,
   DSTargetMarking,
   USTargetSubmitMessage,
-} from '../../models/quiz-message-types';
-import { TargetLetters, TargetResult } from '../target/message-types';
-import { SessionService } from './session.service';
-import { WebsocketService } from '../../services/websocket.service';
+} from "../../models/quiz-message-types";
+import { TargetLetters, TargetResult } from "../target/message-types";
+import { SessionService } from "./session.service";
+import { WebsocketService } from "../../services/websocket.service";
 
 const EXPECTED = 3;
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class TargetService {
   assignments: { [key: string]: TargetLetters };
@@ -30,16 +30,16 @@ export class TargetService {
     this.subscribe();
   }
 
-  subscribe() {
+  subscribe(): void {
     if (!this.websocketService.messages$) this.websocketService.connect();
-    let base$ = this.websocketService.messages$;
+    const base$ = this.websocketService.messages$;
 
     this.results$ = base$?.pipe(
       filter((msg): msg is DSTargetMarking => {
-        return msg.type == 'target_marking';
+        return msg.type == "target_marking";
       }),
       map((msg) => {
-        const match = Object.entries(this.scores).find(([letters, score]) => {
+        const match = Object.entries(this.scores).find(([letters]) => {
           this.equivalent(letters, msg.letters);
         });
         this.scores[match ? match[0] : msg.letters] = msg.score;
@@ -58,11 +58,11 @@ export class TargetService {
     base$
       ?.pipe(
         filter((msg): msg is DSTargetAssignment => {
-          return msg.type == 'target_assignment';
+          return msg.type == "target_assignment";
         })
       )
       .subscribe((msg) => {
-        let sorted = [msg.centre, ...msg.others].sort().join('');
+        const sorted = [msg.centre, ...msg.others].sort().join("");
         if (!(sorted in this.assignments))
           this.assignments[sorted] = {
             centre: msg.centre,
@@ -76,10 +76,10 @@ export class TargetService {
       });
   }
 
-  submit(letters: string, submission: string) {
-    let data: USTargetSubmitMessage = {
+  submit(letters: string, submission: string): void {
+    const data: USTargetSubmitMessage = {
       name: this.session.username,
-      type: 'target_submit',
+      type: "target_submit",
       letters: letters,
       submission: submission,
     };
@@ -87,6 +87,6 @@ export class TargetService {
   }
 
   equivalent(word1: string, word2: string): boolean {
-    return word1.split('').sort().join() === word2.split('').sort().join();
+    return word1.split("").sort().join() === word2.split("").sort().join();
   }
 }

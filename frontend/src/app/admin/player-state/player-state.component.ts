@@ -1,28 +1,28 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, Input, OnChanges } from "@angular/core";
+import { FormBuilder } from "@angular/forms";
 import {
   AdminPlayer,
   AdminQuestionState,
   AdminUSAwardBonus,
   ScoreItem,
-} from 'src/app/models/admin-message-types';
-import { WebsocketService } from 'src/app/services/websocket.service';
-import { AdminGameStateService } from '../services/admin-game-state.service';
-import { AdminSessionService } from '../services/admin-session.service';
+} from "src/app/models/admin-message-types";
+import { WebsocketService } from "src/app/services/websocket.service";
+import { AdminGameStateService } from "../services/admin-game-state.service";
+import { AdminSessionService } from "../services/admin-session.service";
 
 @Component({
-  selector: 'app-admin-player-state',
-  templateUrl: './player-state.component.html',
-  styleUrls: ['./player-state.component.scss'],
+  selector: "app-admin-player-state",
+  templateUrl: "./player-state.component.html",
+  styleUrls: ["./player-state.component.scss"],
 })
 export class AdminPlayerStateComponent implements OnChanges {
   @Input() player!: string;
   questions: [number, AdminQuestionState][] = [];
   scores: ScoreItem[] = [];
-  selected: number = 0;
+  selected = 0;
 
   bonusForm = this.formBuilder.group({
-    description: '',
+    description: "",
     score: 0,
   });
 
@@ -49,12 +49,12 @@ export class AdminPlayerStateComponent implements OnChanges {
     this.scores = state.scores;
   }
 
-  submitBonus() {
+  submitBonus(): void {
     if (!this.bonusForm.value.description) return;
-    let msg: AdminUSAwardBonus = {
+    const msg: AdminUSAwardBonus = {
       admin: true,
       auth: this.session.token,
-      type: 'adminAwardBonus',
+      type: "adminAwardBonus",
       name: this.player,
       description: this.bonusForm.value.description,
       score: this.bonusForm.value.score,

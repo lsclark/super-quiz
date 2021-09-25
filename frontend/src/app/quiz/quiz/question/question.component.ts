@@ -1,12 +1,12 @@
-import { AfterContentInit, Component, Input } from '@angular/core';
-import { QuestionsService } from '../../services/questions.service';
-import { QuestionState } from '../../../models/quiz-message-types';
-import { filter, map } from 'rxjs/operators';
+import { AfterContentInit, Component, Input } from "@angular/core";
+import { QuestionsService } from "../../services/questions.service";
+import { QuestionState } from "../../../models/quiz-message-types";
+import { filter, map } from "rxjs/operators";
 
 @Component({
-  selector: 'app-quiz-question',
-  templateUrl: './question.component.html',
-  styleUrls: ['./question.component.scss'],
+  selector: "app-quiz-question",
+  templateUrl: "./question.component.html",
+  styleUrls: ["./question.component.scss"],
 })
 export class QuestionComponent implements AfterContentInit {
   @Input() index!: number;
@@ -30,11 +30,11 @@ export class QuestionComponent implements AfterContentInit {
   }
 
   ngAfterContentInit(): void {
-    let state = this.questionService.states[this.index];
-    if (!!state) this.update(state);
+    const state = this.questionService.states[this.index];
+    if (state) this.update(state);
   }
 
-  update(state: QuestionState) {
+  update(state: QuestionState): void {
     this.submitted = !(state === QuestionState.UnAnswered);
     if (state !== QuestionState.UnAnswered) {
       this.correct = state == QuestionState.Correct;

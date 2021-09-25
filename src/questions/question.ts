@@ -1,4 +1,4 @@
-import { QuestionColumn, QuestionDisplay } from "./message-types";
+import { QuestionColumn, QuestionDisplay } from "../models/game-message-types";
 import fuzz from "fuzzball";
 
 export interface QuestionBase {
@@ -42,16 +42,16 @@ export interface QuestionSource {
 export function formatQuestionsDisplay(
   questions: Question[]
 ): [{ [index: number]: Question }, QuestionColumn[]] {
-  let split: { [points in 1 | 2 | 3]: Question[] } = { 1: [], 2: [], 3: [] };
-  for (let question of questions) {
+  const split: { [points in 1 | 2 | 3]: Question[] } = { 1: [], 2: [], 3: [] };
+  for (const question of questions) {
     split[question.points].push(question);
   }
   let index = 0;
-  let output: QuestionColumn[] = [];
-  let indexMap: { [index: number]: Question } = {};
+  const output: QuestionColumn[] = [];
+  const indexMap: { [index: number]: Question } = {};
   ([1, 2, 3] as const).forEach((points) => {
-    let colQuestions: QuestionDisplay[] = [];
-    for (let question of split[points]) {
+    const colQuestions: QuestionDisplay[] = [];
+    for (const question of split[points]) {
       colQuestions.push({
         index: index,
         text: question.question,
@@ -102,7 +102,7 @@ export async function checkAnswerCorrect(
     );
     if (!question.fuzzy) return question.alternatives.includes(answer);
 
-    let matches: [string, number, number][] = await fuzz.extractAsPromised(
+    const matches: [string, number, number][] = await fuzz.extractAsPromised(
       answer,
       question.alternatives,
       {
@@ -111,9 +111,9 @@ export async function checkAnswerCorrect(
       }
     );
     if (!matches.length) return false;
-    let [actual, score] = matches[0];
+    const [actual, score] = matches[0];
     if (score > 95) return true;
-    let charError = (1 - score / 100.0) * actual.length;
+    const charError = (1 - score / 100.0) * actual.length;
     if (actual.length < 3) return false;
     else if (actual.length < 10) {
       return charError < 1.5;

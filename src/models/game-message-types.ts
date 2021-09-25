@@ -1,4 +1,4 @@
-import { PlayerState } from "./player";
+import { PlayerState } from "../player";
 
 export interface QuestionDisplay {
   index: number;

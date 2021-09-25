@@ -1,7 +1,7 @@
 import { Subject, timer } from "rxjs";
-import { QuestionDisplay, QuizMessage } from "./message-types";
-import Player, { QuestionState } from "./player";
-import QuizHost from "./quiz-host";
+import { QuestionDisplay, QuizMessage } from "../models/game-message-types";
+import Player, { QuestionState } from "../player";
+import QuizHost from "../quiz-host";
 
 const timeout = 30 * 1000;
 
@@ -36,14 +36,14 @@ export class GroupChallengeManager {
     private quizHost: QuizHost
   ) {
     this.submissions$.subscribe(async (sub) => {
-      let challenge = this.challenges.find(
+      const challenge = this.challenges.find(
         (ch) =>
           ch.origin.name == sub.origin &&
           ch.question.index == sub.question.index
       );
       if (!challenge || challenge.complete) return;
 
-      let correct = await challenge.origin.submitAnswer(
+      const correct = await challenge.origin.submitAnswer(
         sub.question.index,
         sub.submission,
         true
@@ -59,11 +59,11 @@ export class GroupChallengeManager {
     });
   }
 
-  create(origin: Player, wager: number, question: QuestionDisplay) {
-    let active = Object.entries(this.quizHost.players)
+  create(origin: Player, wager: number, question: QuestionDisplay): void {
+    const active = Object.entries(this.quizHost.players)
       .filter(([name, other]) => other.alive && name != origin.name)
-      .map(([name, other]) => name);
-    let challenge: GroupChallenge = {
+      .map(([name]) => name);
+    const challenge: GroupChallenge = {
       origin: origin,
       wager: wager,
       question: question,
@@ -97,8 +97,8 @@ export class GroupChallengeManager {
     player: Player,
     question: QuestionDisplay,
     submission: number | string
-  ) {
-    let sub: Submission = {
+  ): void {
+    const sub: Submission = {
       origin: origin,
       question: question,
       player: player,
@@ -107,7 +107,7 @@ export class GroupChallengeManager {
     this.submissions$.next(sub);
   }
 
-  cancel(player: string, index: number) {
+  cancel(player: string, index: number): void {
     console.log("END", player, index);
     this.challenges
       .filter((challenge) => {
@@ -129,7 +129,7 @@ export class GroupChallengeManager {
       });
   }
 
-  closeout(challenge: GroupChallenge, victor: Player) {
+  closeout(challenge: GroupChallenge, victor: Player): void {
     challenge.complete = true;
     challenge.origin.setQuestionState(
       challenge.question.index,

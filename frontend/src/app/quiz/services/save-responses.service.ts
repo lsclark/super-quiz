@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class SaveResponsesService {
   saves: { [index: number]: string | number };
@@ -14,7 +14,7 @@ export class SaveResponsesService {
     return this.saves[index];
   }
 
-  set(index: number, value: string | number) {
+  set(index: number, value: string | number): void {
     this.saves[index] = value;
   }
 }

@@ -8,14 +8,14 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
-} from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+} from "@angular/core";
+import { Subject } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 
 @Component({
-  selector: 'app-target-input',
-  templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss'],
+  selector: "app-target-input",
+  templateUrl: "./input.component.html",
+  styleUrls: ["./input.component.scss"],
 })
 export class TargetInputComponent implements OnInit, OnChanges {
   @Input() fixed!: boolean;
@@ -23,8 +23,8 @@ export class TargetInputComponent implements OnInit, OnChanges {
   @Input() input?: string;
   @Input() index!: number;
   @Output() submission = new EventEmitter<[string, boolean]>();
-  inputValue: string = '';
-  @ViewChild('input') inputElement!: ElementRef;
+  inputValue = "";
+  @ViewChild("input") inputElement!: ElementRef;
 
   debounceSubmit$ = new Subject<boolean>();
 
@@ -35,7 +35,7 @@ export class TargetInputComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.inputValue = this.input ?? '';
+    this.inputValue = this.input ?? "";
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -44,21 +44,21 @@ export class TargetInputComponent implements OnInit, OnChanges {
       !changes.input.currentValue &&
       !!changes.input.previousValue
     ) {
-      this.inputValue = '';
+      this.inputValue = "";
     }
   }
 
-  enterPressed() {
+  enterPressed(): void {
     this.submitWord(true);
   }
 
-  submitWord(enter: boolean = false) {
+  submitWord(enter = false): void {
     if (this.inputValue.length > 0 && !this.fixed) {
       this.debounceSubmit$.next(enter);
     }
   }
 
-  makeFocus() {
+  makeFocus(): void {
     setTimeout(() => {
       this.inputElement.nativeElement.focus();
     }, 0);

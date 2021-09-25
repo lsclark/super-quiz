@@ -1,13 +1,13 @@
 import { Subject, timer } from "rxjs";
-import { QuizMessage } from "./message-types";
-import QuizHost from "./quiz-host";
-import { TargetManager } from "./target";
+import { QuizMessage } from "../models/game-message-types";
+import QuizHost from "../quiz-host";
+import { TargetManager } from "../target";
 
 const TIMEOUT = 35 * 1000;
 
 export class VocabularyChallenge {
   POINTS_PER_LETTER = 0.333;
-  complete: boolean = false;
+  complete = false;
   submissions: { [key: string]: string } = {};
 
   constructor(
@@ -23,10 +23,10 @@ export class VocabularyChallenge {
     });
   }
 
-  submit(player: string, word: string) {
+  submit(player: string, word: string): void {
     if (this.complete) return;
     if (player in this.submissions) return;
-    if (!this.players.find((plyr) => player)) return;
+    if (!this.players.find((plyr: string) => plyr == player)) return;
     this.submissions[player] = word;
     if (Object.keys(this.submissions).length == this.players.length)
       this.closeout();
@@ -34,19 +34,19 @@ export class VocabularyChallenge {
 
   closeout(): void {
     this.complete = true;
-    let submissions: [string, string][] = Object.entries(this.submissions);
+    const submissions: [string, string][] = Object.entries(this.submissions);
     submissions.sort(([, word1], [, word2]) => word2.length - word1.length);
-    let marking: [string, string, boolean][] = submissions.map(
+    const marking: [string, string, boolean][] = submissions.map(
       ([name, word]) => {
         return [name, word, this.targetManager.spellcheck(word)];
       }
     );
-    let successful = marking.filter(([, , correct]) => correct);
-    let winners = successful
+    const successful = marking.filter(([, , correct]) => correct);
+    const winners = successful
       .filter(([, word]) => word.length == successful[0][1].length)
       .map(([name, ,]) => name);
 
-    let points = successful.length
+    const points = successful.length
       ? successful[0][1].length * this.POINTS_PER_LETTER
       : 0;
     winners.forEach((playerName) => {
@@ -68,7 +68,7 @@ export class VocabularyChallenge {
 }
 
 export class CollisionChallenge {
-  complete: boolean = false;
+  complete = false;
   submissions: { [key: string]: number } = {};
 
   constructor(
@@ -83,10 +83,10 @@ export class CollisionChallenge {
     });
   }
 
-  submit(player: string, request: number) {
+  submit(player: string, request: number): void {
     if (this.complete) return;
     if (player in this.submissions) return;
-    if (!this.players.find((plyr) => player)) return;
+    if (!this.players.find((plyr) => plyr == player)) return;
     this.submissions[player] = request;
     if (Object.keys(this.submissions).length == this.players.length)
       this.closeout();
@@ -94,12 +94,12 @@ export class CollisionChallenge {
 
   closeout(): void {
     this.complete = true;
-    let submissions: [string, number][] = Object.entries(this.submissions);
+    const submissions: [string, number][] = Object.entries(this.submissions);
     submissions.sort(([, req1], [, req2]) => req2 - req1);
     let currRequest: null | number = null;
     let requesters: string[] = [];
 
-    for (let [name, request] of submissions) {
+    for (const [name, request] of submissions) {
       if (request === null) {
         requesters = [name];
         currRequest = request;

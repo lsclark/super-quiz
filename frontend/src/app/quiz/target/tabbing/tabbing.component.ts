@@ -8,7 +8,7 @@ import { TargetService } from 'src/app/quiz/services/target.service';
   styleUrls: ['./tabbing.component.scss'],
 })
 export class TabbingComponent {
-  active: number = 0;
+  active = 0;
   @ViewChild('nav') navElement!: NgbNav;
 
   constructor(public targetService: TargetService) {}

@@ -1,18 +1,18 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { filter, map } from "rxjs/operators";
 import {
   DSPlayerStatusMessage,
   DSScoreboardMessage,
   PlayerState,
-} from '../../models/quiz-message-types';
-import { WebsocketService } from '../../services/websocket.service';
-import { SessionService } from './session.service';
-import { GroupChallengeService } from './group-challenge.service';
-import { PersonalChallengeService } from './personal-challenge.service';
+} from "../../models/quiz-message-types";
+import { WebsocketService } from "../../services/websocket.service";
+import { SessionService } from "./session.service";
+import { GroupChallengeService } from "./group-challenge.service";
+import { PersonalChallengeService } from "./personal-challenge.service";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class PlayersService {
   score: number;
@@ -24,7 +24,9 @@ export class PlayersService {
     private websocketService: WebsocketService,
     private session: SessionService,
     // Define challenge services so they enter memory
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     groupChallenge: GroupChallengeService,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     personalChallenge: PersonalChallengeService
   ) {
     this.others = [];
@@ -32,12 +34,12 @@ export class PlayersService {
     this.subscribe();
   }
 
-  subscribe() {
+  subscribe(): void {
     if (!this.websocketService.messages$) this.websocketService.connect();
-    let base$ = this.websocketService.messages$;
+    const base$ = this.websocketService.messages$;
     this.playerState$ = base$?.pipe(
       filter((msg): msg is DSPlayerStatusMessage => {
-        return msg.type == 'player_status';
+        return msg.type == "player_status";
       }),
       map((msg) => {
         return msg.status;
@@ -45,7 +47,7 @@ export class PlayersService {
     );
     this.scoreboard$ = base$?.pipe(
       filter((msg): msg is DSScoreboardMessage => {
-        return msg.type == 'scoreboard';
+        return msg.type == "scoreboard";
       })
     );
     this.scoreboard$?.subscribe((msg) => {

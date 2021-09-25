@@ -7,18 +7,18 @@ import {
   Output,
   QueryList,
   ViewChildren,
-} from '@angular/core';
-import { filter } from 'rxjs/operators';
-import { TargetService } from 'src/app/quiz/services/target.service';
-import { TargetInputComponent } from '../input/input.component';
-import { TargetLetters, TargetState } from '../message-types';
+} from "@angular/core";
+import { filter } from "rxjs/operators";
+import { TargetService } from "src/app/quiz/services/target.service";
+import { TargetInputComponent } from "../input/input.component";
+import { TargetLetters, TargetState } from "../message-types";
 
 const NUMINPUTS = 10 * 3;
 
 @Component({
-  selector: 'app-target',
-  templateUrl: './target.component.html',
-  styleUrls: ['./target.component.scss'],
+  selector: "app-target",
+  templateUrl: "./target.component.html",
+  styleUrls: ["./target.component.scss"],
 })
 export class TargetComponent implements OnInit, AfterContentInit {
   @ViewChildren(TargetInputComponent) inputs!: QueryList<TargetInputComponent>;
@@ -28,7 +28,7 @@ export class TargetComponent implements OnInit, AfterContentInit {
   @Output() scoreUpdate = new EventEmitter<number>();
 
   constructor(private targetService: TargetService) {
-    this.letters = '';
+    this.letters = "";
     this.columns = [[], [], []];
     [...Array(NUMINPUTS).keys()]
       .map((val) => {
@@ -41,9 +41,9 @@ export class TargetComponent implements OnInit, AfterContentInit {
 
   ngOnInit(): void {
     this.scoreUpdate.emit(this.targetSpec.initScore);
-    this.letters = this.targetSpec.centre + this.targetSpec.others.join('');
+    this.letters = this.targetSpec.centre + this.targetSpec.others.join("");
     let idx = 0;
-    for (let prev of this.targetSpec.previous) {
+    for (const prev of this.targetSpec.previous) {
       this.columns
         .flat(1)
         .filter((state) => state.index == idx)
@@ -65,10 +65,10 @@ export class TargetComponent implements OnInit, AfterContentInit {
       )
       .subscribe((result) => {
         this.scoreUpdate.emit(result.score);
-        let states = this.columns
+        const states = this.columns
           .flat(1)
           .filter((state) => state.input === result.submission);
-        for (let state of states) {
+        for (const state of states) {
           if (!result.correct) state.input = undefined;
           state.fixed = result.correct;
           state.correct = result.correct;
@@ -76,8 +76,8 @@ export class TargetComponent implements OnInit, AfterContentInit {
       });
   }
 
-  makeSubmission(index: number, event: [string, boolean]) {
-    let [submission, enter] = event;
+  makeSubmission(index: number, event: [string, boolean]): void {
+    const [submission, enter] = event;
     if (enter) this.changeFocus(index);
     this.columns
       .flat(1)
@@ -94,7 +94,7 @@ export class TargetComponent implements OnInit, AfterContentInit {
     return (index + 1) % 3;
   }
 
-  changeFocus(index: number) {
+  changeFocus(index: number): void {
     // First ensure a slot exists
     if (!this.inputs.filter((component) => !component.fixed).length) return;
     let component: TargetInputComponent | undefined = undefined;

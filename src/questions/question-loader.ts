@@ -19,12 +19,12 @@ export default class QuestionLoader {
   private questionPool: { [key: string]: Question[] } = { "": [] };
 
   constructor() {
-    let searchPath = path.join(basePath, "*.json");
-    let matches = glob.sync(searchPath);
-    for (let filepath of matches) {
+    const searchPath = path.join(basePath, "*.json");
+    const matches = glob.sync(searchPath);
+    for (const filepath of matches) {
       console.log("Question Loader: Loading", filepath);
-      let raw = readFileSync(filepath, "utf-8");
-      let data: QuestionSource = JSON.parse(raw);
+      const raw = readFileSync(filepath, "utf-8");
+      const data: QuestionSource = JSON.parse(raw);
       this.loadQuestions(data);
       Object.values(this.questionPool).forEach((qs) => shuffle(qs));
     }
@@ -32,21 +32,22 @@ export default class QuestionLoader {
 
   deal(): Question[] {
     let questions: Question[] = [];
-    for (let [category, catQuestions] of Object.entries(this.questionPool)) {
+    for (const [category, catQuestions] of Object.entries(this.questionPool)) {
       if (!category.length || !catQuestions.length) continue;
-      questions.push(catQuestions.pop()!);
+      const catQuest = catQuestions.pop();
+      if (catQuest) questions.push(catQuest);
     }
     shuffle(questions);
     ([1, 2, 3] as const).forEach((points) => {
-      let qnPoints = questions.filter((qn) => qn.points == points);
+      const qnPoints = questions.filter((qn) => qn.points == points);
       let oversample = qnPoints.length - qnsPerPoint;
       while (oversample-- > 0) {
-        let qnRemove = qnPoints.pop()!;
+        const qnRemove = qnPoints.pop() as Question;
         questions = questions.filter((qn) => qn.question != qnRemove.question);
         this.questionPool[qnRemove.category ?? ""].push(qnRemove);
       }
       for (let draw = qnPoints.length; draw < qnsPerPoint; draw++) {
-        let [question, idx] = this.questionPool[""]
+        const [question, idx] = this.questionPool[""]
           .map((qn, idx): [Question, number] => [qn, idx])
           .find(([qn]) => qn.points == points) ?? [null, null];
         if (question === null || idx === null) {
@@ -76,7 +77,7 @@ export default class QuestionLoader {
       question.alternatives = question.alternatives.map((alt) =>
         alt.toLowerCase().replace(/\W/gi, "")
       );
-      let answer = question.answer.toLowerCase().replace(/\W/gi, "");
+      const answer = question.answer.toLowerCase().replace(/\W/gi, "");
       if (!(answer in question.alternatives))
         question.alternatives.push(answer);
       question.alternatives = question.alternatives.map((alt) =>
@@ -92,10 +93,10 @@ export default class QuestionLoader {
       throw `Question points must be 1/2/3 [${question.question}]`;
     if (question.type == "multichoice") {
       if ("alternatives" in question)
-        // @ts-expect-error
+        // @ts-expect-error error case
         throw `Multichoice can't have alternatives [${question.question}]`;
       if ("fuzzy" in question)
-        // @ts-expect-error
+        // @ts-expect-error error case
         throw `Multichoice can't have fuzzy [${question.question}]`;
       if (typeof question.answer != "number")
         throw `Multichoice answer is not a number [${question.question}]`;
@@ -104,10 +105,10 @@ export default class QuestionLoader {
         throw `Numeric answer must be numberic [${question.question}]`;
     } else {
       if (!("alternatives" in question))
-        // @ts-expect-error
+        // @ts-expect-error error case
         throw `Freetext doesn't have alternatives [${question.question}]`;
       if ("choices" in question)
-        // @ts-expect-error
+        // @ts-expect-error error case
         throw `Freetext can't have choices [${question.question}]`;
       if (typeof question.answer != "string")
         throw `Multichoice answer is not a string [${question.question}]`;

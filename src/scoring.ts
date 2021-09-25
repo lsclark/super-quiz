@@ -1,5 +1,9 @@
 import { Subject } from "rxjs";
-import { PlayerScore, QuizMessage, ScoreItem } from "./message-types";
+import {
+  PlayerScore,
+  QuizMessage,
+  ScoreItem,
+} from "./models/game-message-types";
 import Player, { QuestionState } from "./player";
 import QuizHost from "./quiz-host";
 
@@ -19,9 +23,9 @@ export class Scorer {
   }
 
   private scoreItems(): { [key: string]: ScoreItem[] } {
-    let scores = this.makeBaseScores();
-    let bonuses = this.makeBonuses();
-    for (let [name, bonus] of bonuses) {
+    const scores = this.makeBaseScores();
+    const bonuses = this.makeBonuses();
+    for (const [name, bonus] of bonuses) {
       if (!!name && !!bonus) {
         if (!scores[name]) scores[name] = [];
         scores[name].push(bonus);
@@ -31,17 +35,17 @@ export class Scorer {
   }
 
   getScore(player: Player): number {
-    let base = player.makePlayerScore();
-    for (let [name, bonus] of this.makeBonuses()) {
+    const base = player.makePlayerScore();
+    for (const [name, bonus] of this.makeBonuses()) {
       if (name == player.name) base.push(bonus);
     }
     return base.reduce((agg, item) => agg + item.score, 0);
   }
 
-  distributeScores() {
-    let itemised = this.scoreItems();
+  distributeScores(): void {
+    const itemised = this.scoreItems();
 
-    let scoreboard: PlayerScore[] = Object.entries(itemised).map(
+    const scoreboard: PlayerScore[] = Object.entries(itemised).map(
       ([name, scoreItems]) => {
         return {
           name: name,
@@ -50,14 +54,15 @@ export class Scorer {
       }
     );
 
-    for (let [name, scoreItems] of Object.entries(itemised)) {
-      let score = scoreboard.find((ps) => name == ps.name);
+    for (const [name, scoreItems] of Object.entries(itemised)) {
+      const score = scoreboard.find((ps) => name == ps.name);
+
       this.outgoing$.next({
         type: "scoreboard",
         name: name,
         breakdown: scoreItems,
         scores: scoreboard,
-        score: score!.score,
+        score: score?.score ?? 0,
       });
     }
   }
@@ -84,10 +89,10 @@ export class Scorer {
 
   private targetCorrectBonus(): [string, ScoreItem][] {
     let maxNames: string[] = [];
-    let maxSubmits: number = 1;
-    for (let [name, player] of Object.entries(this.quizHost.players)) {
+    let maxSubmits = 1;
+    for (const [name, player] of Object.entries(this.quizHost.players)) {
       if (!player.alive) continue;
-      let submits = player.targets.reduce(
+      const submits = player.targets.reduce(
         (previous, current) => previous + current.submissions.size,
         0
       );
@@ -112,10 +117,10 @@ export class Scorer {
 
   private targetSubmissionsBonus(): [string, ScoreItem][] {
     let maxNames: string[] = [];
-    let maxSubmits: number = 1;
-    for (let [name, player] of Object.entries(this.quizHost.players)) {
+    let maxSubmits = 1;
+    for (const [name, player] of Object.entries(this.quizHost.players)) {
       if (!player.alive) continue;
-      let submits = player.targetSubmissions.size;
+      const submits = player.targetSubmissions.size;
       if (submits > maxSubmits) {
         maxNames = [name];
         maxSubmits = submits;
@@ -137,10 +142,10 @@ export class Scorer {
 
   private quizNonMasterBonus(): [string, ScoreItem][] {
     let maxNames: string[] = [];
-    let maxWrongs: number = 1;
-    for (let [name, player] of Object.entries(this.quizHost.players)) {
+    let maxWrongs = 1;
+    for (const [name, player] of Object.entries(this.quizHost.players)) {
       if (!player.alive) continue;
-      let wrongs = Object.values(player.state).reduce(
+      const wrongs = Object.values(player.state).reduce(
         (agg, state) => (state == QuestionState.Incorrect ? agg + 1 : agg),
         0
       );
@@ -165,10 +170,10 @@ export class Scorer {
 
   private delegatorBonus(): [string, ScoreItem][] {
     let maxNames: string[] = [];
-    let maxDelegations: number = 1;
-    for (let [name, player] of Object.entries(this.quizHost.players)) {
+    let maxDelegations = 1;
+    for (const [name, player] of Object.entries(this.quizHost.players)) {
       if (!player.alive) continue;
-      let delegations = Object.values(player.state).reduce(
+      const delegations = Object.values(player.state).reduce(
         (agg, state) =>
           state == QuestionState.DelegatedComplete ||
           state == QuestionState.DelegatedPending
@@ -197,10 +202,10 @@ export class Scorer {
 
   private profiteerBonus(): [string, ScoreItem][] {
     let maxNames: string[] = [];
-    let maxProfits: number = 0.001;
-    for (let [name, player] of Object.entries(this.quizHost.players)) {
+    let maxProfits = 0.001;
+    for (const [name, player] of Object.entries(this.quizHost.players)) {
       if (!player.alive) continue;
-      let profits = Object.values(player.challenges).reduce(
+      const profits = Object.values(player.challenges).reduce(
         (agg, challenge) =>
           challenge.type == "group-responder" ||
           challenge.type == "personal-delegate"

@@ -1,6 +1,6 @@
 # Super Quiz
 
-A real-time multiplayer quiz game built to mimic newspaper quizzes. Built using websockets, Angular, and NodeJS/Express.
+A real-time multiplayer quiz game built to mimic newspaper quizzes. Built using (and as a platform to learn) websockets, Angular, TypeScript, and NodeJS/Express.
 
 ![Animation showing an overview of the system features](feature_overview.gif "Feature Overview")
 
@@ -96,4 +96,12 @@ Navigate to `http://localhost:4200` for standard players, and `http://localhost:
 
 ```
 npm run build
+npm start
 ```
+
+## Typical Run Sequence
+
+1. The administrator spins up the server, and registers (with the token defined in `src/admin.ts`) within the `/admin` page.
+2. Players navigate to the main webpage (the `/` route), and register their name.
+3. The administrator starts the game within the admin interface (nb. players are still able to join after this point).
+4. The normal game flow (as shown in the video above) commences.

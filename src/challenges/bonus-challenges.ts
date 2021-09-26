@@ -9,6 +9,7 @@ const TIMEOUT = 35 * 1000;
 export class VocabularyChallenge {
   POINTS_PER_LETTER = 0.333;
   complete = false;
+  finished$ = new Subject<boolean>();
   submissions: { [key: string]: string } = {};
 
   constructor(
@@ -34,6 +35,7 @@ export class VocabularyChallenge {
   }
 
   closeout(): void {
+    this.finished$.next(true);
     this.complete = true;
     const submissions: [string, string][] = Object.entries(this.submissions);
     submissions.sort(([, word1], [, word2]) => word2.length - word1.length);
@@ -70,6 +72,7 @@ export class VocabularyChallenge {
 
 export class CollisionChallenge {
   complete = false;
+  finished$ = new Subject<boolean>();
   submissions: { [key: string]: number } = {};
 
   constructor(
@@ -95,6 +98,7 @@ export class CollisionChallenge {
 
   closeout(): void {
     this.complete = true;
+    this.finished$.next(true);
     const submissions: [string, number][] = Object.entries(this.submissions);
     submissions.sort(([, req1], [, req2]) => req2 - req1);
     let currRequest: null | number = null;

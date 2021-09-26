@@ -1,9 +1,6 @@
 import { Subject } from "rxjs";
 
-import {
-  CollisionChallenge,
-  VocabularyChallenge,
-} from "./challenges/bonus-challenges";
+import ChallengeManager from "./challenges/challenge-queuing";
 import { GroupChallengeManager } from "./challenges/group-challenge";
 import { PersonalChallengeManager } from "./challenges/personal-challenge";
 import { QuizMessage } from "./models/game-message-types";
@@ -17,25 +14,21 @@ export default class QuizHost {
   private pendingMessages: QuizMessage[] = [];
   update$: Subject<boolean>;
 
-  private questionLoader: QuestionLoader;
-  private targetManager: TargetManager;
+  private questionLoader: QuestionLoader = new QuestionLoader();
+  private targetManager: TargetManager = new TargetManager();
   groupChallengeManager: GroupChallengeManager;
   personalChallengeManager: PersonalChallengeManager;
+  challengeManager: ChallengeManager;
   scorer: Scorer;
-
-  private vocabChallenge?: VocabularyChallenge;
-  private collisionChallenge?: CollisionChallenge;
 
   players: { [key: string]: Player } = {};
 
   constructor(
     private incoming$: Subject<QuizMessage>,
-    private outgoing$: Subject<QuizMessage>
+    public outgoing$: Subject<QuizMessage>
   ) {
     this.update$ = new Subject<boolean>();
 
-    this.questionLoader = new QuestionLoader();
-    this.targetManager = new TargetManager();
     this.scorer = new Scorer(this.outgoing$, this);
     this.groupChallengeManager = new GroupChallengeManager(
       this.outgoing$,
@@ -44,6 +37,13 @@ export default class QuizHost {
     this.personalChallengeManager = new PersonalChallengeManager(
       this.outgoing$,
       this
+    );
+    this.challengeManager = new ChallengeManager(
+      this,
+      this.outgoing$,
+      this.targetManager,
+      this.personalChallengeManager,
+      this.groupChallengeManager
     );
 
     this.incoming$.subscribe((message) => {
@@ -93,10 +93,10 @@ export default class QuizHost {
         {
           const delegate = this.getPlayer(message.delegate);
           if (!delegate) return;
-          this.personalChallengeManager.create(
+          this.challengeManager.createPersonal(
             player,
-            player.getQuestion(message.index),
-            delegate
+            delegate,
+            player.getQuestion(message.index)
           );
         }
         break;
@@ -111,7 +111,7 @@ export default class QuizHost {
         break;
 
       case "group-origin":
-        this.groupChallengeManager.create(
+        this.challengeManager.createGroup(
           player,
           message.wager,
           player.getQuestion(message.index)
@@ -128,11 +128,11 @@ export default class QuizHost {
         break;
 
       case "vocabulary_challenge_submit":
-        this.vocabChallenge?.submit(message.name, message.submission);
+        this.challengeManager.vocabSubmit(message.name, message.submission);
         break;
 
       case "collision_challenge_submit":
-        this.collisionChallenge?.submit(message.name, message.submission);
+        this.challengeManager.collisionSubmit(message.name, message.submission);
         break;
 
       default:
@@ -216,38 +216,6 @@ export default class QuizHost {
     this.outgoing$.next({
       type: "timeout",
       name: name,
-    });
-  }
-
-  startVocabChallenge(): void {
-    if (this.vocabChallenge && !this.vocabChallenge.complete) return;
-    this.vocabChallenge = new VocabularyChallenge(
-      Object.values(this.players)
-        .filter((plyr) => plyr.alive)
-        .map((plyr) => plyr.name),
-      this.targetManager,
-      this.outgoing$,
-      this
-    );
-    this.outgoing$.next({
-      type: "vocabulary_challenge_start",
-      name: "_broadcast",
-    });
-  }
-
-  startCollisionChallenge(): void {
-    if (this.collisionChallenge && !this.collisionChallenge.complete) return;
-    this.collisionChallenge = new CollisionChallenge(
-      Object.values(this.players)
-        .filter((plyr) => plyr.alive)
-        .map((plyr) => plyr.name),
-      this.outgoing$,
-      this
-    );
-    this.outgoing$.next({
-      type: "collision_challenge_start",
-      name: "_broadcast",
-      players: this.collisionChallenge.players.length,
     });
   }
 }

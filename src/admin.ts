@@ -68,10 +68,10 @@ export class Administrator {
       .subscribe((msg) => {
         switch (msg.challenge) {
           case "collision":
-            this.quizHost.startCollisionChallenge();
+            this.quizHost.challengeManager.createCollision();
             break;
           case "vocabulary":
-            this.quizHost.startVocabChallenge();
+            this.quizHost.challengeManager.createVocab();
             break;
           default:
             break;

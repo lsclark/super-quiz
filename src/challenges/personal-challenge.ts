@@ -1,4 +1,4 @@
-import { Subject, timer } from "rxjs";
+import { Observable, Subject, timer } from "rxjs";
 
 import {
   DSPersonalChallengeOutcome,
@@ -16,6 +16,7 @@ type PersonalChallenge = {
   delegate: Player;
   question: QuestionDisplay;
   complete: boolean;
+  finished$: Subject<boolean>;
 };
 
 export class PersonalChallengeManager {
@@ -26,12 +27,17 @@ export class PersonalChallengeManager {
     private quizHost: QuizHost
   ) {}
 
-  create(origin: Player, question: QuestionDisplay, delegate: Player): void {
+  create(
+    origin: Player,
+    question: QuestionDisplay,
+    delegate: Player
+  ): Observable<boolean> {
     const challenge: PersonalChallenge = {
       origin: origin,
       delegate: delegate,
       question: question,
       complete: false,
+      finished$: new Subject<boolean>(),
     };
     this.challenges.push(challenge);
     origin.setQuestionState(question.index, QuestionState.DelegatedPending);
@@ -49,6 +55,7 @@ export class PersonalChallengeManager {
     timer(timeout).subscribe(() => {
       this.timeout(challenge);
     });
+    return challenge.finished$;
   }
 
   async submit(
@@ -107,6 +114,7 @@ export class PersonalChallengeManager {
       };
       this.outgoing$.next(outcome_delegate);
     });
+    challenge.finished$.next(true);
   }
 
   cancel(origin: string, index: number): void {
@@ -128,6 +136,7 @@ export class PersonalChallengeManager {
       challenge.question.index,
       QuestionState.UnAnswered
     );
+    challenge.finished$.next(true);
     challenge.complete = true;
     [challenge.origin.name, challenge.delegate.name].forEach((name) => {
       const timeoutMsg: DSPersonalChallengeTimeout = {

@@ -1,4 +1,4 @@
-import { Subject, timer } from "rxjs";
+import { Observable, Subject, timer } from "rxjs";
 
 import { QuestionDisplay, QuizMessage } from "../models/game-message-types";
 import Player, { QuestionState } from "../player";
@@ -19,6 +19,7 @@ type GroupChallenge = {
   activePlayers: Set<string>;
   submitted: Set<string>;
   complete: boolean;
+  finished$: Subject<boolean>;
 };
 
 type Submission = {
@@ -60,7 +61,11 @@ export class GroupChallengeManager {
     });
   }
 
-  create(origin: Player, wager: number, question: QuestionDisplay): void {
+  create(
+    origin: Player,
+    wager: number,
+    question: QuestionDisplay
+  ): Observable<boolean> {
     const active = Object.entries(this.quizHost.players)
       .filter(([name, other]) => other.alive && name != origin.name)
       .map(([name]) => name);
@@ -71,6 +76,7 @@ export class GroupChallengeManager {
       activePlayers: new Set(active),
       submitted: new Set<string>(),
       complete: false,
+      finished$: new Subject<boolean>(),
     };
     this.challenges.push(challenge);
     timer(timeout).subscribe(() => {
@@ -91,6 +97,7 @@ export class GroupChallengeManager {
       question: question,
       wager: wager,
     });
+    return challenge.finished$;
   }
 
   submit(
@@ -119,6 +126,7 @@ export class GroupChallengeManager {
       })
       .forEach((challenge) => {
         challenge.complete = true;
+        challenge.finished$.next(true);
         this.outgoing$.next({
           type: "group-outcome",
           name: "_broadcast",
@@ -132,6 +140,7 @@ export class GroupChallengeManager {
 
   closeout(challenge: GroupChallenge, victor: Player): void {
     challenge.complete = true;
+    challenge.finished$.next(true);
     challenge.origin.setQuestionState(
       challenge.question.index,
       QuestionState.DelegatedComplete

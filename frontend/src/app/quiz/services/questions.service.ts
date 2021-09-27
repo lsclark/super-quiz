@@ -57,6 +57,11 @@ export class QuestionsService {
           this.states$.next([index, state]);
           if (!this.submitted.has(index) && state !== QuestionState.UnAnswered)
             this.submitted.add(index);
+          else if (
+            this.submitted.has(index) &&
+            state === QuestionState.UnAnswered
+          )
+            this.submitted.delete(index);
         }
       });
     base$
